@@ -19,7 +19,7 @@ module.exports = function(karma) {
 
     logLevel: 'LOG_DEBUG',
 
-    singleRun: true,
+    singleRun: false,
     autoWatch: false,
 
     // browserify configuration
