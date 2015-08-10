@@ -2,9 +2,9 @@
   "name": "pki-websdk",
   "version": "0.0.1",
   "description": "PKI WebSDK",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/karma start --singleRun",
+    "testWatch": "./node_modules/.bin/karma start"
   },
   "repository": {
     "type": "git",
@@ -12,17 +12,21 @@
   },
   "license": "Private",
   "devDependencies": {
+    "brfs": "^1.4.0",
     "browserify": "^11.0.1",
+    "browserify-shim": "^3.8.10",
     "jasmine-core": "^2.3.4",
     "jsdoc": "^3.3.2",
     "karma": "^0.13.8",
+    "karma-browserify": "^4.3.0",
     "karma-chrome-launcher": "^0.2.0",
-    "karma-jasmine": "^0.2.2",
-    "karma-requirejs": "^0.2.2",
-    "requirejs": "^2.1.20"
+    "karma-jasmine": "^0.2.2"
   },
   "dependencies": {
     "asn1js": "^1.2.2",
     "pkijs": "^1.2.3"
+  },
+  "browserify-shim": {
+    "external": "global:External"
   }
 }
