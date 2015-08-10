@@ -20,13 +20,14 @@
     "karma": "^0.13.8",
     "karma-browserify": "^4.3.0",
     "karma-chrome-launcher": "^0.2.0",
-    "karma-jasmine": "^0.2.2"
+    "karma-jasmine": "^0.2.2",
+    "node.extend": "^1.1.5"
   },
   "dependencies": {
     "asn1js": "^1.2.2",
     "pkijs": "^1.2.3"
   },
   "browserify-shim": {
-    "external": "global:External"
+    "exports": "global:External"
   }
 }
