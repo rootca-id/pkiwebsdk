@@ -12,6 +12,7 @@
   },
   "license": "Private",
   "devDependencies": {
+    "browserify": "^11.0.1",
     "jsdoc": "^3.3.2"
   },
   "dependencies": {
