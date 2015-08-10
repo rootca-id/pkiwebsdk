@@ -13,5 +13,9 @@
   "license": "Private",
   "devDependencies": {
     "jsdoc": "^3.3.2"
+  },
+  "dependencies": {
+    "asn1js": "^1.2.2",
+    "pkijs": "^1.2.3"
   }
 }
