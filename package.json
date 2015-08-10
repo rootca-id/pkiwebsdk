@@ -10,5 +10,8 @@
     "type": "git",
     "url": "git@bitbucket.org:kodekreatif/kominfo-pki-websdk.git"
   },
-  "license": "Private"
+  "license": "Private",
+  "devDependencies": {
+    "jsdoc": "^3.3.2"
+  }
 }
