@@ -21,11 +21,7 @@
     "karma-browserify": "^4.3.0",
     "karma-chrome-launcher": "^0.2.0",
     "karma-jasmine": "^0.2.2",
-    "karma-phantomjs-launcher": "^0.2.1",
-    "node.extend": "^1.1.5",
-    "phantomjs": "^1.9.18",
-    "node.extend": "^1.1.5",
-    "pdfjs-dist": "^1.1.399"
+    "node.extend": "^1.1.5"
   },
   "dependencies": {
     "asn1js": "^1.2.2",

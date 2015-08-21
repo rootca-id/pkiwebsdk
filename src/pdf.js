@@ -2,7 +2,6 @@
 
 require('../lib/pdfjs/pdf.combined');
 
-
 /**
  * Represents a PDF object
  * @constructor
