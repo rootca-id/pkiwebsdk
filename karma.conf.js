@@ -6,6 +6,7 @@ module.exports = function(karma) {
     frameworks: [ 'jasmine', 'browserify' ],
 
     files: [
+      'lib/pdfjs/pdf.combined.js',
       'test/**/*.js'
     ],
 

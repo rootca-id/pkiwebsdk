@@ -1,4 +1,7 @@
-"use strict"
+'use strict';
+
+require('../lib/pdfjs/pdf.combined');
+
 
 /**
  * Represents a PDF object
@@ -6,6 +9,9 @@
  * @param {ArrayBuffer} data - The data of the PDF file
  */
 var PDF = function(data) {
+  var self = this;
+
+  self.data = data;
 }
 
 /**
@@ -33,5 +39,13 @@ PDF.prototype.signVisually = function(key, jpegStream, page, x, y, width, height
  * Gets signatures embedded in the PDF file 
  * @returns {Object} - the signatures with embedded certificates. One can then validate the certificates using the method in {Certificate} class
  */
-PDF.prototype.getSignatures = function() {
+PDF.prototype.getSignatures = function(cb) {
+  var self = this;
+
+  return new Promise(function(resolve, reject) {
+    PDFJS.getDocument({ data: self.data}).then(function(doc) {
+      resolve(doc.pdfInfo.signatures); 
+    });
+  });
 }
+module.exports = PDF;
