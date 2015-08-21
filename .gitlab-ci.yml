@@ -1,0 +1,16 @@
+image: nodejs
+
+before_script:
+ - npm install
+
+stages:
+ - test
+
+job1:
+  stage: test
+  script:
+    - npm run test
+  only:
+    - master
+  tags:
+    - docker
