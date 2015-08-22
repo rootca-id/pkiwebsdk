@@ -5,12 +5,12 @@ require('../lib/pdfjs/pdf.combined');
 /**
  * Represents a PDF object
  * @constructor
- * @param {ArrayBuffer} data - The data of the PDF file
+ * @param {String} rawData - The raw data of the PDF file. One can prepare this using String.fromCharCode() function.
  */
-var PDF = function(data) {
+var PDF = function(rawData) {
   var self = this;
 
-  self.data = data;
+  self.data = rawData;
 }
 
 /**
