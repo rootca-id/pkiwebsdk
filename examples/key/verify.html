@@ -1,0 +1,70 @@
+<script src="bundle.js"></script>
+<script>
+  console.log(PKIWebSDK);
+  if (!window.File && !window.FileReader && !window.FileList && !window.Blob) {
+    alert('The File APIs are not fully supported in this browser.');
+  }
+
+  var data;
+  var dataSignature;
+  var files = [];
+  var signatures = [];
+  var verify = function(){
+    var pem = document.getElementById("existingPrivateKey").value;
+    PKIWebSDK.Key.parsePEM(pem, "SHA-256")
+      .then(function(parsedPEM){
+        console.log("parsedPEM");
+        console.log(parsedPEM);
+        parsedPEM.verify(dataSignature, data)
+          .then(function(isValid){
+            var result = (isValid) ? "valid" : "not valid";     
+            alert("the signature is " + result);
+          })
+          .catch(function(err){
+            alert(err);
+          })
+      })
+      .catch(function(err){
+        alert(err);
+      })
+  }
+  setTimeout(function(){
+    document.getElementById('files').addEventListener('change', function(evt){
+      console.log("file added");
+      files = evt.target.files; // FileList object  
+      // files is a FileList of File objects. List some properties.
+      // Read file as ArrayBuffer
+      console.log(files[0]);
+      var reader = new window.FileReader()
+      reader.readAsArrayBuffer(files[0]);
+      reader.onload = function(e) {
+        data = reader.result;
+        console.log(data)
+       }
+    });
+    document.getElementById('signatures').addEventListener('change', function(evt){
+      console.log("signature file added");
+      signatures = evt.target.files; // FileList object  
+      // files is a FileList of File objects. List some properties.
+      // Read file as ArrayBuffer
+      console.log(signatures[0]);
+      var reader = new window.FileReader()
+      reader.readAsArrayBuffer(signatures[0]);
+      reader.onload = function(e) {
+        dataSignature = reader.result;
+        console.log(data)
+       }
+    });
+  }, 500) 
+</script>
+
+<div>
+  Signature <input type="file" id="signatures" name="signatures[]" multiple />
+  <br>
+  Data <input type="file" id="files" name="files[]" multiple />
+  <hr>
+  <h4>Verify</h4>
+  <textarea cols="80" rows="10" style="margin:10px;" id="existingPrivateKey"></textarea>
+  <br>
+  <button onClick="verify()">Verify</button>
+</div>
