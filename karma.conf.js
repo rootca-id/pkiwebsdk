@@ -1,19 +1,23 @@
 'use strict';
-
+var istanbul = require("browserify-istanbul");
 module.exports = function(karma) {
   karma.set({
 
     frameworks: [ 'jasmine', 'browserify' ],
 
     files: [
-      'lib/pdfjs/pdf.combined.js',
       'test/**/*.js'
     ],
 
-    reporters: [ 'dots' ],
+    reporters: [ 'dots', "coverage"],
 
     preprocessors: {
       'test/**/*.js': [ 'browserify' ]
+    },
+    browserify: {
+      debug: true,
+      transform : [istanbul({"ignore" : ["lib/**"]})],
+      extension: [".js"]
     },
 
     browsers: [ 'Chrome' ],
@@ -22,11 +26,12 @@ module.exports = function(karma) {
 
     singleRun: false,
     autoWatch: true,
+    
+    coverageReporter : {
+      type: "html",
+      dir : "coverage/"
+    },
 
     // browserify configuration
-    browserify: {
-      debug: true,
-      transform: [ 'brfs', 'browserify-shim' ]
-    }
   });
 };
