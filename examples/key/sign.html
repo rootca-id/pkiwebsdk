@@ -25,46 +25,7 @@
         alert(err);
       })
   }
-  var generateAndSign = function() {
-    if (files.length < 1) {
-      return alert("No file selected");
-    }
-    PKIWebSDK.Key.generatePair("SHA-256")
-      .then(function(keyPair){
-        console.log(keyPair);
-        keyPair.privateKey.toPEM()
-          .then(function(pemString){
-            console.log(pemString);
-            var privateKeyContainer = document.getElementById("privateKeyContainer");
-            privateKeyContainer.innerHTML = pemString;
-          })
-          .catch(function(err){
-            alert(err);
-          })
-        keyPair.publicKey.toPEM()
-          .then(function(pemString){
-            console.log(pemString);
-            var publicKeyContainer = document.getElementById("publicKeyContainer");
-            publicKeyContainer.innerHTML = pemString;
-
-          })
-          .catch(function(err){
-            alert(err);
-          })
-        // privateKey has been generated. Now, sign the data
-        console.log(typeof data);
-        keyPair.privateKey.sign(data)
-          .then(function(signature){
-            toFile(signature); 
-        })
-        .catch(function(err){
-          alert(err);
-        })
-      })
-      .catch(function(err){
-        alert(err);
-      });
-  }
+  
   var toFile = function(arrayBuffer){
     // downloading!
     var blob = new Blob([arrayBuffer], { type: "text/plain" });
