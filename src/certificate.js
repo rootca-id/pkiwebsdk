@@ -1,15 +1,19 @@
 "use strict";
-
-var PkiJs = require("../lib/pkijs").org.pkijs;
+var forge = window.PKIWebSDK.private.forge;
 
 /**
  * X509 certificate management
  *
  * @constructor
  */
-var Certificate = function() {
+var Certificate = function(cert) {
+  if (!cert || cert == undefined) {
+    var err = new Error("Not a valid certificate");
+    throw err;
+  } else {
+    this.certData = cert;
+  }
 }
-
 /**
  * Creates a new X509 certificate
  *
@@ -32,32 +36,116 @@ var Certificate = function() {
  * @param {Date} record.notBefore - The start active date
  * @param {Key} key - The private key used to sign the certificate
  */
-Certificate.prototype.create = function(record, key) {
-  var cert = new PkiJs.simpl.CERT();
-  var crypto = PkiJs.getCrypto();
-  cert.serialNumber = new PkiJs.asn1.INTEGER({ value: 1 });
-  cert.issuer.types_and_values.push(new PkiJs.simpl.ATTR_TYPE_AND_VALUE({
-    type: "2.5.4.6", // Country name
-    value: new PkiJs.asn1.PRINTABLESTRING({ value: record.issuer.countryName })
-  }));
-  cert.issuer.types_and_values.push(new PkiJs.simpl.ATTR_TYPE_AND_VALUE({
-    type: "2.5.4.3", // Common name
-    value: new PkiJs.asn1.PRINTABLESTRING({ value: record.issuer.commonName })
-  }));
+Certificate.create = function(record, keys) {
+  return new Promise(function(resolve, reject){
 
-  cert.subject.types_and_values.push(new PkiJs.simpl.ATTR_TYPE_AND_VALUE({
-    type: "2.5.4.6", // Country name
-    value: new PkiJs.asn1.PRINTABLESTRING({ value: record.subject.countryName })
-  }));
-  cert.subject.types_and_values.push(new PkiJs.simpl.ATTR_TYPE_AND_VALUE({
-    type: "2.5.4.3", // Common name
-    value: new PkiJs.asn1.PRINTABLESTRING({ value: record.subject.commonName })
-  }));
+    // add sign prototype from rsa module to key pair
+    keys.privateKey.sign = function(md){
+      forge.rsa.setPrivateKey(md);
+    }
 
-  cert.notBefore.value = new Date(record.notBefore);
-  cert.notAfter.value = new Date(record.notAfter);
-
-  return cert;
+    var cert = forge.pki.createCertificate();
+    cert.publicKey = keys.publicKey;
+    // alternatively set public key from a csr
+    //cert.publicKey = csr.publicKey;
+    cert.serialNumber = '01';
+    cert.validity.notBefore = new Date();
+    cert.validity.notAfter = new Date();
+    cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
+    var issuerAttrs = [{
+      name: 'commonName',
+      value: record.subject.commonName,
+    }, {
+      name: 'countryName',
+      value: record.subject.countryName
+    }, {
+      shortName: 'ST',
+      value: record.subject.stateName
+    }, {
+      name: 'localityName',
+      value: record.subject.localityName
+    }, {
+      name: 'organizationName',
+      value: record.subject.organizationName
+    }, {
+      shortName: 'OU',
+      value: record.subject.organizationUnit
+    }];
+    var subjectAttrs = [{
+      name: 'commonName',
+      value: record.subject.commonName,
+    }, {
+      name: 'countryName',
+      value: record.subject.countryName
+    }, {
+      shortName: 'ST',
+      value: record.subject.stateName
+    }, {
+      name: 'localityName',
+      value: record.subject.localityName
+    }, {
+      name: 'organizationName',
+      value: record.subject.organizationName
+    }, {
+      shortName: 'OU',
+      value: record.subject.organizationUnit
+    }];
+    cert.setSubject(subjectAttrs);
+    // alternatively set subject from a csr
+    //cert.setSubject(csr.subject.attributes);
+    cert.setIssuer(issuerAttrs);
+    cert.setExtensions([{
+      name: 'basicConstraints',
+      cA: true
+    }, {
+      name: 'keyUsage',
+      keyCertSign: true,
+      digitalSignature: true,
+      nonRepudiation: true,
+      keyEncipherment: true,
+      dataEncipherment: true
+    }, {
+      name: 'extKeyUsage',
+      serverAuth: true,
+      clientAuth: true,
+      codeSigning: true,
+      emailProtection: true,
+      timeStamping: true
+    }, {
+      name: 'nsCertType',
+      client: true,
+      server: true,
+      email: true,
+      objsign: true,
+      sslCA: true,
+      emailCA: true,
+      objCA: true
+    }, {
+      name: 'subjectAltName',
+      altNames: [{
+        type: 6, // URI
+        value: 'http://example.org/webid#me'
+      }, {
+        type: 7, // IP
+        ip: '127.0.0.1'
+      }]
+    }, {
+      name: 'subjectKeyIdentifier'
+    }]);
+  
+    cert.sign(keys.privateKey);
+    /* // convert a Forge certificate to PEM */
+    /* var pem = forge.pki.certificateToPem(cert); */
+    /* console.log("pem"); */
+    /* console.log(pem); */
+    
+    /* /1* // convert a Forge certificate from PEM *1/ */
+    /* var frompem = forge.pki.certificateFromPem(pem); */
+    /* console.log("frompem"); */
+    /* console.log(frompem); */
+    var certificate = new Certificate(cert);
+    resolve(certificate);
+  })
 }
 
 /**
@@ -75,7 +163,49 @@ Certificate.prototype.create = function(record, key) {
  * @param {string} password - The challenge password
  * @returns {string} - The CSR in PEM format
  */
-Certificate.prototype.createRequest = function(subject, extensions, key, password) {
+Certificate.createRequest = function(subject, keys, password, extensions) {
+  return new Promise(function(resolve, reject){
+    // add sign prototype from rsa module to key pair
+    keys.privateKey.sign = function(md){
+      forge.rsa.setPrivateKey(md);
+    }
+  
+    var csr = forge.pki.createCertificationRequest();
+    csr.publicKey = keys.publicKey;
+    csr.setSubject([{
+      name : "commonName",
+      value : subject.commonName
+    }, {
+      name : "countryName",
+      value : subject.countryName
+    }, {
+      shortName : "ST",
+      value : subject.stateName
+    }, {
+      name : "localityName",
+      value : subject.localityName
+    }, {
+      name : "organizationName",
+      value : subject.organizationName
+    }, {
+      shortName : "OU",
+      value : subject.organizationUnit
+    }]);
+    var csrAttrs = [{
+      name: 'challengePassword',
+      value: password
+    }]
+    if (extensions || extensions != undefined) {
+      csrAttrs.push({
+        name : "extensionRequest",
+        extensions : extensions
+      });
+    }
+    csr.setAttributes(csrAttrs);
+    csr.sign(keys.privateKey);
+    var certificateRequest = new Certificate(csr);
+    resolve(certificateRequest);
+  })
 }
 
 /**
@@ -83,6 +213,14 @@ Certificate.prototype.createRequest = function(subject, extensions, key, passwor
  * @returns {string}
  */
 Certificate.prototype.toPEM = function() {
+  var cert = this.certData;
+  return new Promise(function(resolve, reject){
+    if (cert.certificationRequestInfo) {
+      resolve(forge.pki.certificationRequestToPem(cert));
+    } else {
+      resolve(forge.pki.certificateToPem(cert));
+    }
+  })
 };
 
 /**
@@ -97,8 +235,29 @@ Certificate.prototype.toP12 = function() {
  * Build a new certificate object from a PEM format
  *
  * @param {string} pem - Text containing the certificate in PEM format
+ * @returns {Object} - a forge certificate object
+ * @static
  */
-Certificate.prototype.fromPEM = function(pem) {
+Certificate.fromPEM = function(pem) {
+  var arr = pem.split("-----");
+  console.log(pem);
+  console.log(1);
+  console.log(arr[1]);
+  return new Promise(function(resolve, reject) {
+  console.log(2);
+    if (arr[1] == "BEGIN CERTIFICATE REQUEST") {
+  console.log(3);
+      var cert = forge.pki.certificationRequestFromPem(pem);
+      resolve(cert);
+    } else if (arr[1] == "BEGIN CERTIFICATE") {
+  console.log(4);
+      var cert = forge.pki.certificateFromPem(pem);
+      resolve(cert);
+    } else {
+  console.log(5);
+      reject("failed");
+    }
+  })
 }
 
 /**
@@ -132,6 +291,10 @@ Certificate.prototype.trust = function() {
  * @returns {Object}
  */
 Certificate.prototype.getIssuer = function() {
+  var cert = this.Data;
+  return new Promise(function(resolve, reject){
+    resolve(cert.issuer.attributes);
+  })
 }
 
 /**
@@ -140,6 +303,10 @@ Certificate.prototype.getIssuer = function() {
  * @returns {Object}
  */
 Certificate.prototype.getSubject = function() {
+  var cert = this.Data;
+  return new Promise(function(resolve, reject){
+    resolve(cert.attributes.attributes);
+  })
 }
 
 /**
@@ -148,6 +315,10 @@ Certificate.prototype.getSubject = function() {
  * @returns {Number}
  */ 
 Certificate.prototype.getVersionNumber = function() {
+  var cert = this.Data;
+  return new Promise(function(resolve, reject){
+    resolve(cert.version);
+  })
 }
 
 /**
@@ -156,6 +327,10 @@ Certificate.prototype.getVersionNumber = function() {
  * @returns {Number}
  */ 
 Certificate.prototype.getSerialNumber = function() {
+  var cert = this.Data;
+  return new Promise(function(resolve, reject){
+    resolve(cert.serialNumber);
+  })
 }
 
 /**
@@ -164,6 +339,10 @@ Certificate.prototype.getSerialNumber = function() {
  * @returns {string}
  */
 Certificate.prototype.getPublicKeyAlgorithm = function() {
+  var cert = this.Data;
+  return new Promise(function(resolve, reject){
+    resolve(cert.publicKey.alg);
+  })
 }
 
 /**
@@ -172,6 +351,10 @@ Certificate.prototype.getPublicKeyAlgorithm = function() {
  * @returns {Key}
  */
 Certificate.prototype.getPublicKey = function() {
+  var cert = this.Data;
+  return new Promise(function(resolve, reject){
+    resolve(cert.publicKey);
+  })
 }
 
 /**

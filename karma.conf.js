@@ -9,7 +9,7 @@ module.exports = function(karma) {
       'test/**/*.js'
     ],
 
-    reporters: [ 'dots', "coverage"],
+    reporters: [ 'mocha', "coverage"],
 
     preprocessors: {
       'test/**/*.js': [ 'browserify' ]

@@ -21,6 +21,7 @@
     "karma-browserify": "^4.3.0",
     "karma-chrome-launcher": "^0.2.0",
     "karma-jasmine": "^0.2.2",
+    "karma-mocha-reporter": "^1.1.1",
     "node.extend": "^1.1.5"
   },
   "dependencies": {
