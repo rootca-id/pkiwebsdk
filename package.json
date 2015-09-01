@@ -4,7 +4,8 @@
   "description": "PKI WebSDK",
   "scripts": {
     "test": "./node_modules/.bin/karma start --singleRun",
-    "testWatch": "./node_modules/.bin/karma start"
+    "testWatch": "./node_modules/.bin/karma start",
+    "build" : "mkdir -p build && ./node_modules/browserify/bin/cmd.js ./src/index.js -o ./build/bundle.js"
   },
   "repository": {
     "type": "git",

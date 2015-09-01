@@ -1,5 +1,6 @@
 "use strict";
 var forge = window.PKIWebSDK.private.forge;
+var Key = require("./key");
 
 /**
  * X509 certificate management
@@ -8,8 +9,7 @@ var forge = window.PKIWebSDK.private.forge;
  */
 var Certificate = function(cert) {
   if (!cert || cert == undefined) {
-    var err = new Error("Not a valid certificate");
-    throw err;
+    this.certData = {}
   } else {
     this.certData = cert;
   }
@@ -91,8 +91,6 @@ Certificate.create = function(record, keys) {
       value: record.subject.organizationUnit
     }];
     cert.setSubject(subjectAttrs);
-    // alternatively set subject from a csr
-    //cert.setSubject(csr.subject.attributes);
     cert.setIssuer(issuerAttrs);
     cert.setExtensions([{
       name: 'basicConstraints',
@@ -134,15 +132,6 @@ Certificate.create = function(record, keys) {
     }]);
   
     cert.sign(keys.privateKey);
-    /* // convert a Forge certificate to PEM */
-    /* var pem = forge.pki.certificateToPem(cert); */
-    /* console.log("pem"); */
-    /* console.log(pem); */
-    
-    /* /1* // convert a Forge certificate from PEM *1/ */
-    /* var frompem = forge.pki.certificateFromPem(pem); */
-    /* console.log("frompem"); */
-    /* console.log(frompem); */
     var certificate = new Certificate(cert);
     resolve(certificate);
   })
@@ -227,7 +216,28 @@ Certificate.prototype.toPEM = function() {
  * Gets byte array representation of the certificate in p12 format
  * @returns {string}
  */
-Certificate.prototype.toP12 = function() {
+Certificate.prototype.toP12 = function(privateKey, password, opt) {
+  var cert = this.certData;
+  return new Promise(function(resolve, reject){
+    if (!privateKey) {
+      reject("No private key defined");
+    }
+    if (!password) {
+      reject("No password defined");
+    }
+    // Web crypto generated key has different jwk structure name with forge's.
+    // Make it compatible so the key can be procceed by forge's lib.
+    privateKey.dP = privateKey.dp;
+    privateKey.dQ = privateKey.dq;
+    privateKey.qInv = privateKey.qi;
+  
+    // create P12 ASN1 object
+    var p12Asn1 = forge.pkcs12.toPkcs12Asn1(privateKey, cert, password, opt);
+    // encode
+    var p12Der = forge.asn1.toDer(p12Asn1).getBytes();
+    var p12b64 = forge.util.encode64(p12Der);
+    resolve(p12b64);
+  })
 };
 
 
@@ -240,22 +250,15 @@ Certificate.prototype.toP12 = function() {
  */
 Certificate.fromPEM = function(pem) {
   var arr = pem.split("-----");
-  console.log(pem);
-  console.log(1);
-  console.log(arr[1]);
   return new Promise(function(resolve, reject) {
-  console.log(2);
     if (arr[1] == "BEGIN CERTIFICATE REQUEST") {
-  console.log(3);
       var cert = forge.pki.certificationRequestFromPem(pem);
       resolve(cert);
     } else if (arr[1] == "BEGIN CERTIFICATE") {
-  console.log(4);
       var cert = forge.pki.certificateFromPem(pem);
       resolve(cert);
     } else {
-  console.log(5);
-      reject("failed");
+      reject("Not a valid PEM string");
     }
   })
 }
@@ -265,7 +268,26 @@ Certificate.fromPEM = function(pem) {
  *
  * @param {ArrayBuffer} p12 - Text containing the certificate in p12 format
  */
-Certificate.prototype.fromP12 = function(p12) {
+Certificate.prototype.fromP12 = function(p12, password) {
+  var self = this;
+  console.log("Certificate.fromP12");
+  console.log(p12);
+  console.log(password);
+  return new Promise(function(resolve, reject){
+
+    // 
+    /* var p12Der = forge.util.binary.raw.encode(new Uint8Array(p12)); */
+  
+    //
+    /* var p12Der = forge.util.binary.base64.encode(p12); */
+    
+    //
+    /* var p12Der = forge.util.decode64(p12); */
+    
+    var p12Asn1 = forge.asn1.fromDer(p12, false);
+    var p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password);
+    resolve(p12);
+  })
 }
 
 /**
@@ -274,6 +296,7 @@ Certificate.prototype.fromP12 = function(p12) {
  * @returns {boolean}
  */
 Certificate.prototype.validate = function() {
+
 }
 
 /**
@@ -291,7 +314,7 @@ Certificate.prototype.trust = function() {
  * @returns {Object}
  */
 Certificate.prototype.getIssuer = function() {
-  var cert = this.Data;
+  var cert = this.certData;
   return new Promise(function(resolve, reject){
     resolve(cert.issuer.attributes);
   })
@@ -303,9 +326,9 @@ Certificate.prototype.getIssuer = function() {
  * @returns {Object}
  */
 Certificate.prototype.getSubject = function() {
-  var cert = this.Data;
+  var cert = this.certData;
   return new Promise(function(resolve, reject){
-    resolve(cert.attributes.attributes);
+    resolve(cert.subject.attributes);
   })
 }
 
@@ -315,7 +338,7 @@ Certificate.prototype.getSubject = function() {
  * @returns {Number}
  */ 
 Certificate.prototype.getVersionNumber = function() {
-  var cert = this.Data;
+  var cert = this.certData;
   return new Promise(function(resolve, reject){
     resolve(cert.version);
   })
@@ -327,7 +350,7 @@ Certificate.prototype.getVersionNumber = function() {
  * @returns {Number}
  */ 
 Certificate.prototype.getSerialNumber = function() {
-  var cert = this.Data;
+  var cert = this.certData;
   return new Promise(function(resolve, reject){
     resolve(cert.serialNumber);
   })
@@ -339,7 +362,7 @@ Certificate.prototype.getSerialNumber = function() {
  * @returns {string}
  */
 Certificate.prototype.getPublicKeyAlgorithm = function() {
-  var cert = this.Data;
+  var cert = this.certData;
   return new Promise(function(resolve, reject){
     resolve(cert.publicKey.alg);
   })
@@ -351,7 +374,7 @@ Certificate.prototype.getPublicKeyAlgorithm = function() {
  * @returns {Key}
  */
 Certificate.prototype.getPublicKey = function() {
-  var cert = this.Data;
+  var cert = this.certData;
   return new Promise(function(resolve, reject){
     resolve(cert.publicKey);
   })
@@ -362,7 +385,29 @@ Certificate.prototype.getPublicKey = function() {
  *
  * @returns {Key}
  */
-Certificate.prototype.getPrivateKey = function() {
+Certificate.prototype.getPrivateKey = function(p12b64, password) {
+  var self = this;
+  return new Promise(function(resolve, reject){
+    // decode from base64
+    var p12Der = forge.util.decode64(p12b64);
+    // get p12 as ASN.1 object
+    var p12Asn1 = forge.asn1.fromDer(p12Der);
+    // decrypt p12 using the password 'password'
+    var p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password);
+    var keyBags = p12.getBags({bagType: forge.pki.oids.pkcs8ShroudedKeyBag});
+    console.log("keybags");
+    console.log(keyBags);
+    var bag = keyBags[forge.pki.oids.pkcs8ShroudedKeyBag][0];
+    console.log("bag");
+    console.log(bag);
+    var privateKey = bag.key;
+    console.log("privateKey");
+    console.log(privateKey);
+    var asn1 = forge.pki.privateKeyToAsn1(privateKey);
+    var der = forge.asn1.toDer(asn1);
+    var b64key = forge.util.encode64(der.getBytes());
+    resolve(b64key);
+  });
 }
 
 /**

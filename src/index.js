@@ -1,3 +1,4 @@
+"use strict";
 require("../lib/forge/jsbn.js");
 require("../lib/forge/asn1.js");
 require("../lib/forge/oids.js");
@@ -11,12 +12,18 @@ require("../lib/forge/mgf.js");
 require("../lib/forge/mgf1.js");
 require("../lib/forge/pem.js");
 require("../lib/forge/pkcs1.js");
+require("../lib/forge/hmac.js");
+require("../lib/forge/pbkdf2.js");
 require("../lib/forge/prime.js");
-require("../lib/forge/prng.js");
-require("../lib/forge/random.js");
-rsa = require("../lib/forge/rsa.js");
 require("../lib/forge/sha1.js");
 require("../lib/forge/sha256.js");
+require("../lib/forge/prng.js");
+require("../lib/forge/aes.js");
+require("../lib/forge/random.js");
+require("../lib/forge/rsa.js");
+require("../lib/forge/pbe.js");
+require("../lib/forge/pkcs12.js");
+require("../lib/forge/pki.js");
 require("../lib/forge/x509.js");
 
 var PKIWebSDK;

@@ -6,17 +6,19 @@ module.exports = function(karma) {
     frameworks: [ 'jasmine', 'browserify' ],
 
     files: [
+      'src/index.js',
       'test/**/*.js'
     ],
 
     reporters: [ 'mocha', "coverage"],
 
     preprocessors: {
+      'src/index.js': [ 'browserify' ],
       'test/**/*.js': [ 'browserify' ]
     },
     browserify: {
       debug: true,
-      transform : [istanbul({"ignore" : ["lib/**"]})],
+      /* transform : [istanbul({"ignore" : ["lib/**"]})], */
       extension: [".js"]
     },
 
