@@ -68,27 +68,27 @@ window.PKIWebSDK.Key.generatePair("SHA-256").then(function(keys){
                   cert.toP12(k.privateKey, "katasandi").then(function(p12){
                     console.log("toP12 result");
                     console.log(p12);
-                    var a = document.createElement("a");
-                    a.href = "data:application/x-pkcs12;base64,"+ p12;
-                    a.download = "cert.p12";
-                    document.body.appendChild(a);
-                    a.click();
+                    /* var a = document.createElement("a"); */
+                    /* a.href = "data:application/x-pkcs12;base64,"+ p12; */
+                    /* a.download = "cert.p12"; */
+                    /* document.body.appendChild(a); */
+                    /* a.click(); */
                     
-                    var p12Ab = base642Ab(p12);
-                    console.log("p12 as array buffer");
-                    console.log(p12Ab);
+                    /* var p12Ab = base642Ab(p12); */
+                    /* console.log("p12 as array buffer"); */
+                    /* console.log(p12Ab); */
                     var newCert = new window.PKIWebSDK.Certificate();
-                    /* newCert.fromP12(p12Ab, "katasandi") */
-                    /*   .then(function(p12Container){ */
-                    /*     console.log("yo"); */
-                    /*     console.log(p12Container); */
-                    /*     var bags = p12Container.getBags({bagType: forge.pki.oids.keyBag}); */
-                    /*     console.log(bags); */
-                    /*     console.log("cert"); */
-                    /*     console.log(p12Container.safeContents[0].safeBags[0].cert); */
-                    /*     console.log("key"); */
-                    /*     console.log(p12Container.safeContents[1].safeBags[0].key); */
-                    /*   }); */
+                    newCert.fromP12(p12, "katasandi")
+                      .then(function(p12Container){
+                        console.log("yo");
+                        console.log(p12Container);
+                        var bags = p12Container.getBags({bagType: forge.pki.oids.keyBag});
+                        console.log(bags);
+                        console.log("cert");
+                        console.log(p12Container.safeContents[0].safeBags[0].cert);
+                        console.log("key");
+                        console.log(p12Container.safeContents[1].safeBags[0].key);
+                      });
                     /* var newCert2 = new window.PKIWebSDK.Certificate(); */
                     /* newCert2.getPrivateKey(p12, "katasandi", "SHA-256") */
                     /*   .then(function(key){ */
@@ -129,8 +129,8 @@ var parse = function(){
       // Read file as ArrayBuffer
       console.log(files[0]);
       var reader = new window.FileReader()
-      /* reader.readAsArrayBuffer(files[0]); */
-      reader.readAsBinaryString(files[0]);
+      reader.readAsArrayBuffer(files[0]);
+      /* reader.readAsBinaryString(files[0]); */
       reader.onload = function(e) {
         data = reader.result;
         console.log(data)

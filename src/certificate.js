@@ -271,7 +271,9 @@ Certificate.fromPEM = function(pem) {
 Certificate.prototype.fromP12 = function(p12, password) {
   var self = this;
   console.log("Certificate.fromP12");
+  console.log("The array buffer of p12");
   console.log(p12);
+  console.log("The password");
   console.log(password);
   return new Promise(function(resolve, reject){
 
@@ -279,12 +281,16 @@ Certificate.prototype.fromP12 = function(p12, password) {
     /* var p12Der = forge.util.binary.raw.encode(new Uint8Array(p12)); */
   
     //
-    /* var p12Der = forge.util.binary.base64.encode(p12); */
+    console.log("encode base64 to p12Der");
+    var p12Der = forge.util.binary.base64.encode(p12);
+    console.log(p12Der);
     
     //
     /* var p12Der = forge.util.decode64(p12); */
     
+    console.log("convert to asn1");
     var p12Asn1 = forge.asn1.fromDer(p12, false);
+    console.log(p12Asn1);
     var p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password);
     resolve(p12);
   })
