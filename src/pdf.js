@@ -1,6 +1,8 @@
 'use strict';
 
 require('../lib/pdfjs/pdf.combined');
+var Certificate = require("./certificate");
+var forge = window.PKIWebSDK.private.forge;
 
 /**
  * Represents a PDF object
@@ -43,7 +45,21 @@ PDF.prototype.getSignatures = function(cb) {
 
   return new Promise(function(resolve, reject) {
     PDFJS.getDocument({ data: self.data}).then(function(doc) {
-      resolve(doc.pdfInfo.signatures); 
+      var signatures = doc.pdfInfo.signatures;
+      if (signatures.length > 0) {
+        for (var i = 0; i < signatures.length; i ++) {
+          var asn1 = forge.asn1.fromDer(signatures[i].der);
+          var signedData = forge.pkcs7.messageFromAsn1(asn1); 
+          delete(signatures[i].der);
+          var certs = [];
+          for (var j = 0; j < signedData.certificates.length; j ++) {
+            certs.push(new Certificate(signedData.certificates[j]));
+          }
+          signedData.certificates = certs;
+          signatures[i].signedData = signedData;
+        }
+      }
+      resolve(signatures); 
     });
   });
 }

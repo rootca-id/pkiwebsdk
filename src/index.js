@@ -25,6 +25,8 @@ require("../lib/forge/pbe.js");
 require("../lib/forge/pkcs12.js");
 require("../lib/forge/pki.js");
 require("../lib/forge/x509.js");
+require("../lib/forge/pkcs7.js");
+require("../lib/forge/pkcs7asn1.js");
 
 var PKIWebSDK;
 if (!window.PKIWebSDK) {
