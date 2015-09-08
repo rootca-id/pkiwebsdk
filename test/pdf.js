@@ -20,7 +20,7 @@ describe("PDF suite", function() {
       var p = new Pdf(new Uint8Array(file));
       var signatures = p.getSignatures().then(function(signatures) {
         expect(signatures.length).toBe(1);
-        expect(signatures[0].integrityBreached).toBe(false);
+        expect(signatures[0].verified).toBe(true);
         done();
       });
     });
@@ -34,7 +34,7 @@ describe("PDF suite", function() {
       var p = new Pdf(new Uint8Array(file));
       var signatures = p.getSignatures().then(function(signatures) {
         expect(signatures.length).toBe(1);
-        expect(signatures[0].integrityBreached).toBe(true);
+        expect(signatures[0].verified).toBe(false);
         done();
       });
     });
@@ -48,6 +48,8 @@ describe("PDF suite", function() {
       var p = new Pdf(new Uint8Array(file));
       var signatures = p.getSignatures().then(function(signatures) {
         expect(signatures.length).toBe(2);
+        expect(signatures[0].verified).toBe(true);
+        expect(signatures[1].verified).toBe(true);
         done();
       });
     });

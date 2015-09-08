@@ -94,16 +94,32 @@ PDF.prototype.getSignatures = function(cb) {
               name: algo,
             }, hashed);
             hashPromise.then(function(hash) {
+              var serialPromises = [];
               var hashHex = forge.util.binary.hex.encode(hash);
               var signerInfo = signedData.getData().signerInfo[0];
               var digest = signerInfo.authenticatedAttributes.digest;
-              if (digest === hashHex) {
-                signature.integrityBreached = false;
-              } else {
-                signature.integrityBreached = true;
+              var certs = signedData.getData().certificates;
+              var found = false;
+              for (var j = 0; j < certs.length; j ++) {
+                serialPromises.push(certs[j].getSerialNumber());
               }
-              hashed = null;
-              sigResolve(signature);
+              
+              Promise.all(serialPromises).then(function(serialNumbers) {
+                for (var j = 0; j < serialNumbers.length; j ++) {
+                  if (serialNumbers[j] === signerInfo.serialNumber) {
+                    found = true;
+                  }
+                }
+                signature.verified = true;
+                if (!found) {
+                  signature.verified = false;
+                }
+                if (digest !== hashHex) {
+                  signature.verified = false;
+                }
+                hashed = null;
+                sigResolve(signature);
+              });
             }, function(error) {
               sigReject(error);
             }).catch(function(error) {
