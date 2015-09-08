@@ -56,53 +56,62 @@ PDF.prototype.getSignatures = function(cb) {
     PDFJS.getDocument({ data: self.data}).then(function(doc) {
       var signatures = doc.pdfInfo.signatures;
       if (signatures.length > 0) {
-        var hashPromises = [];
         var signaturePromises = [];
         for (var i = 0; i < signatures.length; i ++) {
-          var str = signatures[i].der;
-          var signedData = SignedData.fromDER(signatures[i].der);
-          delete(signatures[i].der);
+          signaturePromises.push(new Promise(function(sigResolve, sigReject) {
+            var signature = signatures[i];
+            var str = signature.der;
+            var signedData = SignedData.fromDER(signature.der);
+            delete(signature.der);
 
-          signatures[i].signedData = signedData;
-          var signerInfo = signedData.getData().signerInfo;
-
-          var algo = digestAlgorithmMap[signerInfo.digestAlgorithm];
-          if (!algo) {
-            throw new Error('algorithm is unknown:' + signerInfo.digestAlgorithm);
-          }
-
-          var first = signatures[i].byteRange[1];
-          var second = signatures[i].byteRange[3];
-          var secondPos = signatures[i].byteRange[2];
-          var length = first + second;
-          var hashed = new Uint8Array(length);
-
-          for (var k = 0, pos = 0; k < first; k ++, pos++) {
-            hashed[pos] = self.data[k];
-          }
-          
-          for (var k = 0; k < second; k ++, pos++) {
-            hashed[pos] = self.data[k + secondPos];
-          }
-
-          var hashPromise = window.crypto.subtle.digest({
-            name: algo,
-          }, hashed)
-          hashPromises.push(hashPromise);
-        }
-        Promise.all(hashPromises).then(function(hashes) {
-          for (var i = 0; i < hashes.length; i ++) {
-            var hash = forge.util.binary.hex.encode(hashes[i]);
-            signatures[i].signedData = signedData;
-            var signerInfo = signedData.getData().signerInfo;
-            var digest = signerInfo.authenticatedAttributes.digest;
-            if (digest === hash) {
-              signatures[i].integrityBreached = false;
-            } else {
-              signatures[i].integrityBreached = true;
+            signature.signedData = signedData;
+            if (!signedData.getData().signerInfo[0]) {
+              throw new Error('signer info is not available');
             }
-          }
-          hashed = null;
+            var signerInfo = signedData.getData().signerInfo[0];
+
+            var algo = digestAlgorithmMap[signerInfo.digestAlgorithm];
+            if (!algo) {
+              throw new Error('algorithm is unknown:' + signerInfo.digestAlgorithm);
+            }
+
+            var first = signature.byteRange[1];
+            var second = signature.byteRange[3];
+            var secondPos = signature.byteRange[2];
+            var length = first + second;
+            var hashed = new Uint8Array(length);
+
+            // combine the head and tail area according the the byte range
+            for (var k = 0, pos = 0; k < first; k ++, pos++) {
+              hashed[pos] = self.data[k];
+            }
+            for (var k = 0; k < second; k ++, pos++) {
+              hashed[pos] = self.data[k + secondPos];
+            }
+
+            // calculate hash specified in the byte range
+            var hashPromise = window.crypto.subtle.digest({
+              name: algo,
+            }, hashed);
+            hashPromise.then(function(hash) {
+              var hashHex = forge.util.binary.hex.encode(hash);
+              var signerInfo = signedData.getData().signerInfo[0];
+              var digest = signerInfo.authenticatedAttributes.digest;
+              if (digest === hashHex) {
+                signature.integrityBreached = false;
+              } else {
+                signature.integrityBreached = true;
+              }
+              hashed = null;
+              sigResolve(signature);
+            }, function(error) {
+              sigReject(error);
+            }).catch(function(error) {
+              sigReject(error);
+            });
+          }));
+        }
+        Promise.all(signaturePromises).then(function(signatures) {
           resolve(signatures); 
         }, function(error) {
           reject(error);

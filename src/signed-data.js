@@ -75,26 +75,43 @@ var signerInfoFromASN1 = function(asn1) {
       asn1.value[0].tagClass === 0 && 
       asn1.value[0].type === 16) {
     valid = true;
-    data = asn1.value[0];
   }
 
-  var capture = {};
-  var errors = [];
-  if(!forge.asn1.validate(data, forge.pkcs7.asn1.signerValidator, capture, errors)) {
+  function error() {
     throw new Error('SignerInfo ASN1 is not valid');
   }
 
-  var issuer = resolveIssuer(capture.issuer);
-  var serialNumber = forge.util.createBuffer(capture.serial).toHex();
-  var digestAlgorithm = forge.asn1.derToOid(capture.digestAlgorithm);
-  var authenticatedAttributes = resolveAttributes(capture.authenticatedAttributes);
+  function parseEntry(data) {
+    var capture = {};
+    var errors = [];
+    if(!forge.asn1.validate(data, forge.pkcs7.asn1.signerValidator, capture, errors)) {
+      return throwError();
+    }
 
-  var signerInfo = {
-    issuer: issuer,
-    serialNumber: serialNumber,
-    digestAlgorithm: digestAlgorithm,
-    authenticatedAttributes: authenticatedAttributes
+    var issuer = resolveIssuer(capture.issuer);
+    var serialNumber = forge.util.createBuffer(capture.serial).toHex();
+    var digestAlgorithm = forge.asn1.derToOid(capture.digestAlgorithm);
+    var authenticatedAttributes = resolveAttributes(capture.authenticatedAttributes);
+
+    var signerInfo = {
+      issuer: issuer,
+      serialNumber: serialNumber,
+      digestAlgorithm: digestAlgorithm,
+      authenticatedAttributes: authenticatedAttributes
+    }
+    return signerInfo;
   }
+
+  if (!valid) {
+    return throwError();
+  }
+  
+  var signerInfo = [];
+  for (var i = 0; i < asn1.value.length; i ++) {
+    var info = parseEntry(asn1.value[i]);
+    signerInfo.push(info);
+  }
+
   return signerInfo;
 }
 
@@ -122,6 +139,13 @@ SignedData.fromDER = function fromDER(rawData) {
 
   signedData.signerInfo = signerInfoFromASN1(signerInfoASN1);
   delete(signedData.signerInfos);
+
+  var certs = [];
+  for (var i = 0; i < signedData.certificates.length; i ++) {
+    var cert = new Certificate(signedData.certificates[i]);
+    certs.push(cert);
+  }
+  signedData.certificates = certs;
 
   return new SignedData(signedData);
 }
