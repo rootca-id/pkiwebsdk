@@ -46,8 +46,21 @@ var digestAlgorithmMap = {
 }
 
 /**
+ * @typedef Signature
+ * @type Object
+ * @property {Number[]} byteRange - an array consists of four numbers specifying locations of the range of covered hash
+ * @property {String} type - type of signed data
+ * @property {String} name - the person who signs the document
+ * @property {String} reason - the reason the document was signed
+ * @property {String} location - the place the document was signed
+ * @property {String} contactInfo - the contact information about the signer
+ * @property {Boolean} verified - whether the document is a valid signed PDF, this does not say about the signers and their certificates
+ * @property {SignedData} signedData - the signed data object
+ */
+
+/**
  * Gets signatures embedded in the PDF file 
- * @returns {Object} - the signatures with embedded certificates. One can then validate the certificates using the method in {Certificate} class
+ * @returns {Signature} - the signatures with embedded certificates. One can then validate the certificates using the method in {Certificate} class
  */
 PDF.prototype.getSignatures = function(cb) {
   var self = this;

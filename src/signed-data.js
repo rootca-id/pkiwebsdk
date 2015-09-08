@@ -7,7 +7,7 @@ var forge = window.PKIWebSDK.private.forge;
 /**
  * Represents a PKCS#7 signed data
  * @constructor
- * @param {Object} data - The data of the PKCS#7 signed data. Should not be used by user.
+ * @param {SignedDataObject} data - The data of the PKCS#7 signed data. Should not be used by user.
  */
 var SignedData = function(data) {
   var self = this;
@@ -115,10 +115,31 @@ var signerInfoFromASN1 = function(asn1) {
   return signerInfo;
 }
 
+/* @typedef Attribute
+ * @type Object
+ * @property {String} key - the key of the attribute
+ * @property {Object|String|Uint8Array} value - the value of the attribute
+ */
+
+/* @typedef SignerInfo
+ * @type Object
+ * @property {Object} issuer - the object holding the information about the issuer
+ * @property {String} serialNumber - the serial number of the certificate being used to sign
+ * @property {String} digestAlgorithm - the algorithm used to sign
+ * @property {Attribute} authenticatedAttributes - the signed attributes of this signer information
+ */
+
+/* @typedef SignedDataObject
+ * @description An object representing PKCS#7 signed data
+ * @type Object
+ * @property {Certificate[]} certificates - the certificates embedded in the signed data
+ * @property {SignerInfo} signerInfo - the array holding the signers information
+ */
+
 /*
  * Creates a new SignedData object from a DER formatted data
  * @param {String} rawData - The raw data of the PKCS#7 signed data in DER format
- * @returns {SignedData}
+ * @returns {SignedDataObject}
  */
 SignedData.fromDER = function fromDER(rawData) {
   var asn1 = forge.asn1.fromDer(rawData);
@@ -152,7 +173,7 @@ SignedData.fromDER = function fromDER(rawData) {
 
 /**
  * Returns the data of SignedData
- * @return {Object}
+ * @return {SignedDataObject} - the signed data object
  */
 SignedData.prototype.getData = function getData() {
   return this.data;
