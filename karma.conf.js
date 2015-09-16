@@ -6,19 +6,17 @@ module.exports = function(karma) {
     frameworks: [ 'jasmine', 'browserify' ],
 
     files: [
-      'src/index.js',
       'test/**/*.js'
     ],
 
     reporters: [ 'mocha', "coverage"],
 
     preprocessors: {
-      'src/index.js': [ 'browserify' ],
       'test/**/*.js': [ 'browserify' ]
     },
     browserify: {
       debug: true,
-      /* transform : [istanbul({"ignore" : ["lib/**"]})], */
+      transform : [istanbul({"ignore" : ["lib/**"]})],
       extension: [".js"]
     },
 
@@ -33,7 +31,9 @@ module.exports = function(karma) {
       type: "html",
       dir : "coverage/"
     },
-
+    browserNoActivityTimeout: 100000,
+    browserDisconnectTimeout: 100000,
+    browserDisconnectTolerance: 100000
     // browserify configuration
   });
 };
