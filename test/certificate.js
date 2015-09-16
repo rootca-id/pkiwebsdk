@@ -342,36 +342,29 @@ describe("Certificate suite", function() {
     })
     it("should be able to generate a certificate", function(done) {
       Key.generatePair("SHA-256")
-        .then(function(keyPair){
-          var keys = {}
-          keyPair.privateKey.toPEM().then(function(pem){
-            keys.privateKey = pem
-            keyPair.publicKey.toPEM().then(function(pem){
-              keys.publicKey = pem;     
-              Certificate.create(record, keys).then(function(cert){
-                certSample = cert;
-                expect(cert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
-                expect(cert.certData[0].issuer.attributes[1].value).toBe("ID");
-                expect(cert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
-                expect(cert.certData[0].issuer.attributes[3].value).toBe("Republik Bojong");
-                expect(cert.certData[0].issuer.attributes[4].value).toBe("Test");
-                expect(cert.certData[0].issuer.attributes[5].value).toBe("Test");
-                expect(cert.certData[0].subject.attributes[0].value).toBe("blankon.in");
-                expect(cert.certData[0].subject.attributes[1].value).toBe("ID");
-                expect(cert.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
-                expect(cert.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
-                expect(cert.certData[0].subject.attributes[4].value).toBe("Test");
-                expect(cert.certData[0].subject.attributes[5].value).toBe("Test");
-                done();
-              })
-              .catch(function(err){
-                if (err) {
-                  console.log(err.message);
-                }
-                expect(1).toBe(2);
-                done();
-              })
-            })
+        .then(function(keys){
+          Certificate.create(record, keys).then(function(cert){
+            certSample = cert;
+            expect(cert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
+            expect(cert.certData[0].issuer.attributes[1].value).toBe("ID");
+            expect(cert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
+            expect(cert.certData[0].issuer.attributes[3].value).toBe("Republik Bojong");
+            expect(cert.certData[0].issuer.attributes[4].value).toBe("Test");
+            expect(cert.certData[0].issuer.attributes[5].value).toBe("Test");
+            expect(cert.certData[0].subject.attributes[0].value).toBe("blankon.in");
+            expect(cert.certData[0].subject.attributes[1].value).toBe("ID");
+            expect(cert.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
+            expect(cert.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
+            expect(cert.certData[0].subject.attributes[4].value).toBe("Test");
+            expect(cert.certData[0].subject.attributes[5].value).toBe("Test");
+            done();
+          })
+          .catch(function(err){
+            if (err) {
+              console.log(err.message);
+            }
+            expect(1).toBe(2);
+            done();
           })
         })
         .catch(function(err){
@@ -384,36 +377,29 @@ describe("Certificate suite", function() {
     });
     it("should be able to generate a certificate without specific Date", function(done) {
       Key.generatePair("SHA-256")
-        .then(function(keyPair){
-          var keys = {}
-          keyPair.privateKey.toPEM().then(function(pem){
-            keys.privateKey = pem
-            keyPair.publicKey.toPEM().then(function(pem){
-              keys.publicKey = pem;     
-              Certificate.create(recordWithoutDate, keys).then(function(cert){
-                console.log(cert.certData);
-                expect(cert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
-                expect(cert.certData[0].issuer.attributes[1].value).toBe("ID");
-                expect(cert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
-                expect(cert.certData[0].issuer.attributes[3].value).toBe("Republik Bojong");
-                expect(cert.certData[0].issuer.attributes[4].value).toBe("Test");
-                expect(cert.certData[0].issuer.attributes[5].value).toBe("Test");
-                expect(cert.certData[0].subject.attributes[0].value).toBe("blankon.in");
-                expect(cert.certData[0].subject.attributes[1].value).toBe("ID");
-                expect(cert.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
-                expect(cert.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
-                expect(cert.certData[0].subject.attributes[4].value).toBe("Test");
-                expect(cert.certData[0].subject.attributes[5].value).toBe("Test");
-                done();
-              })
-              .catch(function(err){
-                if (err) {
-                  console.log(err.message);
-                }
-                expect(1).toBe(2);
-                done();
-              })
-            })
+        .then(function(keys){
+          Certificate.create(recordWithoutDate, keys).then(function(cert){
+            console.log(cert.certData);
+            expect(cert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
+            expect(cert.certData[0].issuer.attributes[1].value).toBe("ID");
+            expect(cert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
+            expect(cert.certData[0].issuer.attributes[3].value).toBe("Republik Bojong");
+            expect(cert.certData[0].issuer.attributes[4].value).toBe("Test");
+            expect(cert.certData[0].issuer.attributes[5].value).toBe("Test");
+            expect(cert.certData[0].subject.attributes[0].value).toBe("blankon.in");
+            expect(cert.certData[0].subject.attributes[1].value).toBe("ID");
+            expect(cert.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
+            expect(cert.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
+            expect(cert.certData[0].subject.attributes[4].value).toBe("Test");
+            expect(cert.certData[0].subject.attributes[5].value).toBe("Test");
+            done();
+          })
+          .catch(function(err){
+            if (err) {
+              console.log(err.message);
+            }
+            expect(1).toBe(2);
+            done();
           })
         })
         .catch(function(err){
@@ -426,27 +412,19 @@ describe("Certificate suite", function() {
     });
     it("should be able to generate a certificate request", function(done) {
       Key.generatePair("SHA-256")
-        .then(function(keyPair){
-          var keys = {}
-          keyPair.privateKey.toPEM().then(function(pem){
-            keys.privateKey = pem;
-            // save to global
-            keyPair.publicKey.toPEM().then(function(pem){
-              keys.publicKey = pem;
-              Certificate.createRequest(subject, keys, "katasandi").then(function(cert1){
-                csrSample = cert1;
-                expect(cert1.certData[0].subject.attributes[0].value).toBe("blankon.in");
-                expect(cert1.certData[0].subject.attributes[1].value).toBe("ID");
-                expect(cert1.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
-                expect(cert1.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
-                expect(cert1.certData[0].subject.attributes[4].value).toBe("Test");
-                expect(cert1.certData[0].subject.attributes[5].value).toBe("Test");
-                expect(cert1.certData[0].attributes[0].name).toBe("challengePassword");
-                expect(cert1.certData[0].attributes[0].value).toBe("katasandi");
-                done();
-              });
-            })
-          })
+        .then(function(keys){
+          Certificate.createRequest(subject, keys, "katasandi").then(function(cert1){
+            csrSample = cert1;
+            expect(cert1.certData[0].subject.attributes[0].value).toBe("blankon.in");
+            expect(cert1.certData[0].subject.attributes[1].value).toBe("ID");
+            expect(cert1.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
+            expect(cert1.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
+            expect(cert1.certData[0].subject.attributes[4].value).toBe("Test");
+            expect(cert1.certData[0].subject.attributes[5].value).toBe("Test");
+            expect(cert1.certData[0].attributes[0].name).toBe("challengePassword");
+            expect(cert1.certData[0].attributes[0].value).toBe("katasandi");
+            done();
+          });
         })
         .catch(function(err){
           if (err) {
@@ -812,38 +790,25 @@ describe("Certificate suite", function() {
     });
     it("should be able to check validity of a certificate, return false because of expired date", function(done) {
       Key.generatePair("SHA-256")
-        .then(function(keyPair){
-          var keys = {}
-          keyPair.privateKey.toPEM().then(function(pem){
-            keys.privateKey = pem
-            keyPair.publicKey.toPEM().then(function(pem){
-              keys.publicKey = pem;     
-              Certificate.create(recordExpired, keys).then(function(cert){
-                expect(cert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
-                expect(cert.certData[0].issuer.attributes[1].value).toBe("ID");
-                expect(cert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
-                expect(cert.certData[0].issuer.attributes[3].value).toBe("Republik Bojong");
-                expect(cert.certData[0].issuer.attributes[4].value).toBe("Test");
-                expect(cert.certData[0].issuer.attributes[5].value).toBe("Test");
-                expect(cert.certData[0].subject.attributes[0].value).toBe("blankon.in");
-                expect(cert.certData[0].subject.attributes[1].value).toBe("ID");
-                expect(cert.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
-                expect(cert.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
-                expect(cert.certData[0].subject.attributes[4].value).toBe("Test");
-                expect(cert.certData[0].subject.attributes[5].value).toBe("Test");
+        .then(function(keys){
+          Certificate.create(recordExpired, keys).then(function(cert){
+            expect(cert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
+            expect(cert.certData[0].issuer.attributes[1].value).toBe("ID");
+            expect(cert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
+            expect(cert.certData[0].issuer.attributes[3].value).toBe("Republik Bojong");
+            expect(cert.certData[0].issuer.attributes[4].value).toBe("Test");
+            expect(cert.certData[0].issuer.attributes[5].value).toBe("Test");
+            expect(cert.certData[0].subject.attributes[0].value).toBe("blankon.in");
+            expect(cert.certData[0].subject.attributes[1].value).toBe("ID");
+            expect(cert.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
+            expect(cert.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
+            expect(cert.certData[0].subject.attributes[4].value).toBe("Test");
+            expect(cert.certData[0].subject.attributes[5].value).toBe("Test");
+            done();
+            cert.validate()
+              .then(function(isValid){
+                expect(isValid).toBe(false);
                 done();
-                cert.validate()
-                  .then(function(isValid){
-                    expect(isValid).toBe(false);
-                    done();
-                  })
-                  .catch(function(err){
-                    if (err) {
-                      console.log(err.message);
-                    }
-                    expect(1).toBe(2);
-                    done();
-                  })
               })
               .catch(function(err){
                 if (err) {
@@ -852,7 +817,13 @@ describe("Certificate suite", function() {
                 expect(1).toBe(2);
                 done();
               })
-            })
+          })
+          .catch(function(err){
+            if (err) {
+              console.log(err.message);
+            }
+            expect(1).toBe(2);
+            done();
           })
         })
         .catch(function(err){
