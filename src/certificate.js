@@ -142,102 +142,112 @@ Certificate.getRevocationList = function(data){
  * @param {string} record.subject.organizationUnit - The organization unit of the subject
  * @param {Date} record.notAfter - The expiration date
  * @param {Date} record.notBefore - The start active date
- * @param {Key} key - The private key used to sign the certificate
- * @param {Object} key - Key pair 
- * @param {string} key.publicKey - PEM formatted publicKey
- * @param {string} key.privateKey - PEM formatted privateKey
+ * @param {Object} keyPair - Key pair 
+ * @param {Object} keyPair.publicKey - public key in Key object
+ * @param {Object} keyPair.privateKey - private kye in Key object
  */
-Certificate.create = function(record, keys) {
+Certificate.create = function(record, keyPair) {
   return new Promise(function(resolve, reject){
+    
+    // Convert keyPair to PEM format
+    var keys = {};
+    keyPair.publicKey.toPEM()
+      .then(function(pem){
+        keys.publicKey = pem;
+        return keyPair.privateKey.toPEM();
+      }).then(function(pem){
+        keys.privateKey = pem;
+        // Generate cert
+        var cert = forge.pki.createCertificate();
+        cert.publicKey = forge.pki.publicKeyFromPem(keys.publicKey);
+        cert.serialNumber = '01';
+        if (record.notBefore) {
+          cert.validity.notBefore = record.notBefore;
+        } else {
+          cert.validity.notBefore = new Date();
+        }
+        if (record.notAfter) {
+          cert.validity.notAfter = record.notAfter;
+        } else {
+          cert.validity.notAfter = new Date();
+          cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
+        }
+        var issuerAttrs = [{
+          name: 'commonName',
+          value: record.subject.commonName,
+        }, {
+          name: 'countryName',
+          value: record.subject.countryName
+        }, {
+          shortName: 'ST',
+          value: record.subject.stateName
+        }, {
+          name: 'localityName',
+          value: record.subject.localityName
+        }, {
+          name: 'organizationName',
+          value: record.subject.organizationName
+        }, {
+          shortName: 'OU',
+          value: record.subject.organizationUnit
+        }];
+        var subjectAttrs = [{
+          name: 'commonName',
+          value: record.subject.commonName,
+        }, {
+          name: 'countryName',
+          value: record.subject.countryName
+        }, {
+          shortName: 'ST',
+          value: record.subject.stateName
+        }, {
+          name: 'localityName',
+          value: record.subject.localityName
+        }, {
+          name: 'organizationName',
+          value: record.subject.organizationName
+        }, {
+          shortName: 'OU',
+          value: record.subject.organizationUnit
+        }];
+        cert.setSubject(subjectAttrs);
+        cert.setIssuer(issuerAttrs);
+        cert.setExtensions([{
+          name: 'basicConstraints',
+          cA: true
+        }, {
+          name: 'keyUsage',
+          keyCertSign: true,
+          digitalSignature: true,
+          nonRepudiation: true,
+          keyEncipherment: true,
+          dataEncipherment: true
+        }, {
+          name: 'extKeyUsage',
+          serverAuth: true,
+          clientAuth: true,
+          codeSigning: true,
+          emailProtection: true,
+          timeStamping: true
+        }, {
+          name: 'nsCertType',
+          client: true,
+          server: true,
+          email: true,
+          objsign: true,
+          sslCA: true,
+          emailCA: true,
+          objCA: true
+        }, {
+          name: 'subjectKeyIdentifier'
+        }]);
+    
+        // Convert privateKey to forge's privateKey
+        cert.sign(forge.pki.privateKeyFromPem(keys.privateKey));
+        var certificate = new Certificate([cert]);
+        resolve(certificate);
+      })
 
-    var cert = forge.pki.createCertificate();
-    cert.publicKey = forge.pki.publicKeyFromPem(keys.publicKey);
-    cert.serialNumber = '01';
-    if (record.notBefore) {
-      cert.validity.notBefore = record.notBefore;
-    } else {
-      cert.validity.notBefore = new Date();
-    }
-    if (record.notAfter) {
-      cert.validity.notAfter = record.notAfter;
-    } else {
-      cert.validity.notAfter = new Date();
-      cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
-    }
-    var issuerAttrs = [{
-      name: 'commonName',
-      value: record.subject.commonName,
-    }, {
-      name: 'countryName',
-      value: record.subject.countryName
-    }, {
-      shortName: 'ST',
-      value: record.subject.stateName
-    }, {
-      name: 'localityName',
-      value: record.subject.localityName
-    }, {
-      name: 'organizationName',
-      value: record.subject.organizationName
-    }, {
-      shortName: 'OU',
-      value: record.subject.organizationUnit
-    }];
-    var subjectAttrs = [{
-      name: 'commonName',
-      value: record.subject.commonName,
-    }, {
-      name: 'countryName',
-      value: record.subject.countryName
-    }, {
-      shortName: 'ST',
-      value: record.subject.stateName
-    }, {
-      name: 'localityName',
-      value: record.subject.localityName
-    }, {
-      name: 'organizationName',
-      value: record.subject.organizationName
-    }, {
-      shortName: 'OU',
-      value: record.subject.organizationUnit
-    }];
-    cert.setSubject(subjectAttrs);
-    cert.setIssuer(issuerAttrs);
-    cert.setExtensions([{
-      name: 'basicConstraints',
-      cA: true
-    }, {
-      name: 'keyUsage',
-      keyCertSign: true,
-      digitalSignature: true,
-      nonRepudiation: true,
-      keyEncipherment: true,
-      dataEncipherment: true
-    }, {
-      name: 'extKeyUsage',
-      serverAuth: true,
-      clientAuth: true,
-      codeSigning: true,
-      emailProtection: true,
-      timeStamping: true
-    }, {
-      name: 'nsCertType',
-      client: true,
-      server: true,
-      email: true,
-      objsign: true,
-      sslCA: true,
-      emailCA: true,
-      objCA: true
-    }, {
-      name: 'subjectKeyIdentifier'
-    }]);
- 
-    // Convert privateKey to forge's privateKey
-    cert.sign(forge.pki.privateKeyFromPem(keys.privateKey));
-    var certificate = new Certificate([cert]);
-    resolve(certificate);
   })
 }
 
@@ -252,43 +262,55 @@ Certificate.create = function(record, keys) {
  * @param {string} subject.organizationName - The organization name of the subject
  * @param {string} subject.organizationUnit - The organization unit of the subject
  * @param {Object} extension - The extension request
- * @param {Object} key - Key pair 
- * @param {string} key.publicKey - PEM formatted publicKey
- * @param {string} key.privateKey - PEM formatted privateKey
+ * @param {Object} keyPair - Key pair 
+ * @param {Object} keyPair.publicKey - public key in Key object
+ * @param {Object} keyPair.privateKey - private kye in Key object
  * @param {string} password - The challenge password
  * @returns {string} - The CSR in PEM format
  */
 Certificate.createRequest = function(subject, keys, password) {
   return new Promise(function(resolve, reject){
-    var csr = forge.pki.createCertificationRequest();
-    csr.publicKey = forge.pki.publicKeyFromPem(keys.publicKey);
-    csr.setSubject([{
-      name : "commonName",
-      value : subject.commonName
-    }, {
-      name : "countryName",
-      value : subject.countryName
-    }, {
-      shortName : "ST",
-      value : subject.stateName
-    }, {
-      name : "localityName",
-      value : subject.localityName
-    }, {
-      name : "organizationName",
-      value : subject.organizationName
-    }, {
-      shortName : "OU",
-      value : subject.organizationUnit
-    }]);
-    var csrAttrs = [{
-      name: 'challengePassword',
-      value: password
-    }]
-    csr.setAttributes(csrAttrs);
-    csr.sign(forge.pki.privateKeyFromPem(keys.privateKey));
-    var certificateRequest = new Certificate([csr]);
-    resolve(certificateRequest);
+    
+  // Convert keyPair to PEM format
+    var keys = {};
+    var keys = {};
+    keyPair.publicKey.toPEM()
+      .then(function(pem){
+        keys.publicKey = pem;
+        return keyPair.privateKey.toPEM();
+      }).then(function(pem){
+        keys.privateKey = pem
+        // Generate CSR
+        var csr = forge.pki.createCertificationRequest();
+        csr.publicKey = forge.pki.publicKeyFromPem(keys.publicKey);
+        csr.setSubject([{
+          name : "commonName",
+          value : subject.commonName
+        }, {
+          name : "countryName",
+          value : subject.countryName
+        }, {
+          shortName : "ST",
+          value : subject.stateName
+        }, {
+          name : "localityName",
+          value : subject.localityName
+        }, {
+          name : "organizationName",
+          value : subject.organizationName
+        }, {
+          shortName : "OU",
+          value : subject.organizationUnit
+        }]);
+        var csrAttrs = [{
+          name: 'challengePassword',
+          value: password
+        }]
+        csr.setAttributes(csrAttrs);
+        csr.sign(forge.pki.privateKeyFromPem(keys.privateKey));
+        var certificateRequest = new Certificate([csr]);
+        resolve(certificateRequest);
+      })
   })
 }
 
