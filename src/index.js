@@ -1,48 +1,13 @@
-"use strict";
-require("../lib/forge/jsbn.js");
-require("../lib/forge/asn1.js");
-require("../lib/forge/oids.js");
-require("../lib/forge/util.js");
-require("../lib/forge/cipher");
-require("../lib/forge/pem");
-require("../lib/forge/cipherModes.js");
-require("../lib/forge/md.js");
-require("../lib/forge/md5.js");
-require("../lib/forge/mgf.js");
-require("../lib/forge/mgf1.js");
-require("../lib/forge/pem.js");
-require("../lib/forge/pkcs1.js");
-require("../lib/forge/hmac.js");
-require("../lib/forge/pbkdf2.js");
-require("../lib/forge/prime.js");
-require("../lib/forge/sha1.js");
-require("../lib/forge/sha256.js");
-require("../lib/forge/prng.js");
-require("../lib/forge/aes.js");
-require("../lib/forge/random.js");
-require("../lib/forge/rsa.js");
-require("../lib/forge/pbe.js");
-require("../lib/forge/pkcs12.js");
-require("../lib/forge/pki.js");
-require("../lib/forge/x509.js");
-require("../lib/forge/pkcs7.js");
-require("../lib/forge/pkcs7asn1.js");
-
-var PKIWebSDK;
-if (!window.PKIWebSDK) {
-  PKIWebSDK = function() {
-    this.PDF = require('./pdf')
-    this.sample = require('../test/assets/no-signature.pdf.js')
-    this.Key = require('./key')
-    this.Certificate = require('./certificate')
-    this.private = {};
-    this.private.forge = {}
-  }
-  window.PKIWebSDK = new PKIWebSDK();
-} else {
-  window.PKIWebSDK.PDF = require('./pdf');
-  window.PKIWebSDK.sample = require('../test/assets/no-signature.pdf.js');
-  window.PKIWebSDK.Key = require('./key');
-  window.PKIWebSDK.Certificate = require('./certificate');
+var PKIWebSDK = function() {
+  this.Certificate = require('./certificate')
+  this.PDF = require('./pdf')
+  this.sample = require('../test/assets/no-signature.pdf.js')
+  this.Key = require('./key')
 }
+var caStore = require("./castore");
+
+window.PKIWebSDK = new PKIWebSDK();
+window.PKIWebSDK.private = {}
+window.PKIWebSDK.private.forge = window.forge;
+window.PKIWebSDK.private.caStore = window.forge.pki.createCaStore(caStore);
 module.exports = PKIWebSDK;
