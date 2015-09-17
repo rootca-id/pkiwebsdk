@@ -9,13 +9,14 @@ module.exports = function(karma) {
       'test/**/*.js'
     ],
 
-    reporters: [ 'mocha'],
+    reporters: [ 'mocha', "coverage"],
 
     preprocessors: {
       'test/**/*.js': [ 'browserify' ]
     },
     browserify: {
       debug: true,
+      transform : [istanbul({"ignore" : ["lib/**"]})],
       extension: [".js"]
     },
 
@@ -26,6 +27,10 @@ module.exports = function(karma) {
     singleRun: false,
     autoWatch: true,
     
+    coverageReporter : {
+      type: "html",
+      dir : "coverage/"
+    },
     browserNoActivityTimeout: 100000,
     browserDisconnectTimeout: 100000,
     browserDisconnectTolerance: 100000
