@@ -101,7 +101,7 @@ var Certificate = function(certs) {
 /** 
  * Get a revocated certificate's serial number from a CRL file
  *
- * @param {ArrayBuffer} data - Array buffer of CRL file
+ * @param {ArrayBuffer} data - Array buffer of CRL file, in PEM or DER format
  * @returns {Array} - An array of serial number string
  * @static
  *
@@ -111,6 +111,9 @@ Certificate.getRevocationList = function(data){
   return new Promise(function(resolve, reject){
     var b64 = ab2Base64(data);
     var decoded = forge.util.decode64(b64);
+    if (decoded.substr(0,5) == "-----") {
+      decoded = forge.pem.decode(decoded)[0].body;
+    }
     var crlAsn1 = forge.asn1.fromDer(decoded, false);
     var rl = crlAsn1.value[0].value[5].value;
     var revocationList = [];
@@ -127,19 +130,19 @@ Certificate.getRevocationList = function(data){
  *
  * @param {Object} record - The identity records
  * @param {Object} record.issuer - The issuer identity 
- * @param {string} record.issuer.commonName - The common name of the issuer
- * @param {string} record.issuer.countryName - The country name of the issuer
- * @param {string} record.issuer.stateName - The state name of the issuer
- * @param {string} record.issuer.localityName - The locality name of the issuer
- * @param {string} record.issuer.organizationName - The organization name of the issuer
- * @param {string} record.issuer.organizationUnit - The organization unit of the issuer
+ * @param {String} record.issuer.commonName - The common name of the issuer
+ * @param {String} record.issuer.countryName - The country name of the issuer
+ * @param {String} record.issuer.stateName - The state name of the issuer
+ * @param {String} record.issuer.localityName - The locality name of the issuer
+ * @param {String} record.issuer.organizationName - The organization name of the issuer
+ * @param {String} record.issuer.organizationUnit - The organization unit of the issuer
  * @param {Object} record.subject - The subject identity 
- * @param {string} record.subject.commonName - The common name of the subject
- * @param {string} record.subject.countryName - The country name of the subject
- * @param {string} record.subject.stateName - The state name of the subject
- * @param {string} record.subject.localityName - The locality name of the subject
- * @param {string} record.subject.organizationName - The organization name of the subject
- * @param {string} record.subject.organizationUnit - The organization unit of the subject
+ * @param {String} record.subject.commonName - The common name of the subject
+ * @param {String} record.subject.countryName - The country name of the subject
+ * @param {String} record.subject.stateName - The state name of the subject
+ * @param {String} record.subject.localityName - The locality name of the subject
+ * @param {String} record.subject.organizationName - The organization name of the subject
+ * @param {String} record.subject.organizationUnit - The organization unit of the subject
  * @param {Date} record.notAfter - The expiration date
  * @param {Date} record.notBefore - The start active date
  * @param {Object} keyPair - Key pair 
@@ -255,18 +258,18 @@ Certificate.create = function(record, keyPair) {
  * Creates a new X509 certificate request (CSR)
  *
  * @param {Object} subject - The subject DN
- * @param {string} subject.commonName - The common name of the subject
- * @param {string} subject.countryName - The country name of the subject
- * @param {string} subject.stateName - The state name of the subject
- * @param {string} subject.localityName - The locality name of the subject
- * @param {string} subject.organizationName - The organization name of the subject
- * @param {string} subject.organizationUnit - The organization unit of the subject
+ * @param {String} subject.commonName - The common name of the subject
+ * @param {String} subject.countryName - The country name of the subject
+ * @param {String} subject.stateName - The state name of the subject
+ * @param {String} subject.localityName - The locality name of the subject
+ * @param {String} subject.organizationName - The organization name of the subject
+ * @param {String} subject.organizationUnit - The organization unit of the subject
  * @param {Object} extension - The extension request
  * @param {Object} keyPair - Key pair 
  * @param {Object} keyPair.publicKey - public key in Key object
  * @param {Object} keyPair.privateKey - private kye in Key object
- * @param {string} password - The challenge password
- * @returns {string} - The CSR in PEM format
+ * @param {String} password - The challenge password
+ * @returns {String} - The CSR in PEM format
  */
 Certificate.createRequest = function(subject, keyPair, password) {
   return new Promise(function(resolve, reject){
@@ -316,7 +319,7 @@ Certificate.createRequest = function(subject, keyPair, password) {
 /**
  * Gets string representation of the certificate in PEM format
  *
- * @returns {string}
+ * @returns {String}
  */
 Certificate.prototype.toPEM = function() {
   var certs = this.certData;
@@ -335,10 +338,10 @@ Certificate.prototype.toPEM = function() {
 
 /**
  * Gets byte array representation of the certificate in p12 format
- * @param {String} privateKeyPem - private Key in PEM format
- * @param {String} password - password to encrypt the p12
- * @param {Object} opt - optional configuration
- * @returns {string}
+ * @param {String} privateKeyPem - Private Key in PEM format
+ * @param {String} password - Password to encrypt the p12
+ * @param {Object} opt - Optional configuration
+ * @returns {String}
  */
 Certificate.prototype.toP12 = function(privateKeyPem, password) {
   var self = this;
@@ -375,10 +378,10 @@ Certificate.prototype.toP12 = function(privateKeyPem, password) {
 /**
  * Build a new certificate object from PEM format
  *
- * @param {string} pem - Text containing the certificate in PEM format
+ * @param {String} pem - PEM string of certificate(s)
  * @returns {Object} - a forge certificate object, passed to Certificate object itself
  */
-Certificate.prototype.fromPEM = function(pemString) {
+Certificate.prototype.parsePEM = function(pemString) {
   var self = this;
   return new Promise(function(resolve, reject) {
     var separatedPem = pemString.split("-\n-");
@@ -408,12 +411,12 @@ Certificate.prototype.fromPEM = function(pemString) {
 /**
  * Build a new certificate object from a p12 format
  * 
- * @param {ArrayBuffer} data - Text containing the certificate in p12 format
+ * @param {ArrayBuffer} data - An array buffer of .p12 file
  * @params {String} [password] - Password to open P12 container
  * @returns {Object} - The extracted cert will be passed to Certificate object itself
  *.
  */
-Certificate.prototype.fromP12 = function(data, password) {
+Certificate.prototype.parseP12 = function(data, password) {
   var self = this;
   return new Promise(function(resolve, reject){
     var p12Der = forge.util.decode64(ab2Base64(data));
@@ -517,7 +520,7 @@ Certificate.realValidate = function(chain){
 /**
  * Validates the certificate 
  *
- * @param {Array} chain - An array of cert chain in forge cert object format, the top CA is the last array item.
+ * @param {Array} chain - An array of cert chain in forge cert object format, the top level of certificates is the last array item.
  * @returns {boolean} - Whether the validation valid or not
  */
 Certificate.prototype.validate = function() {
@@ -623,7 +626,7 @@ Certificate.prototype.getSerialNumber = function() {
 /**
  * Gets the algorithm used to create the public key
  *
- * @returns {string}
+ * @returns {String}
  */
 Certificate.prototype.getPublicKeyAlgorithm = function() {
   var cert = this.certData[0];

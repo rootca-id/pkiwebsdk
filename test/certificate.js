@@ -563,7 +563,7 @@ describe("Certificate suite", function() {
     it("should be able to convert a p12 array buffer to p12 container object", function(done) {
       var newCert = new Certificate();
       var data = base642Ab(p12Base64);
-      newCert.fromP12(data, "password")
+      newCert.parseP12(data, "password")
         .then(function(cert){
           expect(cert.certData[0].subject.attributes[0].value).toBe("blankon.in");
           expect(cert.certData[0].subject.attributes[1].value).toBe("ID");
@@ -611,7 +611,7 @@ describe("Certificate suite", function() {
     })
     it("should be able to convert certificate from Pem", function(done) {
       var cert = new Certificate();
-      cert.fromPEM(certPemSample)
+      cert.parsePEM(certPemSample)
         .then(function(cert){
           expect(cert).toBeDefined();
           expect(cert.certData.length).toEqual(1);
@@ -626,7 +626,7 @@ describe("Certificate suite", function() {
     });
     it("should be able to convert certificate from bundled Pem (3 certificate)", function(done) {
       var cert = new Certificate();
-      cert.fromPEM(bundledPEM)
+      cert.parsePEM(bundledPEM)
         .then(function(cert){
           expect(cert).toBeDefined();
           expect(cert.certData.length).toEqual(3);
@@ -642,7 +642,7 @@ describe("Certificate suite", function() {
     });
     it("should be able to convert certificate request from Pem", function(done) {
       var cert2 = new Certificate();
-      cert2.fromPEM(csrPemSample)
+      cert2.parsePEM(csrPemSample)
         .then(function(cert){
           expect(cert).toBeDefined();
           done();
@@ -657,7 +657,7 @@ describe("Certificate suite", function() {
     });
     it("should failed to convert an invalid certificate", function(done) {
       var cert = new Certificate();
-      cert.fromPEM(invalidCertSample)
+      cert.parsePEM(invalidCertSample)
         .then(function(cert){
           expect(1).toBe(2);
           done();
@@ -835,7 +835,7 @@ describe("Certificate suite", function() {
     });
     it("should trust a certificate chain", function(done) {
       var certs = new Certificate();
-      certs.fromPEM(certChainSample);
+      certs.parsePEM(certChainSample);
       var certChain = certs.certData;
       certChainSample.validate()
         .then(function(isValid){
@@ -866,7 +866,7 @@ describe("Certificate suite", function() {
     });
     it("should be able to check validity of certificate chain that does not have top self-signed", function(done) {
       var certs = new Certificate();
-      certs.fromPEM(bundledPEM)
+      certs.parsePEM(bundledPEM)
         .then(function(certs){
           var certChain = certs.certData;
           var certChainIntermediate = new Certificate();
@@ -888,7 +888,7 @@ describe("Certificate suite", function() {
     });
     it("should trust a certificate chain", function(done) {
       var certs = new Certificate();
-      certs.fromPEM(bundledPEM)
+      certs.parsePEM(bundledPEM)
         .then(function(certs){
           var certChain = certs.certData;
           console.log("cert length");
@@ -910,7 +910,7 @@ describe("Certificate suite", function() {
     });
     it("should fail trust a certificate chain because of broken path in certificate chain", function(done) {
       var certs = new Certificate();
-      certs.fromPEM(bundledPEM)
+      certs.parsePEM(bundledPEM)
         .then(function(certs){
           var brokenPath = new Certificate();
           brokenPath.certData[0] = certs.certData[1];
