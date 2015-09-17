@@ -1,8 +1,11 @@
 'use strict';
 
+require("../lib/forge/util.js");
+require("../lib/forge/pkcs7.js");
+require("../lib/forge/pkcs7asn1.js");
 require('../lib/pdfjs/pdf.combined');
 var Certificate = require("./certificate");
-var forge = window.PKIWebSDK.private.forge;
+var forge = window.forge;
 
 /**
  * Represents a PKCS#7 signed data
@@ -163,7 +166,7 @@ SignedData.fromDER = function fromDER(rawData) {
 
   var certs = [];
   for (var i = 0; i < signedData.certificates.length; i ++) {
-    var cert = new Certificate(signedData.certificates[i]);
+    var cert = new Certificate([signedData.certificates[i]]);
     certs.push(cert);
   }
   signedData.certificates = certs;
@@ -177,6 +180,47 @@ SignedData.fromDER = function fromDER(rawData) {
  */
 SignedData.prototype.getData = function getData() {
   return this.data;
+}
+
+SignedData.sign = function sign(cert, key, data) {
+  return new Promise(function(resolve, reject) {
+    var forgeKey;
+    key.toPEM().then(function(keyInPem) {
+      forgeKey = forge.pki.privateKeyFromPem(keyInPem);
+      return cert.toPEM(); 
+    }).then(function(certInPem) {
+      var cert = forge.pki.certificateFromPem(certInPem);
+      var p7 = forge.pkcs7.createSignedData();
+      p7.content = new Uint8Array(data); 
+      p7.addCertificate(cert);
+      p7.addSigner({
+        key: forgeKey,
+        certificate: cert,
+        digestAlgorithm: forge.pki.oids.sha256,
+        authenticatedAttributes: [{
+          type: forge.pki.oids.contentType,
+          value: forge.pki.oids.data
+        }, {
+          type: forge.pki.oids.messageDigest
+        }, {
+          type: forge.pki.oids.signingTime,
+          value: new Date()
+        }]
+      });
+      try {
+      p7.signDetached();
+      } catch (e) {
+        console.log(e.stack);
+      }
+      var asn1 = p7.toAsn1();
+      var raw = forge.asn1.toDer(asn1).getBytes();
+      var buffer = new Uint8Array(raw.length);
+      for (var i = 0; i < raw.length; i ++) {
+        buffer[i] = raw.charCodeAt(i);
+      }
+      resolve(buffer);
+    });
+  });
 }
 
 module.exports = SignedData;
