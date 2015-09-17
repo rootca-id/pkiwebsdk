@@ -580,9 +580,8 @@ describe("Certificate suite", function() {
         })
     })
     it("should be able to sign a file using private key which has included in the p12 container object", function(done) {
-      var cert = new Certificate();
       var data = base642Ab(p12Base64);
-      cert.getPrivateKey(data, "password")
+      Certificate.getPrivateKey(data, "password")
       .then(function(privateKeyPem){
         Key.parsePEM(privateKeyPem, "SHA-256")
           .then(function(privateKey){

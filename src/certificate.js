@@ -652,8 +652,9 @@ Certificate.prototype.getPublicKey = function() {
  * @param {arrayBuffer} data - the arrayBuffer of p12 file
  * @param {String} [password] - the password to unlock p12 container
  * @returns {Key} 
+ * @static
  */
-Certificate.prototype.getPrivateKey = function(data, password) {
+Certificate.getPrivateKey = function(data, password) {
   var self = this;
   return new Promise(function(resolve, reject){
     var p12Der = forge.util.decode64(ab2Base64(data));

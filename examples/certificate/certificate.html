@@ -162,8 +162,7 @@ var parseP12 = function(){
 
 var getPrivateKey = function(){
   removeTextArea(function(){
-    var newCert = new window.PKIWebSDK.Certificate();
-    newCert.getPrivateKey(data, document.getElementById("p12passwordtogetprivatekey").value)
+    new window.PKIWebSDK.Certificate.getPrivateKey(data, document.getElementById("p12passwordtogetprivatekey").value)
       .then(function(privateKey){
         privateKeySample = privateKey;      
         var text = document.getElementById("privateKey");
