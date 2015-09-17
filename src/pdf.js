@@ -1,9 +1,10 @@
 'use strict';
 
+require("../lib/forge/util.js");
 require('../lib/pdfjs/pdf.combined');
 var Certificate = require('./certificate');
 var SignedData = require('./signed-data');
-var forge = window.PKIWebSDK.private.forge;
+var forge = window.forge;
 
 /**
  * Represents a PDF object
@@ -19,8 +20,35 @@ var PDF = function(rawData) {
 /**
  * Signs the PDF with a key
  * @param {Key} key - The private key used to sign the document
+ * @param {String} password - The password to recover the private key
+ * @param {Object} info - The information of the signature
+ * @param {String} info.name - the person who signs the document
+ * @param {String} info.reason - the reason the document was signed
+ * @param {String} info.location - the place the document was signed
+ * @param {String} info.contactInfo - the contact information about the signer
  */
-PDF.prototype.sign = function(key) {
+PDF.prototype.sign = function(cert, key, info) {
+  var self = this;
+
+  var signDataFunction = function(hash, cb) {
+    if (hash === null) {
+      SignedData.sign(cert, key, new Uint8Array(64)).then(function(signedMessage) {
+        cb(signedMessage.length + 100);
+      });
+    } else {
+      SignedData.sign(cert, key, hash).then(function(signedMessage) {
+        cb(signedMessage);
+      });
+    }
+  }
+
+  return new Promise(function(resolve, reject) {
+    PDFJS.signDocument({ data: self.data }, info, signDataFunction).then(function(doc) {
+      resolve(doc);
+    }, function(e) {
+      reject(doc);
+    });
+  });
 }
 
 /**
@@ -135,18 +163,14 @@ PDF.prototype.getSignatures = function(cb) {
               });
             }, function(error) {
               sigReject(error);
-            }).catch(function(error) {
-              sigReject(error);
-            });
+            })
           }));
         }
         Promise.all(signaturePromises).then(function(signatures) {
           resolve(signatures); 
         }, function(error) {
           reject(error);
-        }).catch(function(error) {
-          reject(error);
-        });
+        })
       } else {
         resolve(signatures); 
       }
