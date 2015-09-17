@@ -50,7 +50,7 @@ var SignedData = require('../src/signed-data');
 var Certificate = require('../src/certificate');
 
 
-xdescribe("SignedData", function() {
+describe("SignedData", function() {
   describe("fromDER", function() {
     var Key = require('../src/key');
     var keyPair;
@@ -81,10 +81,10 @@ xdescribe("SignedData", function() {
       done();
     });
     it('should be able to validate the data', function(done) {
-      var hashArray = new Uint8Array([0x61, 0x62, 0x63, 0x0a ]) 
+      var data = new Uint8Array([0x61, 0x62, 0x63, 0x0a ]) 
 
       // sign the message
-      var s = SignedData.sign(certSample, keyPair, hashArray).then(function(signedMessage) {
+      var s = SignedData.sign(certSample, keyPair, data).then(function(signedMessage) {
         // read back the signed message
         var raw = String.fromCharCode.apply(null, signedMessage);
         var p = SignedData.fromDER(raw);
