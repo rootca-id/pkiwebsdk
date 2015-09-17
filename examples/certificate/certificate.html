@@ -151,7 +151,7 @@ var generateCSR = function(){
 var parseP12 = function(){
   removeTextArea(function(){
     var newCert = new window.PKIWebSDK.Certificate();
-    newCert.fromP12(data, document.getElementById("p12passwordtoparse").value)
+    newCert.parseP12(data, document.getElementById("p12passwordtoparse").value)
       .then(function(){
         console.log(newCert);
         document.getElementById("certPem").value = window.PKIWebSDK.private.forge.pki.certificateToPem(newCert.certData[0]);
@@ -173,7 +173,7 @@ var getPrivateKey = function(){
 var fromPem = function(){
   removeTextArea(function(){
     var cert = new window.PKIWebSDK.Certificate();
-    cert.fromPEM(dataText)
+    cert.parsePEM(dataText)
       .then(function(cert){
         certificate = cert;
         alert("Certificate PEM parsed successfully. See console.log in Inspect Element")      
@@ -337,7 +337,7 @@ setTimeout(function(){
     reader.readAsText(files[files.length-1]);
     reader.onload = function(e) {
       var cert = new window.PKIWebSDK.Certificate();
-      cert.fromPEM(reader.result)
+      cert.parsePEM(reader.result)
         .then(function(cert){
           certChain.certData.push(cert.certData[0]);
         })
@@ -390,6 +390,8 @@ setTimeout(function(){
     <button onClick="generateCert()">generate pairKey and create a certificate</button> ---> 
     <input id="p12password" placeholder="password"></input>
     <button onClick="generateP12()">generate P12</button>
+      <br>
+      <br><a id="link" href="">click here get the p12 file if the download not started automatically</a>
   </fieldset>
   <fieldset>
     <h4>Generate Certificate request</h4>
@@ -421,12 +423,12 @@ setTimeout(function(){
       <button onClick="fromPem()">parse</button>
     </div>
     <div style="margin:20px;width:370px;height:150px;display:inline-block;vertical-align:top;background:#DFDFDF;padding:20px;">
-      <h4>Parse a CRL (PEM)</h4>
+      <h4>Parse a CRL (in PEM or DER format)</h4>
       <input type="file" id="files3" name="files[]" multiple />
       <button onClick="fromCRL()">parse</button>
     </div>
     <div style="margin:20px;width:370px;height:150px;display:inline-block;vertical-align:top;background:#DFDFDF;padding:20px;">
-      <h4>Verify Cert Chain</h4>
+      <h4>Verify Cert Chain (PEM)</h4>
       <input type="file" id="certChain" name="files[]" multiple />
       <button onClick="verifyChain()">verify</button>
       <button onClick="trust()">trust</button>
@@ -466,7 +468,6 @@ setTimeout(function(){
   <br>
   p12 in base64 string<br>
   <textarea id="p12Base64" style="width:100%"></textarea>
-  <br><a id="link" href="">click here get the p12 file if the download not started automatically</a>
 </div>
 
 <script>
