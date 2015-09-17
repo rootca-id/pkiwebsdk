@@ -268,11 +268,10 @@ Certificate.create = function(record, keyPair) {
  * @param {string} password - The challenge password
  * @returns {string} - The CSR in PEM format
  */
-Certificate.createRequest = function(subject, keys, password) {
+Certificate.createRequest = function(subject, keyPair, password) {
   return new Promise(function(resolve, reject){
     
   // Convert keyPair to PEM format
-    var keys = {};
     var keys = {};
     keyPair.publicKey.toPEM()
       .then(function(pem){
@@ -463,11 +462,6 @@ Certificate.realValidate = function(chain){
           isTop = true;
         }
   
-        console.log("cert subject : " + cert.subject.attributes[0].value);
-        console.log("cert issuer : " + cert.issuer.attributes[0].value);
-        console.log("parent subject : " + parent.subject.attributes[0].value);
-        console.log("parent issuer : " + parent.issuer.attributes[0].value);
-  
         // Check expiry
         var now = new Date();
         if ( (cert.validity.notAfter.getTime() < now.getTime())
@@ -485,7 +479,6 @@ Certificate.realValidate = function(chain){
           // If it is the last cert in chain and not a self-signed, add caStore's certs to the chain
           // and redo the loop 1 step
           if (isTop) {
-            console.log("last item but not a self-signed cert. try to add caStore to the cert chain")
             var caStoreCerts = []
             for (var x in PKIWebSDK.private.caStore.certs) {
               caStoreCerts.push(PKIWebSDK.private.caStore.certs[x]);
