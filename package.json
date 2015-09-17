@@ -6,7 +6,8 @@
     "test": "./node_modules/.bin/karma start --singleRun",
     "cov": "./node_modules/.bin/karma start karma-cov.conf.js --singleRun",
     "testWatch": "./node_modules/.bin/karma start",
-    "build" : "mkdir -p build && ./node_modules/browserify/bin/cmd.js ./src/index.js -o ./build/bundle.js"
+    "build": "mkdir -p build && ./node_modules/browserify/bin/cmd.js ./src/index.js -o ./build/bundle.js",
+    "gendoc" : "./node_modules/.bin/jsdoc src/* -d docs/api"
   },
   "repository": {
     "type": "git",

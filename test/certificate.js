@@ -467,12 +467,12 @@ describe("Certificate suite", function() {
     it("should be able to get issuer from a certificate", function(done) {
       certSample.getIssuer()
         .then(function(issuer){
-          expect(issuer[0].value).toBe("blankon.in");
-          expect(issuer[1].value).toBe("ID");
-          expect(issuer[2].value).toBe("Jabodetabek");
-          expect(issuer[3].value).toBe("Republik Bojong");
-          expect(issuer[4].value).toBe("Test");
-          expect(issuer[5].value).toBe("Test");
+          expect(issuer.commonName).toBe("blankon.in");
+          expect(issuer.countryName).toBe("ID");
+          expect(issuer.stateOrProvinceName).toBe("Jabodetabek");
+          expect(issuer.localityName).toBe("Republik Bojong");
+          expect(issuer.organizationName).toBe("Test");
+          expect(issuer.organizationalUnitName).toBe("Test");
           done();
         })
         .catch(function(err){
@@ -486,12 +486,12 @@ describe("Certificate suite", function() {
     it("should be able to get subject from a certificate", function(done) {
       certSample.getSubject()
         .then(function(subject){
-          expect(subject[0].value).toBe("blankon.in");
-          expect(subject[1].value).toBe("ID");
-          expect(subject[2].value).toBe("Jabodetabek");
-          expect(subject[3].value).toBe("Republik Bojong");
-          expect(subject[4].value).toBe("Test");
-          expect(subject[5].value).toBe("Test");
+          expect(subject.commonName).toBe("blankon.in");
+          expect(subject.countryName).toBe("ID");
+          expect(subject.stateOrProvinceName).toBe("Jabodetabek");
+          expect(subject.localityName).toBe("Republik Bojong");
+          expect(subject.organizationName).toBe("Test");
+          expect(subject.organizationalUnitName).toBe("Test");
           done();
         })
         .catch(function(err){
@@ -532,7 +532,7 @@ describe("Certificate suite", function() {
       certSample.getPublicKeyAlgorithm()
         .then(function(alg){
           console.log(alg);
-          /* expect(alg).toBe("sha256WithRSAEncryption"); */
+          expect(alg).toBe("sha1WithRSAEncryption");
           done();
         })
         .catch(function(err){
@@ -563,7 +563,7 @@ describe("Certificate suite", function() {
     it("should be able to convert a p12 array buffer to p12 container object", function(done) {
       var newCert = new Certificate();
       var data = base642Ab(p12Base64);
-      newCert.fromP12(data, "password")
+      newCert.parseP12(data, "password")
         .then(function(cert){
           expect(cert.certData[0].subject.attributes[0].value).toBe("blankon.in");
           expect(cert.certData[0].subject.attributes[1].value).toBe("ID");
@@ -580,9 +580,8 @@ describe("Certificate suite", function() {
         })
     })
     it("should be able to sign a file using private key which has included in the p12 container object", function(done) {
-      var cert = new Certificate();
       var data = base642Ab(p12Base64);
-      cert.getPrivateKey(data, "password")
+      Certificate.getPrivateKey(data, "password")
       .then(function(privateKeyPem){
         Key.parsePEM(privateKeyPem, "SHA-256")
           .then(function(privateKey){
@@ -612,7 +611,7 @@ describe("Certificate suite", function() {
     })
     it("should be able to convert certificate from Pem", function(done) {
       var cert = new Certificate();
-      cert.fromPEM(certPemSample)
+      cert.parsePEM(certPemSample)
         .then(function(cert){
           expect(cert).toBeDefined();
           expect(cert.certData.length).toEqual(1);
@@ -627,7 +626,7 @@ describe("Certificate suite", function() {
     });
     it("should be able to convert certificate from bundled Pem (3 certificate)", function(done) {
       var cert = new Certificate();
-      cert.fromPEM(bundledPEM)
+      cert.parsePEM(bundledPEM)
         .then(function(cert){
           expect(cert).toBeDefined();
           expect(cert.certData.length).toEqual(3);
@@ -643,7 +642,7 @@ describe("Certificate suite", function() {
     });
     it("should be able to convert certificate request from Pem", function(done) {
       var cert2 = new Certificate();
-      cert2.fromPEM(csrPemSample)
+      cert2.parsePEM(csrPemSample)
         .then(function(cert){
           expect(cert).toBeDefined();
           done();
@@ -658,7 +657,7 @@ describe("Certificate suite", function() {
     });
     it("should failed to convert an invalid certificate", function(done) {
       var cert = new Certificate();
-      cert.fromPEM(invalidCertSample)
+      cert.parsePEM(invalidCertSample)
         .then(function(cert){
           expect(1).toBe(2);
           done();
@@ -836,7 +835,7 @@ describe("Certificate suite", function() {
     });
     it("should trust a certificate chain", function(done) {
       var certs = new Certificate();
-      certs.fromPEM(certChainSample);
+      certs.parsePEM(certChainSample);
       var certChain = certs.certData;
       certChainSample.validate()
         .then(function(isValid){
@@ -867,7 +866,7 @@ describe("Certificate suite", function() {
     });
     it("should be able to check validity of certificate chain that does not have top self-signed", function(done) {
       var certs = new Certificate();
-      certs.fromPEM(bundledPEM)
+      certs.parsePEM(bundledPEM)
         .then(function(certs){
           var certChain = certs.certData;
           var certChainIntermediate = new Certificate();
@@ -889,7 +888,7 @@ describe("Certificate suite", function() {
     });
     it("should trust a certificate chain", function(done) {
       var certs = new Certificate();
-      certs.fromPEM(bundledPEM)
+      certs.parsePEM(bundledPEM)
         .then(function(certs){
           var certChain = certs.certData;
           console.log("cert length");
@@ -911,7 +910,7 @@ describe("Certificate suite", function() {
     });
     it("should fail trust a certificate chain because of broken path in certificate chain", function(done) {
       var certs = new Certificate();
-      certs.fromPEM(bundledPEM)
+      certs.parsePEM(bundledPEM)
         .then(function(certs){
           var brokenPath = new Certificate();
           brokenPath.certData[0] = certs.certData[1];
