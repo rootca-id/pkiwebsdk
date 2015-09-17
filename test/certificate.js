@@ -467,12 +467,12 @@ describe("Certificate suite", function() {
     it("should be able to get issuer from a certificate", function(done) {
       certSample.getIssuer()
         .then(function(issuer){
-          expect(issuer[0].value).toBe("blankon.in");
-          expect(issuer[1].value).toBe("ID");
-          expect(issuer[2].value).toBe("Jabodetabek");
-          expect(issuer[3].value).toBe("Republik Bojong");
-          expect(issuer[4].value).toBe("Test");
-          expect(issuer[5].value).toBe("Test");
+          expect(issuer.commonName).toBe("blankon.in");
+          expect(issuer.countryName).toBe("ID");
+          expect(issuer.stateOrProvinceName).toBe("Jabodetabek");
+          expect(issuer.localityName).toBe("Republik Bojong");
+          expect(issuer.organizationName).toBe("Test");
+          expect(issuer.organizationalUnitName).toBe("Test");
           done();
         })
         .catch(function(err){
@@ -486,12 +486,12 @@ describe("Certificate suite", function() {
     it("should be able to get subject from a certificate", function(done) {
       certSample.getSubject()
         .then(function(subject){
-          expect(subject[0].value).toBe("blankon.in");
-          expect(subject[1].value).toBe("ID");
-          expect(subject[2].value).toBe("Jabodetabek");
-          expect(subject[3].value).toBe("Republik Bojong");
-          expect(subject[4].value).toBe("Test");
-          expect(subject[5].value).toBe("Test");
+          expect(subject.commonName).toBe("blankon.in");
+          expect(subject.countryName).toBe("ID");
+          expect(subject.stateOrProvinceName).toBe("Jabodetabek");
+          expect(subject.localityName).toBe("Republik Bojong");
+          expect(subject.organizationName).toBe("Test");
+          expect(subject.organizationalUnitName).toBe("Test");
           done();
         })
         .catch(function(err){
@@ -532,7 +532,7 @@ describe("Certificate suite", function() {
       certSample.getPublicKeyAlgorithm()
         .then(function(alg){
           console.log(alg);
-          /* expect(alg).toBe("sha256WithRSAEncryption"); */
+          expect(alg).toBe("sha1WithRSAEncryption");
           done();
         })
         .catch(function(err){

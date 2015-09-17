@@ -570,7 +570,12 @@ Certificate.trust = function(chain) {
 Certificate.prototype.getIssuer = function() {
   var cert = this.certData[0];
   return new Promise(function(resolve, reject){
-    resolve(cert.issuer.attributes);
+    var issuer = cert.issuer.attributes;
+    var wrap = {}
+    for (var i = 0; i < issuer.length;i++) {
+      wrap[issuer[i].name] = issuer[i].value;
+    }
+    resolve(wrap);
   })
 }
 
@@ -582,7 +587,12 @@ Certificate.prototype.getIssuer = function() {
 Certificate.prototype.getSubject = function() {
   var cert = this.certData[0];
   return new Promise(function(resolve, reject){
-    resolve(cert.subject.attributes);
+    var subject = cert.subject.attributes;
+    var wrap = {}
+    for (var i = 0; i < subject.length;i++) {
+      wrap[subject[i].name] = subject[i].value;
+    }
+    resolve(wrap);
   })
 }
 
@@ -618,7 +628,8 @@ Certificate.prototype.getSerialNumber = function() {
 Certificate.prototype.getPublicKeyAlgorithm = function() {
   var cert = this.certData[0];
   return new Promise(function(resolve, reject){
-    resolve(cert.publicKey.alg);
+    var alg = forge.oids[cert.signatureOid]
+    resolve(alg);
   })
 }
 
