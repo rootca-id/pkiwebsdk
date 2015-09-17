@@ -191,7 +191,11 @@ SignedData.sign = function sign(cert, key, data) {
     }).then(function(certInPem) {
       var cert = forge.pki.certificateFromPem(certInPem);
       var p7 = forge.pkcs7.createSignedData();
-      p7.content = new Uint8Array(data); 
+      if (data instanceof Uint8Array) {
+        p7.content = data;
+      } else {
+        p7.content = new Uint8Array(data); 
+      }
       p7.addCertificate(cert);
       p7.addSigner({
         key: forgeKey,
