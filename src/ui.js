@@ -1,6 +1,6 @@
 'use strict';
 
-var html = require("../html/html.js");
+var html = require("../html/html-min.js");
 console.log(html);
 /**
  * Represents a UI object
