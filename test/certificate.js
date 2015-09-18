@@ -16,26 +16,26 @@ var subject = {
   commonName : "blankon.in",
   countryName : "ID",
   stateName : "Jabodetabek",
-  localityName : "Republik Bojong",
-  organizationName : "Test",
-  organizationUnit : "Test"
+  localityName : "Bojong",
+  organizationName : "Uji coba",
+  organizationUnit : "Uji coba"
 }
 var record = {
   issuer : {
     commonName : "blankon.in",
     countryName : "ID",
     stateName : "Jabodetabek",
-    localityName : "Republik Bojong",
-    organizationName : "Test",
-    organizationUnit : "Test"
+    localityName : "Bojong",
+    organizationName : "Uji coba",
+    organizationUnit : "Uji coba"
   },
   subject : {
     commonName : "blankon.in",
     countryName : "ID",
     stateName : "Jabodetabek",
-    localityName : "Republik Bojong",
-    organizationName : "Test",
-    organizationUnit : "Test"
+    localityName : "Bojong",
+    organizationName : "Uji coba",
+    organizationUnit : "Uji coba"
   },
   notBefore: new Date(2015, 8, 1),
   notAfter: new Date(2018, 8, 1),
@@ -45,17 +45,17 @@ var recordExpired = {
     commonName : "blankon.in",
     countryName : "ID",
     stateName : "Jabodetabek",
-    localityName : "Republik Bojong",
-    organizationName : "Test",
-    organizationUnit : "Test"
+    localityName : "Bojong",
+    organizationName : "Uji coba",
+    organizationUnit : "Uji coba"
   },
   subject : {
     commonName : "blankon.in",
     countryName : "ID",
     stateName : "Jabodetabek",
-    localityName : "Republik Bojong",
-    organizationName : "Test",
-    organizationUnit : "Test"
+    localityName : "Bojong",
+    organizationName : "Uji coba",
+    organizationUnit : "Uji coba"
   },
   notBefore: new Date(2011, 8, 1),
   notAfter: new Date(2012, 8, 1),
@@ -65,59 +65,67 @@ var recordWithoutDate = {
     commonName : "blankon.in",
     countryName : "ID",
     stateName : "Jabodetabek",
-    localityName : "Republik Bojong",
-    organizationName : "Test",
-    organizationUnit : "Test"
+    localityName : "Bojong",
+    organizationName : "Uji coba",
+    organizationUnit : "Uji coba"
   },
   subject : {
     commonName : "blankon.in",
     countryName : "ID",
     stateName : "Jabodetabek",
-    localityName : "Republik Bojong",
-    organizationName : "Test",
-    organizationUnit : "Test"
+    localityName : "Bojong",
+    organizationName : "Uji coba",
+    organizationUnit : "Uji coba"
   },
 }
 
 var p12Base64 = "MIIJAwIBAzCCCMkGCSqGSIb3DQEHAaCCCLoEggi2MIIIsjCCAzQGCSqGSIb3DQEHAaCCAyUEggMhMIIDHTCCAxkGCyqGSIb3DQEMCgEDoIIC4TCCAt0GCiqGSIb3DQEJFgGgggLNBIICyTCCAsUwggKmoAMCAQICAQEwDQYJKoZIhvcNAQEFBQAwcDETMBEGA1UEAxMKYmxhbmtvbi5pbjELMAkGA1UEBhMCSUQxFDASBgNVBAgTC0phYm9kZXRhYmVrMRgwFgYDVQQHEw9SZXB1YmxpayBCb2pvbmcxDTALBgNVBAoTBFRlc3QxDTALBgNVBAsTBFRlc3QwHhcNMTUwOTA4MTMxNDUyWhcNMTYwOTA4MTMxNDUyWjBwMRMwEQYDVQQDEwpibGFua29uLmluMQswCQYDVQQGEwJJRDEUMBIGA1UECBMLSmFib2RldGFiZWsxGDAWBgNVBAcTD1JlcHVibGlrIEJvam9uZzENMAsGA1UEChMEVGVzdDENMAsGA1UECxMEVGVzdDCByjANBgkqhkiG9w0BAQEFAAOBuAAwgbQCgawAAAAABADWAAAAAAAAAAAAlQAKZwAFAAAAAAABAAAAAA0AAAAAAAUAAAAAAAAcAAAA7QAPAAAAAAAAAAAAAAAJAAAAAAAAAAPfAAgAAAAAAAAAAAwAAOsAAA3BAAAAAO4FAgAAAAAAAAAIAA4AAAAMAA0AAK4AAAACAAD4DAACAOsAAAAAAAMCCQAAAAD9DgAADwAAAAAqAgAAWwAGAAAPrgAAAAAAAAAAAAAMAgMACqujgbswgbgwDAYDVR0TBAUwAwEB/zALBgNVHQ8EBAMCAvQwOwYDVR0lBDQwMgYIKwYBBQUHAwEGCCsGAQUFBwMCBggrBgEFBQcDAwYIKwYBBQUHAwQGCCsGAQUFBwMIMBEGCWCGSAGG+EIBAQQEAwIA9zAsBgNVHREEJTAjhhtodHRwOi8vZXhhbXBsZS5vcmcvd2ViaWQjbWWHBH8AAAEwHQYDVR0OBBYEFIfVxGCZ63aQvEl6YGWTZl0LYlVAMA0GCSqGSIb3DQEBBQUAAwoAdW5kZWZpbmVkMSUwIwYJKoZIhvcNAQkVMRYEFMBALbD8WBk1Hq3wAGWMZWa00iyeMIIFdgYJKoZIhvcNAQcBoIIFZwSCBWMwggVfMIIFWwYLKoZIhvcNAQwKAQKgggUjMIIFHzBJBgkqhkiG9w0BBQ0wPDAbBgkqhkiG9w0BBQwwDgQIxeDGhVKohtMCAggAMB0GCWCGSAFlAwQBAgQQGU8oqsBnfwrmljPx5Rf65wSCBNDk17vod85HuMobslGDMIxnIe9HT3vjuHF+5oiVPNbHjh+JY+x/br0EtOOiZrTObdy6EOwlkOiEZwPdGh4KGiteSyhngQEGOdUXlDGiiqCCQh9GyDs/Rm77YHLI2ijLKI5Kl9SUA0vkIO9cHKvsG7k96JiGsWzyDbF5qNSy02N86pRfPiUnS/zisHleY3BHwYTCTfXcebkrBu78mK7X0jQ3OusooKushyXMFUJAu5DuQJSF1k/ohT5n4tOgDlbKeKkGu2ieU3URGtbcOcskm3/XfYzg/3yrme0agt8hVXiPiPsfQYG+gIcS2AdocAfnnxbc8XmByCB8yX+OANgDk9YYDyRRqzT2c2bfoGG/lJwxxXs5Asb2l7x8RkxZhRq1J9n6LtS6UxEZIM1tGI9/dcjMQHVcpxLx0ZNJ79+a9IHp5dwBHivBl5qjV2QPiVK5eGJmOfmkMIDwZDqXosjCMnHxVzhCm7PQYyzKaRkeEbjqkjmnlAIGcM2HM6vglaQHxqosNqXfLO1pPMGEDbD/3UgSNRAY062GyOXY7nJTqzeTJcLnnlYk/K41iSH+VlBC9HaiHXi5TUc9+jLZcf4umTO+yZP8PJzRLcEptIz+UGcYSBr4bSpN21D7aQyP4C2N4WvpY/lOZ030CzXnAOU4JyZ0Vzjm6+VFRUtZi8FZwxMmqFv4XrG4yBuqyY00lFScaGtlQUJSuYaoKi/idar7tOviqiS6oZ0Outd6X74TG3OxR0WcBnZy4u9YTVueyMfrieSYGU9t2NVlGF5Cn3gOOAhBmtOyWkaNqv6GZQ6YxXHdjOcvraKNLKXDJXUz6plVQfkN0mbgw6SG4Qu+zjIrRh3WZ9GP3xe3CJKSfyrsdi0yX7/bLy77dtvEezCiQUDiYqyO+byKn037i+go5uakd/xAArwkRq/u40KEKPsbh0OXP4AW1JotGvVCSmaEao8tlpSZoFUCqc6tqMkHXiG1cUZnz1B8CL/oNSnESXqpV0xbUa7Z1xC8AxVVpHhN8fPZIeiX7gH0b2sg7NWLoz2uw0I2VprVyjaNKQYDlvNXsDDYZsLsfQ2KuQ5zvD03nTLoABtRPyxjBfdAR5xKdjOFDb0ttQFPQn2DZKOtm7UvhXcRgy4/EPa0dz/Bmwg/r8fPpa+WmZnqypPYoiRaGrZFhfl3NQWTgkpYndRrAOjF3LaJny6R+CESHT4SryuhhNtjQN1fD9uiYEqJ841skWd9UxomERFJx7vQq5ImFsWXlxAjHvfyDG1kKtXM5s1MixL+AJXeWIoGsgH55SmdnpzVFfAIbJq80ukPclwazFE6GSlj96vlt/A2IGwY6oB6Y0FhzmPzuCcp2ejpup/kzqOHslk8U+W2KCDL7959WjXBY/uhkKjnUw9phDr0K9tLC6mca0+9rdSFNIlpyKsT0z2tX7FYiRynuBHJwWk1wXr1qP6sVIUm6AGb2JvE1CZiPRR8jn9CK3vb0a7zh+XZAI0aiwYORHtXcDJNmso048wgJMIST+pJHXfKTpILPMuuQiRzto9CViku1rAK5pkNXAK3+B2j8ol/7VPD3EOInjyYOoMCtnGNoRT0E9tnKP2E+w6zqnJRHxme/2W8437VAnd50DDrYpz95eolFLtVtcWW/a9ZqDElMCMGCSqGSIb3DQEJFTEWBBTAQC2w/FgZNR6t8ABljGVmtNIsnjAxMCEwCQYFKw4DAhoFAAQU4PFHQi1cz+XnsFgfc2Il4ytUeJgECNtj6euvgo3TAgIIAA==";
 
-var certPemSample = "-----BEGIN CERTIFICATE-----\r\n"
-+ "MIICxTCCAqagAwIBAgIBATANBgkqhkiG9w0BAQUFADBwMRMwEQYDVQQDEwpibGFu\r\n"
-+ "a29uLmluMQswCQYDVQQGEwJJRDEUMBIGA1UECBMLSmFib2RldGFiZWsxGDAWBgNV\r\n"
-+ "BAcTD1JlcHVibGlrIEJvam9uZzENMAsGA1UEChMEVGVzdDENMAsGA1UECxMEVGVz\r\n"
-+ "dDAeFw0xNTA5MDgxMTE3MDlaFw0xNjA5MDgxMTE3MDNaMHAxEzARBgNVBAMTCmJs\r\n"
-+ "YW5rb24uaW4xCzAJBgNVBAYTAklEMRQwEgYDVQQIEwtKYWJvZGV0YWJlazEYMBYG\r\n"
-+ "A1UEBxMPUmVwdWJsaWsgQm9qb25nMQ0wCwYDVQQKEwRUZXN0MQ0wCwYDVQQLEwRU\r\n"
-+ "ZXN0MIHKMA0GCSqGSIb3DQEBAQUAA4G4ADCBtAKBrAAACw0AAAAA3wALqwK8AAwE\r\n"
-+ "AAAAAwDdAAAAHgAAAAAOsQAAAAAAAAsAAA//5GkMAAAAAAIAAAAEAAAEALwAAAAA\r\n"
-+ "AAAMDQAPAAAAAAAPAAD8AMsAAAAAUwAAAAAAAAsAAF8ADQANAAAAjwANDgAABgcO\r\n"
-+ "AA4LAAAAAK0AABMAAAC8AAANAAIAAAAAAFz+rAAADQ0AAAAAAAcADwD+DQAAAA8A\r\n"
-+ "AAsAAAAACQAIAAACAwAKq6OBuzCBuDAMBgNVHRMEBTADAQH/MAsGA1UdDwQEAwIC\r\n"
-+ "9DA7BgNVHSUENDAyBggrBgEFBQcDAQYIKwYBBQUHAwIGCCsGAQUFBwMDBggrBgEF\r\n"
-+ "BQcDBAYIKwYBBQUHAwgwEQYJYIZIAYb4QgEBBAQDAgD3MCwGA1UdEQQlMCOGG2h0\r\n"
-+ "dHA6Ly9leGFtcGxlLm9yZy93ZWJpZCNtZYcEfwAAATAdBgNVHQ4EFgQUMiPQu33W\r\n"
-+ "eqa0pgWcxDlvAp11I1QwDQYJKoZIhvcNAQEFBQADCgB1bmRlZmluZWQ=\r\n"
-+ "-----END CERTIFICATE-----";
+var certPemSample = "-----BEGIN CERTIFICATE-----\n"
++ "MIID5zCCAs+gAwIBAgIBATANBgkqhkiG9w0BAQUFADBvMRMwEQYDVQQDEwpibGFu\n"
++ "a29uLmluMQswCQYDVQQGEwJJRDEUMBIGA1UECBMLSmFib2RldGFiZWsxDzANBgNV\n"
++ "BAcTBkJvam9uZzERMA8GA1UEChMIVWppIGNvYmExETAPBgNVBAsTCFVqaSBjb2Jh\n"
++ "MB4XDTE0MDkxODA4MDk0OVoXDTE0MDkxODA4MDk0OVowbzETMBEGA1UEAxMKYmxh\n"
++ "bmtvbi5pbjELMAkGA1UEBhMCSUQxFDASBgNVBAgTC0phYm9kZXRhYmVrMQ8wDQYD\n"
++ "VQQHEwZCb2pvbmcxETAPBgNVBAoTCFVqaSBjb2JhMREwDwYDVQQLEwhVamkgY29i\n"
++ "YTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANJ0uIEFUO994Ea9a30/\n"
++ "bjIvsS4TRddluEwLSYUPwtwvWA5PzN6P4MzJ6expSUBGeogjnIe6BQWqGBL1BC0t\n"
++ "RubxkdZF3HaNkCJBuuL4bBPjpLQjmFdzLr34NCAfkhF4OsyNlP+a8LSK/Eda5HZr\n"
++ "fFix+x1b1dEl1WBNl+9HBj2PSkndJaudID8ul8cVxXtbDSCZiuLR2N6WyBAHOn39\n"
++ "jAnJuc3sM2hl9jeYUovZaDXG5DCIf7OLlRw5e21YhFrDqSYbfwEbEeC7T0LT/wy3\n"
++ "NQWXSBs/sHJ1jGCUgXxJ0YiB25ZNmTtwOq4fdpfz1j+GuXhMkYdmrmj6LDGabA7U\n"
++ "lg8CAwEAAaOBjTCBijAMBgNVHRMEBTADAQH/MAsGA1UdDwQEAwIC9DA7BgNVHSUE\n"
++ "NDAyBggrBgEFBQcDAQYIKwYBBQUHAwIGCCsGAQUFBwMDBggrBgEFBQcDBAYIKwYB\n"
++ "BQUHAwgwEQYJYIZIAYb4QgEBBAQDAgD3MB0GA1UdDgQWBBRCN27ex505paMrG07J\n"
++ "cMSW0BRcwTANBgkqhkiG9w0BAQUFAAOCAQEAV6/HX8JYhpGeuDs/eF7v33CfpRfh\n"
++ "Nubgrb5QFQ+hqqBlpCAoaPR1JOh9J1gqnObiquHcQwyJcMRPzRfznLascpBNLjFQ\n"
++ "ESmFFS54FRORhSO4TA4yy7MsEhnpCzqFMHCmchLOR3f43gd9HRoanV4hWjdYnmYZ\n"
++ "a4CK4LRp/+rIOxeQddjFRW2FUcMVpY8SBucgdId1VFU5X3R0BncoKQH5JIJNcVTZ\n"
++ "WzX+NPafpY1XbV54DynddnunNBcrqrU3gjn0QceV5/+nksFtZMP8kGMScJgWXLtw\n"
++ "V8akVZGiXdTn0M7upFc5T2Yb8J4ZohyIllfwLXaqsv0mhaWSeoTZu6nvHg==\n"
++ "-----END CERTIFICATE-----\n"
 
 
-var csrPemSample = "-----BEGIN CERTIFICATE REQUEST-----\r\n"
-+ "MIICzzCCAbcCAQAwgYkxCzAJBgNVBAYTAklEMRMwEQYDVQQIDApKYXdhIEJhcmF0\r\n"
-+ "MQ4wDAYDVQQHDAVCb2dvcjESMBAGA1UECgwJcGRmdCwgaW5jMQwwCgYDVQQLDANS\r\n"
-+ "JkQxETAPBgNVBAMMCHBkZnQubmV0MSAwHgYJKoZIhvcNAQkBFhFoZXJwaWtvQGdt\r\n"
-+ "YWlsLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMTERKpRMrIC\r\n"
-+ "My267fwL1zvURUbDxMUIWTpXGkZEqg/bQPDBwBvFTgERRwPoZYCDIyrf/yElV6Sz\r\n"
-+ "SymhR1d8uaItRqRvE27ObGsqQo8T91dnJUncZPRbA22WMIRSdsVo6N3DkGEeO40j\r\n"
-+ "Ohj62pO+mdRUx5fuXtJ5BzEsdXQercdEZPyBXfFcGIX8nYPQw4hPezXDXKzn3DLY\r\n"
-+ "Wbrj7oQk7xg6vWBhyQ2bHQkj0mf64BO/632YYNR0lhT9h26I+OmQywVHPZbjQp3i\r\n"
-+ "SnuF7CZAyBsPzo/Bxi0n1kZegGqou/f7s3q6JW38qe038fZ91M/OXeN1kTOF2vfT\r\n"
-+ "cxcJWhB4h/sCAwEAAaAAMA0GCSqGSIb3DQEBCwUAA4IBAQArQakshcpX+R0EtSYv\r\n"
-+ "FoXS1CeXyzzlBVBv0shNWK6sggbZxO0T0pWP/unnoBH8O5s5JEWGQxSoDAL4T0a3\r\n"
-+ "84gAJfGz1iHiAohdxP8avOrWkM+LW0aYsIwOOoNLFLG+Jqsp4tIusKDQPYfJjyn3\r\n"
-+ "U8yI8bpFLjfLqkr6UwkczVxvo9rDIOIQA3quVMQvFOl1wb4hZmNveAc50r7jQs0E\r\n"
-+ "1OYF484zEklE+/LlxlJKNngwkaRzYeAsUOn18qtymqZLty2hBYYkrM5rekDk53hX\r\n"
-+ "vzLuiNVIbX/Xwx0HdNN51TngqFw++yEhrcpE6L/YVMPxMN5VSfW3EJ6dBWlb3xA4\r\n"
-+ "F3f5\r\n"
-+ "-----END CERTIFICATE REQUEST-----\r\n";
+
+var csrPemSample = "-----BEGIN CERTIFICATE REQUEST-----\n"
++ "MIICxTCCAa0CAQAwbzETMBEGA1UEAxMKYmxhbmtvbi5pbjELMAkGA1UEBhMCSUQx\n"
++ "FDASBgNVBAgTC0phYm9kZXRhYmVrMQ8wDQYDVQQHEwZCb2pvbmcxETAPBgNVBAoT\n"
++ "CFVqaSBjb2JhMREwDwYDVQQLEwhVamkgY29iYTCCASIwDQYJKoZIhvcNAQEBBQAD\n"
++ "ggEPADCCAQoCggEBANz4dsUgNFoXbV6TbJpH7jeSfYvFwRuQCEJ6bZCNcRtLHDg+\n"
++ "wjubYltauwvz/xp0hmEQCAOcgbXibsK1QppOxK9j6AjoXIffdybaoH4rs/1dlPt+\n"
++ "+A61YI1mX9VHtStuAy7oJcQsrEd9nKwI0CTUfpgKrQNF7bqp85AEc2sV33fuS1z5\n"
++ "8bb+8B1s66/gdJH3ZKY5AhrTeGiRYYkEr+wtbfL+RcfO2gXm1VvXduy8755/frbP\n"
++ "mwtBVWJz1wGghCeDDCXvCDfcespEUNn+uUO/UZL4RvqXDP0lxRY3aBdSo80HMlJS\n"
++ "54js+63PilttSs0g4H37GfHpbcQdsruPB6oAoM0CAwEAAaARMA8GCSqGSIb3DQEJ\n"
++ "BzECDAAwDQYJKoZIhvcNAQEFBQADggEBAIgTLyj0LtuLWnttMB6YpEBHA9gs22yP\n"
++ "3C7n/zkOk5eDtuEc7GLOXGgiTZiYqnkqkDIKSOePtegrCg1bhzy4DcF6uWnaY3kE\n"
++ "dP+eq7r+OT36TrpZSHxRvi6hFt2pHkUglxu2QP6BD2ApXK1QxRsSBAr67Ml1lD1Z\n"
++ "1uev+emqcnriW9RyYJyRIy7q1mGUH10TU15BH68npYtoc3GFqo6CIeoe88m4WUB9\n"
++ "G4XGBItdhkQ3rruz/8DY1DFVtDU2mSm9uD9VZo888Cn3g5jNTKBRetPkPiCLV21o\n"
++ "rcQFlNUp0WWUSkzfE1ZJRfFNOrVtaW/loLfDqP+nGp0/d6xiz52I/+o=\n"
++ "-----END CERTIFICATE REQUEST-----\n"
+
+
 
 var invalidCertSample = "-----BEGIN CERTIFICATE REQUEST INVALID-----\r\n"
 + "MIICzzCCAbcCAQAwgYkxCzAJBgNVBAYTAklEMRMwEQYDVQQIDApKYXdhIEJhcmF0\r\n"
@@ -348,15 +356,15 @@ describe("Certificate suite", function() {
             expect(cert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
             expect(cert.certData[0].issuer.attributes[1].value).toBe("ID");
             expect(cert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
-            expect(cert.certData[0].issuer.attributes[3].value).toBe("Republik Bojong");
-            expect(cert.certData[0].issuer.attributes[4].value).toBe("Test");
-            expect(cert.certData[0].issuer.attributes[5].value).toBe("Test");
+            expect(cert.certData[0].issuer.attributes[3].value).toBe("Bojong");
+            expect(cert.certData[0].issuer.attributes[4].value).toBe("Uji coba");
+            expect(cert.certData[0].issuer.attributes[5].value).toBe("Uji coba");
             expect(cert.certData[0].subject.attributes[0].value).toBe("blankon.in");
             expect(cert.certData[0].subject.attributes[1].value).toBe("ID");
             expect(cert.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
-            expect(cert.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
-            expect(cert.certData[0].subject.attributes[4].value).toBe("Test");
-            expect(cert.certData[0].subject.attributes[5].value).toBe("Test");
+            expect(cert.certData[0].subject.attributes[3].value).toBe("Bojong");
+            expect(cert.certData[0].subject.attributes[4].value).toBe("Uji coba");
+            expect(cert.certData[0].subject.attributes[5].value).toBe("Uji coba");
             done();
           })
           .catch(function(err){
@@ -383,15 +391,15 @@ describe("Certificate suite", function() {
             expect(cert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
             expect(cert.certData[0].issuer.attributes[1].value).toBe("ID");
             expect(cert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
-            expect(cert.certData[0].issuer.attributes[3].value).toBe("Republik Bojong");
-            expect(cert.certData[0].issuer.attributes[4].value).toBe("Test");
-            expect(cert.certData[0].issuer.attributes[5].value).toBe("Test");
+            expect(cert.certData[0].issuer.attributes[3].value).toBe("Bojong");
+            expect(cert.certData[0].issuer.attributes[4].value).toBe("Uji coba");
+            expect(cert.certData[0].issuer.attributes[5].value).toBe("Uji coba");
             expect(cert.certData[0].subject.attributes[0].value).toBe("blankon.in");
             expect(cert.certData[0].subject.attributes[1].value).toBe("ID");
             expect(cert.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
-            expect(cert.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
-            expect(cert.certData[0].subject.attributes[4].value).toBe("Test");
-            expect(cert.certData[0].subject.attributes[5].value).toBe("Test");
+            expect(cert.certData[0].subject.attributes[3].value).toBe("Bojong");
+            expect(cert.certData[0].subject.attributes[4].value).toBe("Uji coba");
+            expect(cert.certData[0].subject.attributes[5].value).toBe("Uji coba");
             done();
           })
           .catch(function(err){
@@ -418,9 +426,9 @@ describe("Certificate suite", function() {
             expect(cert1.certData[0].subject.attributes[0].value).toBe("blankon.in");
             expect(cert1.certData[0].subject.attributes[1].value).toBe("ID");
             expect(cert1.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
-            expect(cert1.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
-            expect(cert1.certData[0].subject.attributes[4].value).toBe("Test");
-            expect(cert1.certData[0].subject.attributes[5].value).toBe("Test");
+            expect(cert1.certData[0].subject.attributes[3].value).toBe("Bojong");
+            expect(cert1.certData[0].subject.attributes[4].value).toBe("Uji coba");
+            expect(cert1.certData[0].subject.attributes[5].value).toBe("Uji coba");
             expect(cert1.certData[0].attributes[0].name).toBe("challengePassword");
             expect(cert1.certData[0].attributes[0].value).toBe("katasandi");
             done();
@@ -470,9 +478,9 @@ describe("Certificate suite", function() {
           expect(issuer.commonName).toBe("blankon.in");
           expect(issuer.countryName).toBe("ID");
           expect(issuer.stateOrProvinceName).toBe("Jabodetabek");
-          expect(issuer.localityName).toBe("Republik Bojong");
-          expect(issuer.organizationName).toBe("Test");
-          expect(issuer.organizationalUnitName).toBe("Test");
+          expect(issuer.localityName).toBe("Bojong");
+          expect(issuer.organizationName).toBe("Uji coba");
+          expect(issuer.organizationalUnitName).toBe("Uji coba");
           done();
         })
         .catch(function(err){
@@ -489,9 +497,9 @@ describe("Certificate suite", function() {
           expect(subject.commonName).toBe("blankon.in");
           expect(subject.countryName).toBe("ID");
           expect(subject.stateOrProvinceName).toBe("Jabodetabek");
-          expect(subject.localityName).toBe("Republik Bojong");
-          expect(subject.organizationName).toBe("Test");
-          expect(subject.organizationalUnitName).toBe("Test");
+          expect(subject.localityName).toBe("Bojong");
+          expect(subject.organizationName).toBe("Uji coba");
+          expect(subject.organizationalUnitName).toBe("Uji coba");
           done();
         })
         .catch(function(err){
@@ -621,6 +629,22 @@ describe("Certificate suite", function() {
           if (err) {
             console.log(err.message);
           }
+          expect(1).toBe(2);
+          done();
+        })
+    });
+    it("should be able to convert certificate from Pem", function(done) {
+      var cert = new Certificate();
+      cert.parsePEM(certPemSample)
+        .then(function(cert){
+          expect(cert).toBeDefined();
+          expect(cert.certData.length).toEqual(1);
+        })
+        .catch(function(err){
+          if (err) {
+            console.log(err.message);
+          }
+          expect(1).toBe(2);
           done();
         })
     });
@@ -637,6 +661,7 @@ describe("Certificate suite", function() {
           if (err) {
             console.log(err.message);
           }
+          expect(1).toBe(2);
           done();
         })
     });
@@ -794,15 +819,15 @@ describe("Certificate suite", function() {
             expect(cert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
             expect(cert.certData[0].issuer.attributes[1].value).toBe("ID");
             expect(cert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
-            expect(cert.certData[0].issuer.attributes[3].value).toBe("Republik Bojong");
-            expect(cert.certData[0].issuer.attributes[4].value).toBe("Test");
-            expect(cert.certData[0].issuer.attributes[5].value).toBe("Test");
+            expect(cert.certData[0].issuer.attributes[3].value).toBe("Bojong");
+            expect(cert.certData[0].issuer.attributes[4].value).toBe("Uji coba");
+            expect(cert.certData[0].issuer.attributes[5].value).toBe("Uji coba");
             expect(cert.certData[0].subject.attributes[0].value).toBe("blankon.in");
             expect(cert.certData[0].subject.attributes[1].value).toBe("ID");
             expect(cert.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
-            expect(cert.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
-            expect(cert.certData[0].subject.attributes[4].value).toBe("Test");
-            expect(cert.certData[0].subject.attributes[5].value).toBe("Test");
+            expect(cert.certData[0].subject.attributes[3].value).toBe("Bojong");
+            expect(cert.certData[0].subject.attributes[4].value).toBe("Uji coba");
+            expect(cert.certData[0].subject.attributes[5].value).toBe("Uji coba");
             done();
             cert.validate()
               .then(function(isValid){
