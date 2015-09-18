@@ -413,7 +413,9 @@ Certificate.prototype.parsePEM = function(pemString) {
  * 
  * @param {ArrayBuffer} data - An array buffer of .p12 file
  * @params {String} [password] - Password to open P12 container
- * @returns {Object} - The extracted cert will be passed to Certificate object itself
+ * @returns {Object} result - An object that contains certificate and private key
+ * @returns {Object} result.certificate - The certificate object, will be passed to Certificate object itself too.
+ * @returns {Object} result.privateKey - Private key in PEM format
  *.
  */
 Certificate.prototype.parseP12 = function(data, password) {
@@ -425,10 +427,19 @@ Certificate.prototype.parseP12 = function(data, password) {
     var certBags = p12.getBags({bagType: forge.pki.oids.certBag});
     var cert = certBags[forge.pki.oids.certBag][0].cert;
     var certs = certBags[forge.pki.oids.certBag];
+    
+    var keyBags = p12.getBags({bagType: forge.pki.oids.pkcs8ShroudedKeyBag});
+    var bag = keyBags[forge.pki.oids.pkcs8ShroudedKeyBag][0];
+    var privateKey = forge.pki.privateKeyToPem(bag.key);
+
     for (var i = 0;i < certs.length;i++) {
       self.certData.push(certs[i].cert);
     }
-    resolve(self);
+    var result = {
+      certificate : self,
+      privateKey : privateKey
+    }
+    resolve(result);
   })
 }
 
@@ -647,27 +658,6 @@ Certificate.prototype.getPublicKey = function() {
     var pem = forge.pki.publicKeyToPem(cert.publicKey);
     resolve(pem)
   })
-}
-
-/**
- * Gets the private key of the subject which signed the certificate
- *
- * @param {arrayBuffer} data - the arrayBuffer of p12 file
- * @param {String} [password] - the password to unlock p12 container
- * @returns {Key} 
- * @static
- */
-Certificate.getPrivateKey = function(data, password) {
-  var self = this;
-  return new Promise(function(resolve, reject){
-    var p12Der = forge.util.decode64(ab2Base64(data));
-    var p12Asn1 = forge.asn1.fromDer(p12Der);
-    var p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, password);
-    var keyBags = p12.getBags({bagType: forge.pki.oids.pkcs8ShroudedKeyBag});
-    var bag = keyBags[forge.pki.oids.pkcs8ShroudedKeyBag][0];
-    var privateKey = forge.pki.privateKeyToPem(bag.key);
-    resolve(privateKey);
-  });
 }
 
 /**
