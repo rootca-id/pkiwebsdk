@@ -2,7 +2,6 @@
 Parse Cert PEM <div id="parse-pem"></div><br>
 Parse CRL <div id="parse-crl"></div><br>
 Parse P12 to Cert <div id="parse-p12"></div><br>
-Parse P12 to Private Key <div id="parse-p12-private-key"></div><br>
 Validate certificate chain <div id="validate-cert-chain"></div><br>
 <script>
   window.PKIWebSDK.UI.getCertPEM("parse-pem", function(promise){
@@ -16,13 +15,9 @@ Validate certificate chain <div id="validate-cert-chain"></div><br>
     })
   })
   window.PKIWebSDK.UI.getP12("parse-p12", function(promise){
-    promise.then(function(cert){
+    promise.then(function(cert, privateKey){
       console.log(cert);
-    })
-  })
-  window.PKIWebSDK.UI.getP12PrivateKey("parse-p12-private-key", function(promise){
-    promise.then(function(cert){
-      console.log(cert);
+      console.log(privateKey);
     })
   })
   window.PKIWebSDK.UI.getCertChain("validate-cert-chain", function(promise){
