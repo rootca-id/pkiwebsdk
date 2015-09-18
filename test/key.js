@@ -16,7 +16,7 @@ var string2Ab = function(str, cb) {
   return cb(buf);
 }
 
-describe("Key", function() {
+xdescribe("Key", function() {
   beforeEach(function (done) {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
     Key.generatePair("SHA-256")

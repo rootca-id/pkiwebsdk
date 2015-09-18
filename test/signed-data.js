@@ -57,7 +57,7 @@ describe("SignedData", function() {
     var certSample;
     beforeEach(function (done) {
       var cert = new Certificate();
-      cert.fromPEM(certPemSample).then(function(c) {
+      cert.parsePEM(certPemSample).then(function(c) {
         certSample = c;
         return Key.parsePEM(privateKeyPEM, "SHA-256"); 
       }).then(function(k) {

@@ -30,13 +30,26 @@ var PDF = function(rawData) {
 PDF.prototype.sign = function(cert, key, info) {
   var self = this;
 
-  var signDataFunction = function(hash, cb) {
-    if (hash === null) {
+  var signDataFunction = function(data, cb) {
+    if (data === null) {
       SignedData.sign(cert, key, new Uint8Array(64)).then(function(signedMessage) {
-        cb(signedMessage.length + 100);
+        cb(signedMessage.length + 10);
       });
     } else {
-      SignedData.sign(cert, key, hash).then(function(signedMessage) {
+      SignedData.sign(cert, key, data).then(function(signedMessage) {
+        var z=signedMessage;
+        var x='[';
+        for (var i = 0 ; i < z.length; i ++) {
+          x+=z[i]+',';
+        }
+        //console.log(x);
+        var z=data;
+        var x='[';
+        for (var i = 0 ; i < z.length; i ++) {
+          x+=z[i]+',';
+        }
+        //console.log(x);
+ 
         cb(signedMessage);
       });
     }
