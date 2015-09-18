@@ -6,8 +6,8 @@
     "test": "./node_modules/.bin/karma start --singleRun",
     "cov": "./node_modules/.bin/karma start karma-cov.conf.js --singleRun",
     "testWatch": "./node_modules/.bin/karma start",
-    "build": "mkdir -p build && ./node_modules/browserify/bin/cmd.js ./src/index.js -o ./build/bundle.js",
-    "gendoc" : "./node_modules/.bin/jsdoc src/* -d docs/api"
+    "build": "./node_modules/.bin/gulp",
+    "gendoc": "./node_modules/.bin/jsdoc src/* -d docs/api"
   },
   "repository": {
     "type": "git",
@@ -18,6 +18,10 @@
     "brfs": "^1.4.0",
     "browserify": "^11.0.1",
     "browserify-shim": "^3.8.10",
+    "gulp": "^3.9.0",
+    "gulp-html-to-js": "0.0.1",
+    "gulp-minify": "0.0.5",
+    "gulp-rimraf": "^0.1.1",
     "jasmine-core": "^2.3.4",
     "jsdoc": "^3.3.2",
     "karma": "^0.13.8",
@@ -32,7 +36,8 @@
     "browserify-istanbul": "^0.2.1",
     "karma-coverage": "^0.5.0",
     "pem-jwk": "^1.5.1",
-    "pkijs": "^1.2.3"
+    "pkijs": "^1.2.3",
+    "vinyl-source-stream": "^1.1.0"
   },
   "browserify-shim": {
     "exports": "global:External"
