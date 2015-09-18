@@ -342,7 +342,7 @@ var base642Ab = function(base64) {
   }
   return bytes.buffer;
 }
-xdescribe("Certificate suite", function() {
+describe("Certificate suite", function() {
   describe("Certificate generation", function() {
     beforeEach(function(){
       jasmine.getEnv().defaultTimeoutInterval = 100000;
