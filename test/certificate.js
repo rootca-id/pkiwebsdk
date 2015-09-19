@@ -572,44 +572,35 @@ describe("Certificate suite", function() {
       var newCert = new Certificate();
       var data = base642Ab(p12Base64);
       newCert.parseP12(data, "password")
-        .then(function(cert){
-          expect(cert.certData[0].subject.attributes[0].value).toBe("blankon.in");
-          expect(cert.certData[0].subject.attributes[1].value).toBe("ID");
-          expect(cert.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
-          expect(cert.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
-          expect(cert.certData[0].subject.attributes[4].value).toBe("Test");
-          expect(cert.certData[0].subject.attributes[5].value).toBe("Test");
-          done();
-        })
-        .catch(function(err){
-          console.log(err.message);
-          expect(1).toBe(2);
-          done();
-        })
-    })
-    it("should be able to sign a file using private key which has included in the p12 container object", function(done) {
-      var data = base642Ab(p12Base64);
-      Certificate.getPrivateKey(data, "password")
-      .then(function(privateKeyPem){
-        Key.parsePEM(privateKeyPem, "SHA-256")
-          .then(function(privateKey){
-            string2Ab("hello world", function(dataToBeSigned){
-              privateKey.sign(dataToBeSigned)
-                .then(function(signature){
-                  done();
+        .then(function(result){
+          console.log(result.privateKey);
+          expect(result.privateKey.substr(0, 31)).toBe("-----BEGIN RSA PRIVATE KEY-----");
+          expect(result.certificate.certData[0].subject.attributes[0].value).toBe("blankon.in");
+          expect(result.certificate.certData[0].subject.attributes[1].value).toBe("ID");
+          expect(result.certificate.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
+          expect(result.certificate.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
+          expect(result.certificate.certData[0].subject.attributes[4].value).toBe("Test");
+          expect(result.certificate.certData[0].subject.attributes[5].value).toBe("Test");
+          Key.parsePEM(result.privateKey, "SHA-256")
+            .then(function(privateKey){
+              string2Ab("hello world", function(dataToBeSigned){
+                privateKey.sign(dataToBeSigned)
+                  .then(function(sig){
+                    expect(sig).toBeDefined();
+                    done();
+                  })
+                  .catch(function(err){
+                    console.log(err.message);
+                    expect(1).toBe(2);
+                    done();
+                  })
                 })
-                .catch(function(err){
-                  console.log(err.message);
-                  expect(1).toBe(2);
-                  done();
-                })
-              })
-          })
-          .catch(function(err){
-            console.log(err.message);
-            expect(1).toBe(2);
-            done();
-          })
+            })
+            .catch(function(err){
+              console.log(err.message);
+              expect(1).toBe(2);
+              done();
+            })
         })
         .catch(function(err){
           console.log(err.message);
@@ -622,27 +613,8 @@ describe("Certificate suite", function() {
       cert.parsePEM(certPemSample)
         .then(function(cert){
           expect(cert).toBeDefined();
-          return cert.getSignature();
-        }).then(function(sig) {
-          var sigStr = String.fromCharCode.apply(null, new Uint8Array(sig));
-          console.log('---------', sigStr);
           expect(cert.certData.length).toEqual(1);
           done();
-        })
-        .catch(function(err){
-          if (err) {
-            console.log(err.message);
-          }
-          expect(1).toBe(2);
-          done();
-        })
-    });
-    it("should be able to convert certificate from Pem", function(done) {
-      var cert = new Certificate();
-      cert.parsePEM(certPemSample)
-        .then(function(cert){
-          expect(cert).toBeDefined();
-          expect(cert.certData.length).toEqual(1);
         })
         .catch(function(err){
           if (err) {
