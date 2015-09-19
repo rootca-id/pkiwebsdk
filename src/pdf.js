@@ -18,11 +18,12 @@ var PDF = function(rawData) {
 }
 
 /**
- * Signs the PDF with a key
+ * Signs the PDF with a certificate
+ * @param {Certificate} cert - The certificate used to sign the document 
  * @param {Key} key - The private key used to sign the document
- * @param {String} password - The password to recover the private key
  * @param {Object} info - The information of the signature
  * @param {String} info.name - the person who signs the document
+ * @param {Date} info.date - the date the signing took place 
  * @param {String} info.reason - the reason the document was signed
  * @param {String} info.location - the place the document was signed
  * @param {String} info.contactInfo - the contact information about the signer
