@@ -1,28 +1,49 @@
 <script src="../../build/bundle.js"></script>
 Parse Cert PEM <div id="parse-pem"></div><br>
 Parse CRL <div id="parse-crl"></div><br>
-Parse P12 to Cert <div id="parse-p12"></div><br>
+Parse P12 to Cert. Fill the password then select a p12 file <div id="parse-p12"></div><br>
 Validate certificate chain <div id="validate-cert-chain"></div><br>
 <script>
   window.PKIWebSDK.UI.getCertPEM("parse-pem", function(promise){
     promise.then(function(cert){
       console.log(cert);
+      cert.getSubject().then(function(subject){
+        alert("PEM successfully parsed. \n\n" + JSON.stringify(subject));
+      })
+    })
+    .catch(function(err){
+      alert(err.message);
     })
   })
   window.PKIWebSDK.UI.getCRL("parse-crl", function(promise){
-    promise.then(function(cert){
-      console.log(cert);
+    promise.then(function(revocationList){
+      console.log(revocationList);
+      alert("CRL successfully parsed. \n\n" + revocationList);
+    })
+    .catch(function(err){
+      alert(err.message);
     })
   })
   window.PKIWebSDK.UI.getP12("parse-p12", function(promise){
-    promise.then(function(cert, privateKey){
-      console.log(cert);
-      console.log(privateKey);
+    promise.then(function(result){
+      console.log(result);
+      result.certificate.getSubject().then(function(subject){
+              alert("P12 successfully parsed. \n\n CERTIFICATE :\n" + JSON.stringify(subject));
+              alert("PRIVATE KEY : \n\n" + result.privateKey);
+      })
+
+    })
+    .catch(function(err){
+      alert(err.message);
     })
   })
   window.PKIWebSDK.UI.getCertChain("validate-cert-chain", function(promise){
-    promise.then(function(cert){
-      console.log(cert);
+    promise.then(function(isValid){
+      var isValid = isValid ? "valid" : "not valid";
+      alert("The certificate is " + isValid);
+    })
+    .catch(function(err){
+      alert(err.message);
     })
   })
 </script>
