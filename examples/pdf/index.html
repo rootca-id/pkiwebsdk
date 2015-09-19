@@ -1,7 +1,114 @@
 <html>
     <head>
-        <script src="bundle.js"></script>
+        <script src="../../build/bundle.js"></script>
     </head>
     <body>
+            Parse P12 to Cert <div id="parse-p12"></div><br>
+            <br>
+            PDF file to sign <input id="pdf-file" type="file"></input>
+            <br>
+            Get the signature of <input id="pdf-file-get-signature" type="file"></input>
     </body>
+  <script>
+    var certificate;
+    var privateKey;
+    var pdfData;
+    var pdf;
+  
+    var info = {
+      name : "Someone",
+      reason : "Test",
+      location : "Greater Jakarta Area",
+      contactInfo : "email@domain"
+    }
+  
+    /* Save an array buffer to client's computer as file download
+     * @params {ArrayBuffer} arrayBuffer - Array buffer of the file that will be downloaded 
+     * @params {String} filename - File name
+     * @params {String} type - Type of file
+     */
+    var toFile = function(arrayBuffer, filename, type){
+      // downloading!
+      var blob = new Blob([arrayBuffer], { type: type });
+      if (typeof window.navigator.msSaveBlob !== 'undefined') {
+        window.navigator.msSaveBlob(blob, filename);
+      } else {
+        var URL = window.URL || window.webkitURL;
+        var downloadUrl = URL.createObjectURL(blob);
+        if (filename) {
+          var a = document.createElement("a");
+          if (typeof a.download === 'undefined') {
+            window.location = downloadUrl;
+          } else {
+            a.href = downloadUrl;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+          }
+        } else {
+          window.location = downloadUrl;
+        }
+        setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100);
+      }
+    }
+  
+    // Render an element that handle P12 file
+    window.PKIWebSDK.UI.getP12("parse-p12", function(promise){
+      promise.then(function(result){
+        console.log(result);
+        certificate = result.certificate;
+        window.PKIWebSDK.Key.parsePEM(result.privateKey, "SHA-256")
+          .then(function(key){
+            privateKey = key;
+            alert("P12 was successfully parsed. Select a pdf file to be signed.")
+          })
+          .catch(function(err){
+            alert(err.message);
+          })
+      })
+      .catch(function(err){
+        alert(err.message);
+      })
+    })
+  
+    // Event listener to #pdf-file element. Sign the pdf file when added.
+    document.getElementById('pdf-file').addEventListener('change', function(evt){
+      var files = evt.target.files; // FileList object  
+      // Read file as ArrayBuffer
+      var reader = new window.FileReader()
+      reader.readAsArrayBuffer(files[files.length-1]);
+      reader.onload = function(e) {
+        pdfData = reader.result;
+        pdf = new window.PKIWebSDK.PDF(new Uint8Array(pdfData));
+        pdf.sign(certificate, privateKey, info)
+          .then(function(doc){
+            console.log(doc);
+            toFile(doc, "signed-data", "application/pdf");
+          })
+          .catch(function(err){
+            alert(err.message);
+          })
+       }
+    });
+    
+    // Event listener of #pdf-file-get-signature element. Obtains signature information.
+    document.getElementById('pdf-file-get-signature').addEventListener('change', function(evt){
+      var files = evt.target.files; // FileList object  
+      // Read file as ArrayBuffer
+      var reader = new window.FileReader()
+      reader.readAsArrayBuffer(files[files.length-1]);
+      reader.onload = function(e) {
+        pdfData = reader.result;
+        pdf = new window.PKIWebSDK.PDF(new Uint8Array(pdfData));
+        pdf.getSignatures()
+        .then(function(sig){
+            console.log(sig);
+            alert("Successfully obtained the signature. See browser's console output");
+          })
+          .catch(function(err){
+            alert(err.message);
+          })
+       }
+    });
+  </script>
 </html>
