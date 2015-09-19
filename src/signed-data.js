@@ -1,5 +1,6 @@
 'use strict';
 
+require("../lib/forge/asn1.js");
 require("../lib/forge/util.js");
 require("../lib/forge/pkcs7.js");
 require("../lib/forge/pkcs7asn1.js");
