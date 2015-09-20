@@ -577,25 +577,33 @@ describe("Certificate suite", function() {
         .then(function(result){
           console.log(result.privateKey);
           expect(result.privateKey.substr(0, 31)).toBe("-----BEGIN RSA PRIVATE KEY-----");
-          expect(result.certificate.certData[0].subject.attributes[0].value).toBe("blankon.in");
-          expect(result.certificate.certData[0].subject.attributes[1].value).toBe("ID");
-          expect(result.certificate.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
-          expect(result.certificate.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
-          expect(result.certificate.certData[0].subject.attributes[4].value).toBe("Test");
-          expect(result.certificate.certData[0].subject.attributes[5].value).toBe("Test");
           Key.parsePEM(result.privateKey, "SHA-256")
             .then(function(privateKey){
-              string2Ab("hello world", function(dataToBeSigned){
-                privateKey.sign(dataToBeSigned)
-                  .then(function(sig){
-                    expect(sig).toBeDefined();
-                    done();
-                  })
-                  .catch(function(err){
-                    console.log(err.message);
-                    expect(1).toBe(2);
-                    done();
-                  })
+              expect(result.certificate.certData[0].subject.attributes[0].value).toBe("blankon.in");
+              expect(result.certificate.certData[0].subject.attributes[1].value).toBe("ID");
+              expect(result.certificate.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
+              expect(result.certificate.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
+              expect(result.certificate.certData[0].subject.attributes[4].value).toBe("Test");
+              expect(result.certificate.certData[0].subject.attributes[5].value).toBe("Test");
+              Key.parsePEM(result.privateKey, "SHA-256")
+                .then(function(privateKey){
+                  string2Ab("hello world", function(dataToBeSigned){
+                    privateKey.sign(dataToBeSigned)
+                      .then(function(sig){
+                        expect(sig).toBeDefined();
+                        done();
+                      })
+                      .catch(function(err){
+                        console.log(err.message);
+                        expect(1).toBe(2);
+                        done();
+                      })
+                    })
+                })
+                .catch(function(err){
+                  console.log(err.message);
+                  expect(1).toBe(2);
+                  done();
                 })
             })
             .catch(function(err){
@@ -617,25 +625,33 @@ describe("Certificate suite", function() {
         .then(function(result){
           console.log(result.privateKey);
           expect(result.privateKey.substr(0, 31)).toBe("-----BEGIN RSA PRIVATE KEY-----");
-          expect(result.certificate.certData[0].subject.attributes[0].value).toBe("ID");
-          expect(result.certificate.certData[0].subject.attributes[1].value).toBe("Depok");
-          expect(result.certificate.certData[0].subject.attributes[2].value).toBe("Depok");
-          expect(result.certificate.certData[0].subject.attributes[3].value).toBe("Depok Baru");
-          expect(result.certificate.certData[0].subject.attributes[4].value).toBe("Simpangan Depok");
-          expect(result.certificate.certData[0].subject.attributes[5].value).toBe("Cimanggis");
           Key.parsePEM(result.privateKey, "SHA-256")
             .then(function(privateKey){
-              string2Ab("hello world", function(dataToBeSigned){
-                privateKey.sign(dataToBeSigned)
-                  .then(function(sig){
-                    expect(sig).toBeDefined();
-                    done();
-                  })
-                  .catch(function(err){
-                    console.log(err.message);
-                    expect(1).toBe(2);
-                    done();
-                  })
+              expect(result.certificate.certData[0].subject.attributes[0].value).toBe("ID");
+              expect(result.certificate.certData[0].subject.attributes[1].value).toBe("Depok");
+              expect(result.certificate.certData[0].subject.attributes[2].value).toBe("Depok");
+              expect(result.certificate.certData[0].subject.attributes[3].value).toBe("Depok Baru");
+              expect(result.certificate.certData[0].subject.attributes[4].value).toBe("Simpangan Depok");
+              expect(result.certificate.certData[0].subject.attributes[5].value).toBe("Cimanggis");
+              Key.parsePEM(result.privateKey, "SHA-256")
+                .then(function(privateKey){
+                  string2Ab("hello world", function(dataToBeSigned){
+                    privateKey.sign(dataToBeSigned)
+                      .then(function(sig){
+                        expect(sig).toBeDefined();
+                        done();
+                      })
+                      .catch(function(err){
+                        console.log(err.message);
+                        expect(1).toBe(2);
+                        done();
+                      })
+                    })
+                })
+                .catch(function(err){
+                  console.log(err.message);
+                  expect(1).toBe(2);
+                  done();
                 })
             })
             .catch(function(err){
