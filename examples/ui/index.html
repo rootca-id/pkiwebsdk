@@ -3,6 +3,12 @@ Parse Cert PEM <div id="parse-pem"></div><br>
 Parse CRL <div id="parse-crl"></div><br>
 Parse P12 to Cert. Fill the password then select a p12 file <div id="parse-p12"></div><br>
 Validate certificate chain <div id="validate-cert-chain"></div><br>
+<hr>
+Sign a PDF file<br>
+<div id="sign-a-pdf"></div>
+<hr>
+Verify a PDF file<br>
+<div id="verify-a-pdf"></div>
 <script>
   window.PKIWebSDK.UI.getCertPEM("parse-pem", function(promise){
     promise.then(function(cert){
@@ -37,10 +43,21 @@ Validate certificate chain <div id="validate-cert-chain"></div><br>
       alert(err.message);
     })
   })
-  window.PKIWebSDK.UI.getCertChain("validate-cert-chain", function(promise){
-    promise.then(function(isValid){
-      var isValid = isValid ? "valid" : "not valid";
-      alert("The certificate is " + isValid);
+  window.PKIWebSDK.UI.signPDF("sign-a-pdf", function(promise){
+    promise.then(function(signed){
+      console.log(signed);
+      alert("Successfully signed");
+      window.PKIWebSDK.UI.toFile(signed, "signed-data.pdf", "application/pdf");
+    })
+    .catch(function(err){
+      alert(err.message);
+    })
+  })
+  window.PKIWebSDK.UI.verifyPDF("verify-a-pdf", function(promise){
+    promise.then(function(isVerified){
+      console.log(isVerified);
+      isVerified = isVerified ? "verified" : "not verified";
+      alert("The Signature of the PDF file is " + isVerified);
     })
     .catch(function(err){
       alert(err.message);
