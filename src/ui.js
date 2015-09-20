@@ -1,6 +1,7 @@
 'use strict';
 
 // Obtains HTML template
+var async = require("async");
 var html = require("../html/html-min.js");
 
 /**
@@ -124,10 +125,27 @@ UI.handler.PDFToVerify = function(file) {
       var reader = new window.FileReader()
       reader.readAsArrayBuffer(file);
       reader.onload = function(e) {
-        UI.PDFToVerify = new window.PKIWebSDK.PDF(reader.result);
-        UI.PDFToVerify.getSignatures()
+        UI.PDFToVerify = new window.PKIWebSDK.PDF(new Uint8Array(reader.result));
+        var signatures = UI.PDFToVerify.getSignatures()
           .then(function(signatures){
-            resolve(signatures[0].verified);
+            var isVerified = signatures[0].verified;
+            var certs = signatures[0].signedData.data.certificates;
+            async.eachSeries(certs, function iterator(item, cb){
+              if (isVerified) {
+                certs[0].validate()
+                  .then(function(isValid){
+                    isVerified = isValid;
+                    cb();
+                  })
+                  .catch(function(err){
+                    reject(err);
+                  })
+              } else {
+                cb();
+              }
+            }, function(done){
+              resolve(isVerified);
+            })
           })
           .catch(function(err){
             reject(err);
@@ -251,7 +269,7 @@ UI.getCertChain = function(element, cb) {
 }
 
 /**
- * Generate HTML element that handle P12 and PDF file, in purpose to signing the PDF.
+ * Generate HTML element that handle P12 and PDF file, in purpose of signing the PDF.
  *
  * @params {String} element - Id of the parent element. Without # symbol.
  * @returns {Object} cb - Return a promise from PDF.prototype.sign()
@@ -275,7 +293,7 @@ UI.signPDF = function(element, cb) {
 }
 
 /**
- * Generate HTML element that handle PDF file, in purpose to verifying the PDF.
+ * Generate HTML element that handle PDF file, in purpose of verifying the PDF.
  *
  * @params {String} element - Id of the parent element. Without # symbol.
  * @returns {Object} cb - Return a promise from PDF.prototype.verify()
