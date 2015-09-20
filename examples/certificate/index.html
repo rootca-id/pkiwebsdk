@@ -13,12 +13,27 @@
     </head>
     <body>
       <div id="tabs">
-        <a href="#" onclick="tab_click(0);">Generate certificate</a>
-        <a href="#" onclick="tab_click(1);">Generate certificate request</a>
+        <a href="#" onclick="tab_click(0);">Generate certificate request</a>
+        <a href="#" onclick="tab_click(1);">Generate certificate</a>
         <a href="#" onclick="tab_click(2);">Import</a>
         <a href="#" onclick="tab_click(3);">Get property of</a>
       </div>
       <div id="tabs_data">
+        <fieldset>
+          <h4>Generate Certificate request</h4>
+          <div style="text-align:right;width:400px;display:inline-block;vertical-align:top;">
+                  <label>subject.commonName <input id="csr_subject_commonName" value="blankon.in"></input></label><br>
+                  <label>subject.countryName <input id="csr_subject_countryName" value="ID"></input></label><br>
+                  <label>subject.stateName <input id="csr_subject_stateName" value="Jabodetabek"></input></label><br>
+                  <label>subject.localityName <input id="csr_subject_localityName" value="Bojong"></input></label><br>
+                  <label>subject.organizationName <input id="csr_subject_organizationName" value="Uji coba"></input></label><br>
+                  <label>subject.organizationUnit <input id="csr_subject_organizationUnit" value="Uji coba"></input></label><br>
+          </div>
+          <br>
+          <br>
+          <input id="csr_password" placeholder="password"></input>
+          <button onClick="generateCSR()">generate pairKey and create a certificate request</button> 
+        </fieldset>
         <fieldset> 
           <h4>Generate Certificate</h4>
           <div style="text-align:right;width:400px;display:inline-block;vertical-align:top;">
@@ -44,21 +59,6 @@
           <button onClick="generateP12()">generate P12</button>
             <br>
             <br><a id="link" href="">click here get the p12 file if the download not started automatically</a>
-        </fieldset>
-        <fieldset>
-          <h4>Generate Certificate request</h4>
-          <div style="text-align:right;width:400px;display:inline-block;vertical-align:top;">
-                  <label>subject.commonName <input id="csr_subject_commonName" value="blankon.in"></input></label><br>
-                  <label>subject.countryName <input id="csr_subject_countryName" value="ID"></input></label><br>
-                  <label>subject.stateName <input id="csr_subject_stateName" value="Jabodetabek"></input></label><br>
-                  <label>subject.localityName <input id="csr_subject_localityName" value="Bojong"></input></label><br>
-                  <label>subject.organizationName <input id="csr_subject_organizationName" value="Uji coba"></input></label><br>
-                  <label>subject.organizationUnit <input id="csr_subject_organizationUnit" value="Uji coba"></input></label><br>
-          </div>
-          <br>
-          <br>
-          <input id="csr_password" placeholder="password"></input>
-          <button onClick="generateCSR()">generate pairKey and create a certificate request</button> 
         </fieldset>
         <fieldset>
           <div style="margin:20px;width:370px;height:150px;display:inline-block;vertical-align:top;background:#DFDFDF;padding:20px;">
