@@ -3,9 +3,11 @@ require("../lib/forge/jsbn.js");
 require("../lib/forge/asn1.js");
 require("../lib/forge/oids.js");
 require("../lib/forge/util.js");
+require("../lib/forge/rc2");
 require("../lib/forge/cipher");
 require("../lib/forge/pem");
 require("../lib/forge/cipherModes.js");
+require("../lib/forge/des.js");
 require("../lib/forge/md.js");
 require("../lib/forge/md5.js");
 require("../lib/forge/mgf.js");
@@ -422,7 +424,7 @@ Certificate.prototype.parseP12 = function(data, password) {
   var self = this;
   return new Promise(function(resolve, reject){
     var p12Der = forge.util.decode64(ab2Base64(data));
-    var p12Asn1 = forge.asn1.fromDer(p12Der, false);
+    var p12Asn1 = forge.asn1.fromDer(p12Der);
     var p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password);
     var certBags = p12.getBags({bagType: forge.pki.oids.certBag});
     var cert = certBags[forge.pki.oids.certBag][0].cert;
