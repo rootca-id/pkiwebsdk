@@ -81,6 +81,8 @@ var recordWithoutDate = {
 
 var p12Base64 = "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";
 
+var p12OpenSSLBase64 = "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";
+
 var certPemSample = "-----BEGIN CERTIFICATE-----\n"
 + "MIID5zCCAs+gAwIBAgIBATANBgkqhkiG9w0BAQUFADBvMRMwEQYDVQQDEwpibGFu\n"
 + "a29uLmluMQswCQYDVQQGEwJJRDEUMBIGA1UECBMLSmFib2RldGFiZWsxDzANBgNV\n"
@@ -575,25 +577,81 @@ describe("Certificate suite", function() {
         .then(function(result){
           console.log(result.privateKey);
           expect(result.privateKey.substr(0, 31)).toBe("-----BEGIN RSA PRIVATE KEY-----");
-          expect(result.certificate.certData[0].subject.attributes[0].value).toBe("blankon.in");
-          expect(result.certificate.certData[0].subject.attributes[1].value).toBe("ID");
-          expect(result.certificate.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
-          expect(result.certificate.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
-          expect(result.certificate.certData[0].subject.attributes[4].value).toBe("Test");
-          expect(result.certificate.certData[0].subject.attributes[5].value).toBe("Test");
           Key.parsePEM(result.privateKey, "SHA-256")
             .then(function(privateKey){
-              string2Ab("hello world", function(dataToBeSigned){
-                privateKey.sign(dataToBeSigned)
-                  .then(function(sig){
-                    expect(sig).toBeDefined();
-                    done();
-                  })
-                  .catch(function(err){
-                    console.log(err.message);
-                    expect(1).toBe(2);
-                    done();
-                  })
+              expect(result.certificate.certData[0].subject.attributes[0].value).toBe("blankon.in");
+              expect(result.certificate.certData[0].subject.attributes[1].value).toBe("ID");
+              expect(result.certificate.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
+              expect(result.certificate.certData[0].subject.attributes[3].value).toBe("Republik Bojong");
+              expect(result.certificate.certData[0].subject.attributes[4].value).toBe("Test");
+              expect(result.certificate.certData[0].subject.attributes[5].value).toBe("Test");
+              Key.parsePEM(result.privateKey, "SHA-256")
+                .then(function(privateKey){
+                  string2Ab("hello world", function(dataToBeSigned){
+                    privateKey.sign(dataToBeSigned)
+                      .then(function(sig){
+                        expect(sig).toBeDefined();
+                        done();
+                      })
+                      .catch(function(err){
+                        console.log(err.message);
+                        expect(1).toBe(2);
+                        done();
+                      })
+                    })
+                })
+                .catch(function(err){
+                  console.log(err.message);
+                  expect(1).toBe(2);
+                  done();
+                })
+            })
+            .catch(function(err){
+              console.log(err.message);
+              expect(1).toBe(2);
+              done();
+            })
+        })
+        .catch(function(err){
+          console.log(err.message);
+          expect(1).toBe(2);
+          done();
+        })
+    })
+    it("should be able to convert a p12 version of openSSL, from array buffer to p12 container object", function(done) {
+      var newCert = new Certificate();
+      var data = base642Ab(p12OpenSSLBase64);
+      newCert.parseP12(data, "homhai")
+        .then(function(result){
+          console.log(result.privateKey);
+          expect(result.privateKey.substr(0, 31)).toBe("-----BEGIN RSA PRIVATE KEY-----");
+          Key.parsePEM(result.privateKey, "SHA-256")
+            .then(function(privateKey){
+              expect(result.certificate.certData[0].subject.attributes[0].value).toBe("ID");
+              expect(result.certificate.certData[0].subject.attributes[1].value).toBe("Depok");
+              expect(result.certificate.certData[0].subject.attributes[2].value).toBe("Depok");
+              expect(result.certificate.certData[0].subject.attributes[3].value).toBe("Depok Baru");
+              expect(result.certificate.certData[0].subject.attributes[4].value).toBe("Simpangan Depok");
+              expect(result.certificate.certData[0].subject.attributes[5].value).toBe("Cimanggis");
+              Key.parsePEM(result.privateKey, "SHA-256")
+                .then(function(privateKey){
+                  string2Ab("hello world", function(dataToBeSigned){
+                    privateKey.sign(dataToBeSigned)
+                      .then(function(sig){
+                        expect(sig).toBeDefined();
+                        done();
+                      })
+                      .catch(function(err){
+                        console.log(err.message);
+                        expect(1).toBe(2);
+                        done();
+                      })
+                    })
+                })
+                .catch(function(err){
+                  console.log(err.message);
+                  expect(1).toBe(2);
+                  done();
                 })
             })
             .catch(function(err){
