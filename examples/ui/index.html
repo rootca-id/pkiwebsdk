@@ -54,10 +54,12 @@ Verify a PDF file<br>
     })
   })
   window.PKIWebSDK.UI.verifyPDF("verify-a-pdf", function(promise){
-    promise.then(function(isVerified){
-      console.log(isVerified);
-      isVerified = isVerified ? "verified" : "not verified";
-      alert("The Signature of the PDF file is " + isVerified);
+    promise.then(function(result){
+      console.log(result);
+      var msg = "The Signature of the PDF file is " + (result.isVerified? "verified" : "not verified" );
+      msg += ", " + (result.isValid? "valid" : "not valid" );
+      msg += " and " + (result.isTrusted? "trusted" : "not trusted" );
+      alert(msg);
     })
     .catch(function(err){
       alert(err.message);

@@ -273,9 +273,12 @@
       var verifyChain = function(){
         removeTextArea(function(){
           certChain.validate()
-            .then(function(isValid){
-              console.log(isValid);
-              alert("The certificate is : " + (isValid? "valid":"not valid"));
+            .then(function(result){
+              console.log(result);
+              var msg = "The Signature of the PDF file is ";
+              msg += (result.isValid? "valid" : "not valid" );
+              msg += " and " + (result.isTrusted? "trusted" : "not trusted" );
+              alert(msg);
             })
             .catch(function(err){
               console.log(err.message);
