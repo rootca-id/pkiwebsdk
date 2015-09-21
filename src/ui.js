@@ -1,6 +1,7 @@
 'use strict';
 
 // Obtains HTML template
+var async = require("async");
 var html = require("../html/html-min.js");
 
 /**
@@ -11,8 +12,10 @@ var UI = function() {
   var self = this;
 }
 
-// Declare empty certificate object
+// Declare empty object
 UI.certChain = {};
+UI.P12ToSign = {};
+UI.signInfo = {};
 
 
 // Handle input file
@@ -74,6 +77,117 @@ UI.handler.certChain = function(file) {
     }
   })
 }
+
+UI.handler.P12ToSign = function(file) {
+  console.log(file);
+  return new Promise(function(resolve, reject){
+    if (file) {
+      var reader = new window.FileReader()
+      var password = document.getElementById("pkiwebsdk-p12-password-to-sign").value; 
+      reader.readAsArrayBuffer(file);
+      reader.onload = function(e) {
+        var cert = new window.PKIWebSDK.Certificate();
+        var result;
+        cert.parseP12(reader.result, password)
+          .then(function(p12){
+            result = p12;
+            UI.P12ToSign.certificate = result.certificate;
+            return result.certificate.getSubject();
+          })
+          .then(function(subject){
+            UI.signInfo.name = subject.commonName;
+            UI.signInfo.location = subject.localityName;
+            return window.PKIWebSDK.Key.parsePEM(result.privateKey, "SHA-256")
+          })
+          .then(function(privateKey){
+            UI.P12ToSign.privateKey = privateKey;
+          })
+       }
+    }
+  })
+}
+UI.handler.PDFToSign = function(file) {
+  console.log(file);
+  return new Promise(function(resolve, reject){
+    if (file) {
+      var reader = new window.FileReader()
+      reader.readAsArrayBuffer(file);
+      reader.onload = function(e) {
+        UI.PDFToSign = new window.PKIWebSDK.PDF(reader.result);
+        }
+    }
+  })
+}
+UI.handler.PDFToVerify = function(file) {
+  console.log(file);
+  return new Promise(function(resolve, reject){
+    if (file) {
+      var reader = new window.FileReader()
+      reader.readAsArrayBuffer(file);
+      reader.onload = function(e) {
+        UI.PDFToVerify = new window.PKIWebSDK.PDF(new Uint8Array(reader.result));
+        var signatures = UI.PDFToVerify.getSignatures()
+          .then(function(signatures){
+            var isVerified = signatures[0].verified;
+            var certs = signatures[0].signedData.data.certificates;
+            async.eachSeries(certs, function iterator(item, cb){
+              if (isVerified) {
+                certs[0].validate()
+                  .then(function(isValid){
+                    isVerified = isValid;
+                    cb();
+                  })
+                  .catch(function(err){
+                    reject(err);
+                  })
+              } else {
+                cb();
+              }
+            }, function(done){
+              resolve(isVerified);
+            })
+          })
+          .catch(function(err){
+            reject(err);
+          })
+        }
+    }
+  })
+}
+
+/**
+ * Transfer an array buffer data to client as file download
+ *
+ * @params {ArrayBuffer} arrayBuffer - An array buffer
+ * @params {ArrayBuffer} filename - File name with extension
+ * @params {ArrayBuffer} type - File type, ex : "application/pdf"
+ */
+
+UI.toFile = function(arrayBuffer, filename, type){
+  // downloading!
+  var blob = new Blob([arrayBuffer], { type: type });
+  if (typeof window.navigator.msSaveBlob !== 'undefined') {
+    window.navigator.msSaveBlob(blob, filename);
+  } else {
+    var URL = window.URL || window.webkitURL;
+    var downloadUrl = URL.createObjectURL(blob);
+    if (filename) {
+      var a = document.createElement("a");
+      if (typeof a.download === 'undefined') {
+        window.location = downloadUrl;
+      } else {
+        a.href = downloadUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+      }
+    } else {
+      window.location = downloadUrl;
+    }
+    setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100);
+  }
+}
+
 
 /**
  * Generate HTML element that handle certificate PEM file
@@ -151,6 +265,46 @@ UI.getCertChain = function(element, cb) {
     UI.certChain.certData = [];              
     var list = document.getElementById("pkiwebsdk-cert-chain-list");
     list.innerHTML = "Chain list :";
+  });
+}
+
+/**
+ * Generate HTML element that handle P12 and PDF file, in purpose of signing the PDF.
+ *
+ * @params {String} element - Id of the parent element. Without # symbol.
+ * @returns {Object} cb - Return a promise from PDF.prototype.sign()
+ */
+UI.signPDF = function(element, cb) {
+  var self = this;
+  var e = document.getElementById(element);
+  e.innerHTML = html["sign-pdf.html"];
+  document.getElementById("pkiwebsdk-get-p12-to-sign").addEventListener("change", function(evt){
+    var files = evt.target.files;
+    UI.handler.P12ToSign(files[0]);
+  });
+  document.getElementById("pkiwebsdk-get-pdf-to-sign").addEventListener("change", function(evt){
+    var files = evt.target.files;
+    UI.handler.PDFToSign(files[0]);
+  });
+  document.getElementById("pkiwebsdk-get-pdf-to-sign-trigger").addEventListener("click", function(evt){
+    UI.signInfo.date = new Date();
+    cb(UI.PDFToSign.sign(UI.P12ToSign.certificate, UI.P12ToSign.privateKey, UI.signInfo));
+  });
+}
+
+/**
+ * Generate HTML element that handle PDF file, in purpose of verifying the PDF.
+ *
+ * @params {String} element - Id of the parent element. Without # symbol.
+ * @returns {Object} cb - Return a promise from PDF.prototype.verify()
+ */
+UI.verifyPDF = function(element, cb) {
+  var self = this;
+  var e = document.getElementById(element);
+  e.innerHTML = html["verify-pdf.html"];
+  document.getElementById("pkiwebsdk-get-pdf-to-verify").addEventListener("change", function(evt){
+    var files = evt.target.files;
+    cb(UI.handler.PDFToVerify(files[0]));
   });
 }
 
