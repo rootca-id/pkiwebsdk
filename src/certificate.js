@@ -569,10 +569,8 @@ Certificate.trust = function(chain) {
           for (var i = 0; i < chain.length; i++) {
             window.PKIWebSDK.private.caStore.addCertificate(chain[i]);
           }
-          resolve(result);
-        } else {
-          resolve(result);
         }
+        resolve(result);
       })
       .catch(function(err){
         reject(err);
