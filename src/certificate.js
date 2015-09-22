@@ -460,13 +460,15 @@ Certificate.realValidate = function(chain){
       };
       return reject(error);
     }
-    
-    var isValid = true;
+    var result = {
+      isValid : true,
+      isTrusted : true
+    } 
     var isTop = false;
     var i = 0;
       while (!isTop) {
-        if (!isValid) {
-          resolve(isValid);
+        if (!result.isValid) {
+          resolve(result);
           break;
         }
         var error = null;
@@ -503,6 +505,7 @@ Certificate.realValidate = function(chain){
             i--;
             isTop = false;
           } else {
+            result.isTrusted = false;
             error = {
               message: 'Certificate is not trusted.',
               error: forge.pki.certificateError.unknown_ca
@@ -520,10 +523,10 @@ Certificate.realValidate = function(chain){
         
         // Set isValid to be false if there is any error
         if (error != null) {
-          isValid = false;
+          result.isValid = false;
         }
         if (isTop) {
-          resolve(isValid);  
+          resolve(result);  
         }
         i++
       } // End of while
@@ -541,8 +544,8 @@ Certificate.prototype.validate = function() {
   var chain = self.certData;
   return new Promise(function(resolve, reject) {
     Certificate.realValidate(chain)
-      .then(function(isValid){
-        resolve(isValid);
+      .then(function(result){
+        resolve(result);
       })
       .catch(function(err){
         reject(err);
@@ -561,15 +564,13 @@ Certificate.trust = function(chain) {
   var self = this;
   return new Promise(function(resolve, reject) {
     Certificate.realValidate(chain)
-      .then(function(isValid){
-        if (isValid) {
+      .then(function(result){
+        if (result.isValid && result.isTrusted) {
           for (var i = 0; i < chain.length; i++) {
             window.PKIWebSDK.private.caStore.addCertificate(chain[i]);
           }
-          resolve(true);
-        } else {
-          resolve(false);
         }
+        resolve(result);
       })
       .catch(function(err){
         reject(err);

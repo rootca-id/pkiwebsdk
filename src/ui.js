@@ -128,13 +128,19 @@ UI.handler.PDFToVerify = function(file) {
         UI.PDFToVerify = new window.PKIWebSDK.PDF(new Uint8Array(reader.result));
         var signatures = UI.PDFToVerify.getSignatures()
           .then(function(signatures){
-            var isVerified = signatures[0].verified;
+            var result = {
+              isVerified : signatures[0].verified,
+              isValid : true,
+              isTrusted : true
+            }
             var certs = signatures[0].signedData.data.certificates;
+            console.log(certs);
             async.eachSeries(certs, function iterator(item, cb){
-              if (isVerified) {
+              if (result.isValid && result.isTrusted) {
                 certs[0].validate()
-                  .then(function(isValid){
-                    isVerified = isValid;
+                  .then(function(validationResult){
+                    result.isValid = validationResult.isValid;
+                    result.isTrusted = validationResult.isTrusted;
                     cb();
                   })
                   .catch(function(err){
@@ -144,7 +150,7 @@ UI.handler.PDFToVerify = function(file) {
                 cb();
               }
             }, function(done){
-              resolve(isVerified);
+              resolve(result);
             })
           })
           .catch(function(err){
@@ -259,7 +265,7 @@ UI.getCertChain = function(element, cb) {
     cb(UI.certChain.validate());
   });
   document.getElementById("pkiwebsdk-get-cert-chain-trust").addEventListener("click", function(evt){
-    cb(window.PKIWebSDK.Certificate.trust(certChain.certData));
+    cb(window.PKIWebSDK.Certificate.trust(UI.certChain.certData));
   });
   document.getElementById("pkiwebsdk-clear-cert-chain").addEventListener("click", function(evt){
     UI.certChain.certData = [];              

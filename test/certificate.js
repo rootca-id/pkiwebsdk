@@ -788,22 +788,28 @@ describe("Certificate suite", function() {
     });
     it("should be able to check validity of a certificate", function(done) {
       certSample.validate()
-        .then(function(isValid){
-          expect(isValid).toBe(true);
+        .then(function(result){
+          expect(result.isValid).toBe(true);
+          expect(result.isTrusted).toBe(true);
           done();
         })
         .catch(function(err){
           if (err) {
             console.log(err.message);
           }
+          expect(result.isValid).toBe(true);
+          expect(result.isTrusted).toBe(true);
           expect(1).toBe(2);
           done();
         })
     });
     it("should be able to check validity of certificate chain", function(done) {
       certChainSample.validate()
-        .then(function(isValid){
-          expect(isValid).toBe(true);
+        .then(function(result){
+          console.log("validation result");
+          console.log(result);
+          expect(result.isValid).toBe(true);
+          expect(result.isTrusted).toBe(true);
           done();
         })
         .catch(function(err){
@@ -817,7 +823,7 @@ describe("Certificate suite", function() {
     it("should be fail to validate certificate chain because of empty certChain", function(done) {
       var emptyCert = new Certificate();
       emptyCert.validate()
-        .then(function(isValid){
+        .then(function(result){
           expect(1).toBe(2);
           done();
         })
@@ -834,8 +840,10 @@ describe("Certificate suite", function() {
       brokenPath.certData[2] = certChainSample.certData[2];
 
       brokenPath.validate()
-        .then(function(isValid){
-          expect(isValid).toBe(false);
+        .then(function(result){
+          console.log("validation result");
+          console.log(result);
+          expect(result.isValid).toBe(false);
           done();
         })
         .catch(function(err){
@@ -864,8 +872,8 @@ describe("Certificate suite", function() {
             expect(cert.certData[0].subject.attributes[5].value).toBe("Uji coba");
             done();
             cert.validate()
-              .then(function(isValid){
-                expect(isValid).toBe(false);
+              .then(function(result){
+                expect(result.isValid).toBe(false);
                 done();
               })
               .catch(function(err){
@@ -897,8 +905,8 @@ describe("Certificate suite", function() {
       certs.parsePEM(certChainSample);
       var certChain = certs.certData;
       certChainSample.validate()
-        .then(function(isValid){
-          expect(isValid).toBe(true);
+        .then(function(result){
+          expect(result.isValid).toBe(true);
           done();
         })
         .catch(function(err){
@@ -911,8 +919,8 @@ describe("Certificate suite", function() {
     });
     it("should be able to check validity of certificate chain", function(done) {
       certChainSample.validate()
-        .then(function(isValid){
-          expect(isValid).toBe(true);
+        .then(function(result){
+          expect(result.isValid).toBe(true);
           done();
         })
         .catch(function(err){
@@ -931,8 +939,8 @@ describe("Certificate suite", function() {
           var certChainIntermediate = new Certificate();
           certChainIntermediate.certData[0] = certChain[0];
           certChainIntermediate.validate()
-            .then(function(isValid){
-              expect(isValid).toBe(true);
+            .then(function(result){
+              expect(result.isValid).toBe(true);
               done();
             })
             .catch(function(err){
@@ -953,8 +961,8 @@ describe("Certificate suite", function() {
           console.log("cert length");
           console.log(certChain.length);
           Certificate.trust(certChain)
-            .then(function(isValid){
-              expect(isValid).toBe(true);
+            .then(function(result){
+              expect(result.isValid).toBe(true);
               expect(Object.keys(window.PKIWebSDK.private.caStore.certs).length).toEqual(3);
               done();
             })
@@ -976,8 +984,10 @@ describe("Certificate suite", function() {
           brokenPath.certData[1] = certs.certData[0];
           brokenPath.certData[2] = certs.certData[2];
           Certificate.trust(brokenPath.certData)
-            .then(function(isValid){
-              expect(isValid).toBe(false);
+            .then(function(result){
+              console.log("validation result");
+              console.log(result);
+              expect(result.isValid).toBe(false);
               done();
             })
             .catch(function(err){
