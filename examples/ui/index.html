@@ -43,6 +43,18 @@ Verify a PDF file<br>
       alert(err.message);
     })
   })
+  window.PKIWebSDK.UI.getCertChain("validate-cert-chain", function(promise){
+    promise.then(function(result){
+      console.log(result);
+      var msg = "The certificate chain is " + (result.isVerified? "verified" : "not verified" );
+      msg += ", " + (result.isValid? "valid" : "not valid" );
+      msg += " and " + (result.isTrusted? "trusted" : "not trusted" );
+      alert(msg);
+    })
+    .catch(function(err){
+      alert(err.message);
+    })
+  })
   window.PKIWebSDK.UI.signPDF("sign-a-pdf", function(promise){
     promise.then(function(signed){
       console.log(signed);
