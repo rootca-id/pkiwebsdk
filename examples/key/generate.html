@@ -1,40 +1,45 @@
-<script src="bundle.js"></script>
-<script>
-  console.log(PKIWebSDK);
-  var generatePair = function(){
-    var algorithm = document.getElementById("algorithm").value;
-    if (!algorithm || algorithm.length < 1) {
-      alert("You must input algorithm string");
-    }
-    PKIWebSDK.Key.generatePair(algorithm)
-      .then(function(keyPair){
-        console.log(keyPair);
-        keyPair.publicKey.toPEM()
-          .then(function(pemString){
-            console.log(pemString);
-            var privateKeyContainer = document.getElementById("privateKeyContainer");
-            privateKeyContainer.innerHTML = pemString;
-          })
-        keyPair.privateKey.toPEM()
-          .then(function(pemString){
-            console.log(pemString);
-            var publicKeyContainer = document.getElementById("publicKeyContainer");
-            publicKeyContainer.innerHTML = pemString;
-          })
-      })
-      .catch(function(err){
-        alert(err);
-      });
-  }
-</script>
-
-<div>
-  <h4>Generate pair</h4>
-  <input id="algorithm" placeholder="Algorithm, ex : SHA-256"></input>
-  <button onClick="generatePair()">generate</button>
-  <br>
-  <textarea cols="80" rows="10" style="margin:10px;" id="privateKeyContainer"></textarea>
-  <br>
-  <textarea cols="80" rows="40" style="margin:10px" id="publicKeyContainer"></textarea>
-  <br>
-</div>
+<html>
+    <head>
+        <script src="../../build/bundle.js"></script>
+    </head>
+    <body>
+      <div>
+        <h4>Generate pair</h4>
+        <input id="algorithm" placeholder="Algorithm, ex : SHA-256"></input>
+        <button onClick="generatePair()">generate</button>
+        <br>
+        <textarea cols="80" rows="10" style="margin:10px;" id="privateKeyContainer"></textarea>
+        <br>
+        <textarea cols="80" rows="40" style="margin:10px" id="publicKeyContainer"></textarea>
+        <br>
+      </div>
+      <script>
+        console.log(PKIWebSDK);
+        var generatePair = function(){
+          var algorithm = document.getElementById("algorithm").value;
+          if (!algorithm || algorithm.length < 1) {
+            alert("You must input algorithm string");
+          }
+          PKIWebSDK.Key.generatePair(algorithm)
+            .then(function(keyPair){
+              console.log(keyPair);
+              keyPair.publicKey.toPEM()
+                .then(function(pemString){
+                  console.log(pemString);
+                  var privateKeyContainer = document.getElementById("privateKeyContainer");
+                  privateKeyContainer.innerHTML = pemString;
+                })
+              keyPair.privateKey.toPEM()
+                .then(function(pemString){
+                  console.log(pemString);
+                  var publicKeyContainer = document.getElementById("publicKeyContainer");
+                  publicKeyContainer.innerHTML = pemString;
+                })
+            })
+            .catch(function(err){
+              alert(err);
+            });
+        }
+      </script>
+    </body>
+</html>

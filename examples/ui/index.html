@@ -1,0 +1,80 @@
+<script src="../../build/bundle.js"></script>
+Parse Cert PEM <div id="parse-pem"></div><br>
+Parse CRL <div id="parse-crl"></div><br>
+Parse P12 to Cert. Fill the password then select a p12 file <div id="parse-p12"></div><br>
+Validate certificate chain <div id="validate-cert-chain"></div><br>
+<hr>
+Sign a PDF file<br>
+<div id="sign-a-pdf"></div>
+<hr>
+Verify a PDF file<br>
+<div id="verify-a-pdf"></div>
+<script>
+  window.PKIWebSDK.UI.getCertPEM("parse-pem", function(promise){
+    promise.then(function(cert){
+      console.log(cert);
+      cert.getSubject().then(function(subject){
+        alert("PEM successfully parsed. \n\n" + JSON.stringify(subject));
+      })
+    })
+    .catch(function(err){
+      alert(err.message);
+    })
+  })
+  window.PKIWebSDK.UI.getCRL("parse-crl", function(promise){
+    promise.then(function(revocationList){
+      console.log(revocationList);
+      alert("CRL successfully parsed. \n\n" + revocationList);
+    })
+    .catch(function(err){
+      alert(err.message);
+    })
+  })
+  window.PKIWebSDK.UI.getP12("parse-p12", function(promise){
+    promise.then(function(result){
+      console.log(result);
+      result.certificate.getSubject().then(function(subject){
+              alert("P12 successfully parsed. \n\n CERTIFICATE :\n" + JSON.stringify(subject));
+              alert("PRIVATE KEY : \n\n" + result.privateKey);
+      })
+
+    })
+    .catch(function(err){
+      alert(err.message);
+    })
+  })
+  window.PKIWebSDK.UI.getCertChain("validate-cert-chain", function(promise){
+    promise.then(function(result){
+      console.log(result);
+      var msg = "The certificate chain is " + (result.isVerified? "verified" : "not verified" );
+      msg += ", " + (result.isValid? "valid" : "not valid" );
+      msg += " and " + (result.isTrusted? "trusted" : "not trusted" );
+      alert(msg);
+    })
+    .catch(function(err){
+      alert(err.message);
+    })
+  })
+  window.PKIWebSDK.UI.signPDF("sign-a-pdf", function(promise){
+    promise.then(function(signed){
+      console.log(signed);
+      alert("Successfully signed");
+      window.PKIWebSDK.UI.toFile(signed, "signed-data.pdf", "application/pdf");
+    })
+    .catch(function(err){
+      alert(err.message);
+    })
+  })
+  window.PKIWebSDK.UI.verifyPDF("verify-a-pdf", function(promise){
+    promise.then(function(result){
+      console.log(result);
+      var msg = "The Signature of the PDF file is " + (result.isVerified? "verified" : "not verified" );
+      msg += ", " + (result.isValid? "valid" : "not valid" );
+      msg += " and " + (result.isTrusted? "trusted" : "not trusted" );
+      alert(msg);
+    })
+    .catch(function(err){
+      alert(err.message);
+    })
+  })
+</script>

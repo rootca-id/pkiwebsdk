@@ -23,10 +23,8 @@ var Key = function(key) {
 /**
  * Generates a key pair
  *
- * @param {string} algorithm - The algorithm used to generate the key pair
- * @returns {Promise} result
- * @resolves {Object} - An object containing both private and public keys
- * @rejects {Error} - Information about the error that occurs.
+ * @param {String} algorithm - The algorithm used to generate the key pair
+ * @returns {Object} - An object containing both private and public keys
  * @static
  */
 Key.generatePair = function(algorithm) {
@@ -56,9 +54,7 @@ Key.generatePair = function(algorithm) {
  * Parse PEM string to key object.
  * @param {String} pem - the PEM string that will be parsed
  * @param {string} algorithm - the algorithm used in this PEM string
- * @returns {Promise} result
- * @resolves {Object} - A Key object
- * @rejects {Error} - Information about the error that occurs.
+ * @returns {Object} - A Key object
  * @static
  */
 Key.parsePEM = function(pem, algorithm) {
@@ -84,9 +80,7 @@ Key.parsePEM = function(pem, algorithm) {
 
 /**
  * Gets string representation of the key in PEM format
- * @returns {Promise} result
- * @resolves {String} - A PEM string
- * @rejects {Error} - Information about the error that occurs.
+ * @returns {String} - A PEM string
  */
 Key.prototype.toPEM = function() {
   var self = this;
@@ -103,9 +97,7 @@ Key.prototype.toPEM = function() {
 
 /**
  * Gets JSON web key representation of the key
- * @returns {Promise} result
- * @resolves {Object} - A JSON web key object
- * @rejects {Error} - Information about the error that occurs.
+ * @returns {Object} - A JSON web key object
  */
 Key.prototype.toJwk = function() {
   var self = this;
@@ -121,9 +113,7 @@ Key.prototype.toJwk = function() {
 /**
  * Signs data using the key
  * @param {ArrayBuffer} data - the data to be signed
- * @returns {Promise} result
- * @resolves {ArrayBuffer} - An ArrayBuffer of signature
- * @rejects {Error} - Information about the error that occurs.
+ * @returns {ArrayBuffer} - An ArrayBuffer of signature
  */
 Key.prototype.sign = function(data) {
   var self = this;
@@ -152,9 +142,7 @@ Key.prototype.sign = function(data) {
  * Verify data using the key
  * @param {ArrayBuffer} signature - the signature
  * @param {ArrayBuffer} data - the data to be checked
- * @returns {Promise} result
- * @resolves {Boolean} - A boolean value that represents whether the signature is valid
- * @rejects {Error} - Information about the error that occurs.
+ * @returns {Boolean} - A boolean value that represents whether the signature is valid
  */
 Key.prototype.verify = function(signature, data) {
   var self = this;

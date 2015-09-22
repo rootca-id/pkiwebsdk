@@ -4,7 +4,7 @@ var files = fs.readdirSync('./test/assets/');
 
 for (var i = 0; i < files.length; i ++) {
   var f = files[i];
-  if (f.lastIndexOf('.pdf') != 5)
+  if (f.length - f.lastIndexOf('.der' ) === 3)
     continue;
 
   var c = fs.readFileSync('./test/assets/' + f);

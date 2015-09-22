@@ -1,79 +1,86 @@
-<script src="bundle.js"></script>
-<script>
-  console.log(PKIWebSDK);
-  if (!window.File && !window.FileReader && !window.FileList && !window.Blob) {
-    alert('The File APIs are not fully supported in this browser.');
-  }
-
-  var data;
-  var files = [];
-  var sign = function(){
-    var pem = document.getElementById("existingPrivateKey").value;
-    PKIWebSDK.Key.parsePEM(pem, "SHA-256")
-      .then(function(parsedPEM){
-        console.log("parsedPEM");
-        console.log(parsedPEM);
-        parsedPEM.sign(data)
-          .then(function(signature){
-            toFile(signature); 
-          })
-          .catch(function(err){
-            alert(err);
-          })
-      })
-      .catch(function(err){
-        alert(err);
-      })
-  }
-  
-  var toFile = function(arrayBuffer){
-    // downloading!
-    var blob = new Blob([arrayBuffer], { type: "text/plain" });
-    var filename = "signature";
-    if (typeof window.navigator.msSaveBlob !== 'undefined') {
-      window.navigator.msSaveBlob(blob, filename);
-    } else {
-      var URL = window.URL || window.webkitURL;
-      var downloadUrl = URL.createObjectURL(blob);
-      if (filename) {
-        var a = document.createElement("a");
-        if (typeof a.download === 'undefined') {
-          window.location = downloadUrl;
-        } else {
-          a.href = downloadUrl;
-          a.download = filename;
-          document.body.appendChild(a);
-          a.click();
+<html>
+    <head>
+        <script src="../../build/bundle.js"></script>
+    </head>
+    <body>
+      <div>
+        <input type="file" id="files" name="files[]" multiple />
+        <hr>
+        <h4>Sign with existing key</h4>
+        <textarea cols="80" rows="40" style="margin:10px;" id="existingPrivateKey"></textarea>
+        <br>
+        <button onClick="sign()">Sign this file with existing private key</button>
+      </div>
+      <script>
+        console.log(PKIWebSDK);
+        if (!window.File && !window.FileReader && !window.FileList && !window.Blob) {
+          alert('The File APIs are not fully supported in this browser.');
         }
-      } else {
-        window.location = downloadUrl;
-      }
-      setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100);
-    }
-  }
-  setTimeout(function(){
-    document.getElementById('files').addEventListener('change', function(evt){
-      console.log("file added");
-      files = evt.target.files; // FileList object  
-      // files is a FileList of File objects. List some properties.
-      // Read file as ArrayBuffer
-      console.log(files[0]);
-      var reader = new window.FileReader()
-      reader.readAsArrayBuffer(files[0]);
-      reader.onload = function(e) {
-        data = reader.result;
-        console.log(data)
-       }
-  
-    });
-  }, 500) 
-</script>
+      
+        var data;
+        var files = [];
+        var sign = function(){
+          var pem = document.getElementById("existingPrivateKey").value;
+          PKIWebSDK.Key.parsePEM(pem, "SHA-256")
+            .then(function(parsedPEM){
+              console.log("parsedPEM");
+              console.log(parsedPEM);
+              parsedPEM.sign(data)
+                .then(function(signature){
+                  toFile(signature); 
+                })
+                .catch(function(err){
+                  alert(err);
+                })
+            })
+            .catch(function(err){
+              alert(err);
+            })
+        }
+        
+        var toFile = function(arrayBuffer){
+          // downloading!
+          var blob = new Blob([arrayBuffer], { type: "text/plain" });
+          var filename = "signature";
+          if (typeof window.navigator.msSaveBlob !== 'undefined') {
+            window.navigator.msSaveBlob(blob, filename);
+          } else {
+            var URL = window.URL || window.webkitURL;
+            var downloadUrl = URL.createObjectURL(blob);
+            if (filename) {
+              var a = document.createElement("a");
+              if (typeof a.download === 'undefined') {
+                window.location = downloadUrl;
+              } else {
+                a.href = downloadUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+              }
+            } else {
+              window.location = downloadUrl;
+            }
+            setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100);
+          }
+        }
+        setTimeout(function(){
+          document.getElementById('files').addEventListener('change', function(evt){
+            console.log("file added");
+            files = evt.target.files; // FileList object  
+            // files is a FileList of File objects. List some properties.
+            // Read file as ArrayBuffer
+            console.log(files[0]);
+            var reader = new window.FileReader()
+            reader.readAsArrayBuffer(files[0]);
+            reader.onload = function(e) {
+              data = reader.result;
+              console.log(data)
+             }
+        
+          });
+        }, 500) 
+      </script>
+    </body>
+</html>
 
-<div>
-  <input type="file" id="files" name="files[]" multiple />
-  <hr>
-  <h4>Sign with existing key</h4>
-  <textarea cols="80" rows="40" style="margin:10px;" id="existingPrivateKey"></textarea>
-  <br>
-  <button onClick="sign()">Sign this file with existing private key</button>
-</div>
+
