@@ -193,8 +193,9 @@ describe("UI Class", function() {
         document.getElementById("pkiwebsdk-get-cert-chain-validate").click();
         expect(UI.certChain.certData.length).toBe(1);
         UI.certChain.validate()
-          .then(function(isValid){
-            expect(isValid).toBe(true);
+          .then(function(result){
+            expect(result.isValid).toBe(true);
+            expect(result.isTrusted).toBe(true);
             done();
           })
       }, 1000);
