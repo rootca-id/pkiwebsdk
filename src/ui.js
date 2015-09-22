@@ -265,7 +265,7 @@ UI.getCertChain = function(element, cb) {
     cb(UI.certChain.validate());
   });
   document.getElementById("pkiwebsdk-get-cert-chain-trust").addEventListener("click", function(evt){
-    cb(window.PKIWebSDK.Certificate.trust(certChain.certData));
+    cb(window.PKIWebSDK.Certificate.trust(UI.certChain.certData));
   });
   document.getElementById("pkiwebsdk-clear-cert-chain").addEventListener("click", function(evt){
     UI.certChain.certData = [];              
