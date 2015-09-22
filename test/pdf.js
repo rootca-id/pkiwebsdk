@@ -121,7 +121,7 @@ var uint = new Uint8Array(doc);
           a += uint[i] + ','; 
         }
         a += ']';
-        console.log(a);
+        //console.log(a);
 
 
 
@@ -265,7 +265,7 @@ var uint = new Uint8Array(doc);
 
         var p = new Pdf(new Uint8Array(doc));
         var signatures = p.getSignatures().then(function(signatures) {
-          expect(signatures.length).toBe(2);
+          expect(signatures.length).toBe(3);
           expect(signatures[0].verified).toBe(true);
           done();
         });
