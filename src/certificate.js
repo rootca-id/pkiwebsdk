@@ -150,6 +150,8 @@ Certificate.getRevocationList = function(data){
  * @param {Object} keyPair - Key pair 
  * @param {Object} keyPair.publicKey - public key in Key object
  * @param {Object} keyPair.privateKey - private kye in Key object
+ * @returns {Object} - Certificate object
+ * @static
  */
 Certificate.create = function(record, keyPair) {
   return new Promise(function(resolve, reject){
@@ -271,7 +273,8 @@ Certificate.create = function(record, keyPair) {
  * @param {Object} keyPair.publicKey - public key in Key object
  * @param {Object} keyPair.privateKey - private kye in Key object
  * @param {String} password - The challenge password
- * @returns {String} - The CSR in PEM format
+ * @returns {Object} - The CSR object
+ * @static
  */
 Certificate.createRequest = function(subject, keyPair, password) {
   return new Promise(function(resolve, reject){
@@ -447,8 +450,10 @@ Certificate.prototype.parseP12 = function(data, password) {
 
 /*
  * Real validate function : check expirate date, verify cert, verify cert path
- * @params {Array} chain - An array of certs
- * @returns {boolean} - Whether the validation valid or not
+ * @params {Array} chain - An array of certs. Sorted by certificate level. The parent/top level certificate is the last item in array.
+ * @returns {Object} result - The result of validation
+ * @returns {Boolean} result.isValid - Whether the certificate valid or not
+ * @returns {Boolean} result.isTrusted - Whether the certificate trusted or not
  * @static
  */
 
@@ -536,8 +541,10 @@ Certificate.realValidate = function(chain){
 /**
  * Validates the certificate 
  *
- * @param {Array} chain - An array of cert chain in forge cert object format, the top level of certificates is the last array item.
- * @returns {boolean} - Whether the validation valid or not
+ * @param {Array} chain - An array of cert chain in forge cert object format. Sorted by certificate level. The parent/top level certificate is the last item in array. 
+ * @returns {Object} result - The result of validation
+ * @returns {Boolean} result.isValid - Whether the certificate valid or not
+ * @returns {Boolean} result.isTrusted - Whether the certificate trusted or not
  */
 Certificate.prototype.validate = function() {
   var self = this;
@@ -556,9 +563,11 @@ Certificate.prototype.validate = function() {
 
 /**
  * Trust the certificate 
- *
- * @param {Array} chain - An array of cert chain in forge cert object format, the top CA is the last array item.
- * @returns {boolean} - Whether the validation valid or not
+ * @description - If valid, the certificate(s) will be merged to CA Store
+ * @param {Array} chain - An array of cert chain in forge cert object format. Sorted by certificate level. The parent/top level certificate is the last item in array.
+ * @returns {Object} result - The result of validation
+ * @returns {Boolean} result.isValid - Whether the certificate valid or not
+ * @returns {Boolean} result.isTrusted - Whether the certificate trusted or not
  */
 Certificate.trust = function(chain) {
   var self = this;
@@ -582,7 +591,7 @@ Certificate.trust = function(chain) {
 /**
  * Gets the issuer information
  *
- * @returns {Object}
+ * @returns {Object} - Object that contains certificate's issuer detail
  */
 Certificate.prototype.getIssuer = function() {
   var cert = this.certData[0];
@@ -599,7 +608,7 @@ Certificate.prototype.getIssuer = function() {
 /**
  * Gets the subject information
  *
- * @returns {Object}
+ * @returns {Object} - Object that contains certificate's subject detail
  */
 Certificate.prototype.getSubject = function() {
   var cert = this.certData[0];
@@ -616,7 +625,7 @@ Certificate.prototype.getSubject = function() {
 /**
  * Gets the version number of the certificate
  *
- * @returns {Number}
+ * @returns {Number} - Version number of certificate
  */ 
 Certificate.prototype.getVersionNumber = function() {
   var cert = this.certData[0];
@@ -628,7 +637,7 @@ Certificate.prototype.getVersionNumber = function() {
 /**
  * Gets the serial number of the certificate
  *
- * @returns {Number}
+ * @returns {String} - Serial number of certificate
  */ 
 Certificate.prototype.getSerialNumber = function() {
   var cert = this.certData[0];
@@ -640,7 +649,7 @@ Certificate.prototype.getSerialNumber = function() {
 /**
  * Gets the algorithm used to create the public key
  *
- * @returns {String}
+ * @returns {String} - Algorithm of certificate's public key
  */
 Certificate.prototype.getPublicKeyAlgorithm = function() {
   var cert = this.certData[0];
@@ -653,7 +662,7 @@ Certificate.prototype.getPublicKeyAlgorithm = function() {
 /**
  * Gets the public key of the subject which signed the certificate
  *
- * @returns {Key}
+ * @returns {Key} - Public key of certificate
  */
 Certificate.prototype.getPublicKey = function() {
   var cert = this.certData[0];
@@ -666,7 +675,7 @@ Certificate.prototype.getPublicKey = function() {
 /**
  * Gets the signature of the certificate
  *
- * @returns {ArrayBuffer}
+ * @returns {ArrayBuffer} - An array buffer of the certificate's signature
  */
 Certificate.prototype.getSignature = function() {
   var self = this;
@@ -679,7 +688,7 @@ Certificate.prototype.getSignature = function() {
 /**
  * Gets the usage of the certificate
  *
- * @returns {string[]} 
+ * @returns {string[]} - Array of string that represents the usage of certificate
  */
 Certificate.prototype.getUsage = function() {
   var extensions = this.certData[0].extensions;
