@@ -96,6 +96,7 @@ describe("PDF suite", function() {
     });
 
   });
+
   describe('Signing', function() {
 
     it('should be able to sign a minimal file', function(done) {
@@ -112,6 +113,18 @@ describe("PDF suite", function() {
 
       var p = new Pdf(new Uint8Array(file));
       p.sign(certSample, key, info).then(function(doc) {
+var uint = new Uint8Array(doc);
+
+    var uint = new Uint8Array(doc);
+        var a = '[';
+        for (var i = 0; i < uint.length; i ++) {
+          a += uint[i] + ','; 
+        }
+        a += ']';
+        console.log(a);
+
+
+
         var p = new Pdf(new Uint8Array(doc));
         var signatures = p.getSignatures().then(function(signatures) {
           expect(signatures.length).toBe(1);
@@ -206,8 +219,7 @@ describe("PDF suite", function() {
         contactInfo: 'contactInfo1'
       };
 
-file[0] = 37;
-console.log('--------->', file[0]);
+      file[0] = 37;
       var p = new Pdf(new Uint8Array(file));
       p.sign(certSample, key, info).then(function(doc) {
         var uint = new Uint8Array(doc);
@@ -261,5 +273,53 @@ console.log('--------->', file[0]);
         console.log(e.message);
       });
     });
+  });
+  describe('Signing visually', function() {
+
+
+    it('should be able to sign a minimal file', function(done) {
+      var sig1 = new Uint8Array(require('./assets/Louis-xiv-signature.jpg.js'));
+      var file = require('./assets/minimal.pdf.js');
+      var key = keyPair.privateKey; 
+      var password = '';
+      var info = {
+        name: 'test1',
+        reason: 'reason1',
+        'location': 'location1',
+        contactInfo: 'contactInfo1',
+        page: 0,
+        x: 50,
+        y: 50,
+        width: 100,
+        height: 100,
+        image: sig1
+      };
+
+      var p = new Pdf(new Uint8Array(file));
+      p.sign(certSample, key, info).then(function(doc) {
+        var uint = new Uint8Array(doc);
+        var a = '[';
+        for (var i = 0; i < uint.length; i ++) {
+          a += uint[i] + ','; 
+        }
+        a += ']';
+        //console.log(a);
+
+
+        var p = new Pdf(new Uint8Array(doc));
+        var signatures = p.getSignatures().then(function(signatures) {
+          expect(signatures.length).toBe(1);
+          expect(signatures[0].verified).toBe(true);
+          done();
+        }).catch(function(e) {
+          console.log(e.stack);
+        });
+      }).catch(function(e) {
+        console.log(e.message);
+      });
+    });
+
+
+
   });
 });
