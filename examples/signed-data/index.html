@@ -24,7 +24,7 @@
           File to be signed : <input type="file" id="file-to-sign"></input>
           <br>Certificate in PEM : <input type="file" id="to-sign-certificate"></input>
           <br>Private Key in PEM : <input type="file" id="to-sign-private-key"></input>
-          <br><br><button id="to-sign-trigger">Tanda tangani</button>
+          <br><br><button id="to-sign-trigger">Sign</button>
         </fieldset>
       </div>
             
@@ -40,7 +40,6 @@
         // Read file as ArrayBuffer
         var reader = new window.FileReader()
         reader.readAsBinaryString(files[files.length-1]);
-        /* reader.readAsBinaryString(files[0]); */
         reader.onload = function(e) {
           derData = reader.result;
           var signedData = window.PKIWebSDK.SignedData.parseDER(derData);
@@ -93,7 +92,7 @@
       document.getElementById("to-sign-trigger").addEventListener("click", function(evt){
         window.PKIWebSDK.SignedData.sign(certificateToSign, privateKeyToSign, fileToBeSigned)
           .then(function(result){
-            console.log(result);
+            window.PKIWebSDK.UI.toFile(result , "signed-data.der", "application/pcks7");
           })
       })
 
