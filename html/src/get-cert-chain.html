@@ -1,9 +1,22 @@
-<div class="pkiwebsdk-container">
-  <input type="file" id="pkiwebsdk-get-cert-chain" multiple />
-  <button id="pkiwebsdk-get-cert-chain-validate">Verify</button>
-  <button id="pkiwebsdk-get-cert-chain-trust">Trust</button>
-  <br><br>
-  Add the bottom level certificate first.
-  <div id="pkiwebsdk-cert-chain-list">Chain list :</div>
-  <br><button id="pkiwebsdk-clear-cert-chain">clear list</button>
-</div>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Validate Certificate Chain</title>
+		<link rel="stylesheet" href="../../build/examples-ui.css">
+	</head>
+
+	<body>
+		<div class="pkiwebsdk-container">
+			<h4>Validate certificate chain</h4> 
+			<input type="file" id="pkiwebsdk-get-cert-chain" multiple />
+			<button class="btn" id="pkiwebsdk-get-cert-chain-validate">Verify</button>
+			<button class="btn" id="pkiwebsdk-get-cert-chain-trust">Trust</button>
+			<br><br>
+			<p>Add the bottom level certificate first.</p>
+			<div id="pkiwebsdk-cert-chain-list">Chain list :</div>
+			<br>
+			<button class="btn" id="pkiwebsdk-clear-cert-chain">clear list</button>
+		</div>
+	</body>
+</html>
