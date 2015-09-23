@@ -43,7 +43,7 @@
         /* reader.readAsBinaryString(files[0]); */
         reader.onload = function(e) {
           derData = reader.result;
-          var signedData = window.PKIWebSDK.SignedData.fromDER(derData);
+          var signedData = window.PKIWebSDK.SignedData.parseDER(derData);
           var data = signedData.getData();
           console.log(data);
           data.certificates[0].getSubject()

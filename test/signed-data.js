@@ -51,7 +51,7 @@ var Certificate = require('../src/certificate');
 
 
 describe("SignedData", function() {
-  describe("fromDER", function() {
+  describe("parseDER", function() {
     var Key = require('../src/key');
     var keyPair;
     var certSample;
@@ -72,7 +72,7 @@ describe("SignedData", function() {
       var file = require('./assets/signed-data.1.der.js');
 
       var raw = String.fromCharCode.apply(null, new Uint8Array(file));
-      var p = SignedData.fromDER(raw);
+      var p = SignedData.parseDER(raw);
       var d = p.getData().signerInfo[0];
       expect(d.issuer.C).toBe('ID');
       expect(d.authenticatedAttributes.digest).toBe('1acce136db22f9100d4a0c1e1521e6f1448d2a8da4e828e29f8f41079f0241c5');
@@ -87,7 +87,7 @@ describe("SignedData", function() {
       var s = SignedData.sign(certSample, keyPair, data).then(function(signedMessage) {
         // read back the signed message
         var raw = String.fromCharCode.apply(null, signedMessage);
-        var p = SignedData.fromDER(raw);
+        var p = SignedData.parseDER(raw);
         var d = p.getData().signerInfo[0];
         expect(d.issuer.C).toBe('ID');
         expect(d.authenticatedAttributes.digest).toBe('edeaaff3f1774ad2888673770c6d64097e391bc362d7d6fb34982ddf0efd18cb');
