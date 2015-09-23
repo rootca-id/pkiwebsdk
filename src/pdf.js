@@ -108,7 +108,7 @@ PDF.prototype.getSignatures = function(cb) {
           signaturePromises.push(new Promise(function(sigResolve, sigReject) {
             var signature = signatures[i];
             var str = signature.der;
-            var signedData = SignedData.fromDER(signature.der);
+            var signedData = SignedData.parseDER(signature.der);
             delete(signature.der);
 
             signature.signedData = signedData;
