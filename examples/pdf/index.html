@@ -1,14 +1,49 @@
-<html>
-    <head>
-        <script src="../../build/bundle.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Parse P12 to Cert</title>
+    <link rel="stylesheet" href="../../build/bootstrap.min.css">
+
+	<script src="../../build/bundle.js"></script>
     </head>
+
     <body>
-            Parse P12 to Cert <div id="parse-p12"></div><br>
-            <br>
-            PDF file to sign <input id="pdf-file" type="file"></input>
-            <br>
-            Get the signature of <input id="pdf-file-get-signature" type="file"></input>
+		<nav class="navbar navbar-default navbar-fixed-top">
+		  <div class="container">
+			<div class="navbar-header">
+			  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			  </button>
+			  <a class="navbar-brand" href="#">PKIWebSDK</a>
+			</div>
+			<div id="navbar-main" class="collapse navbar-collapse">
+			  <ul class="nav navbar-nav pull-left">
+				<li><a href="#">Parse P12 to Cert</a></li>
+			  </ul>
+			</div><!--/.nav-collapse -->			
+		  </div>
+		</nav>		
+		
+		<div class="container" style="padding-top: 30px;">
+			<div class="col-sm-12" style="padding-top: 50px;">
+				<div id="parse-p12"></div><br>
+					<div class="col-sm-12 well">
+						<h4>PDF file to sign</h4> 
+						<input id="pdf-file" type="file"></input>
+						<br>
+						<h4>Get the signature of</h4> 
+						<input id="pdf-file-get-signature" type="file"></input>
+					</div>
+			</div>
+		</div><!-- /.container -->
     </body>
+
   <script>
     var certificate;
     var privateKey;
