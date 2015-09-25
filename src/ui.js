@@ -95,12 +95,11 @@ UI.handler.P12ToSign = function(file) {
             return result.certificate.getSubject();
           })
           .then(function(subject){
-            UI.signInfo.name = subject.commonName;
-            UI.signInfo.location = subject.localityName;
             return window.PKIWebSDK.Key.parsePEM(result.privateKey, "SHA-256")
           })
           .then(function(privateKey){
             UI.P12ToSign.privateKey = privateKey;
+            resolve();
           })
        }
     }
@@ -114,7 +113,8 @@ UI.handler.PDFToSign = function(file) {
       reader.readAsArrayBuffer(file);
       reader.onload = function(e) {
         UI.PDFToSign = new window.PKIWebSDK.PDF(reader.result);
-        }
+        resolve();
+      }
     }
   })
 }
@@ -128,6 +128,7 @@ UI.handler.PDFToVerify = function(file) {
         UI.PDFToVerify = new window.PKIWebSDK.PDF(new Uint8Array(reader.result));
         var signatures = UI.PDFToVerify.getSignatures()
           .then(function(signatures){
+            console.log(signatures);
             var result = {
               isVerified : signatures[0].verified,
               isValid : true,
@@ -160,40 +161,6 @@ UI.handler.PDFToVerify = function(file) {
     }
   })
 }
-
-/**
- * Transfer an array buffer data to client as file download
- *
- * @params {ArrayBuffer} arrayBuffer - An array buffer
- * @params {ArrayBuffer} filename - File name with extension
- * @params {ArrayBuffer} type - File type, ex : "application/pdf"
- */
-
-UI.toFile = function(arrayBuffer, filename, type){
-  // downloading!
-  var blob = new Blob([arrayBuffer], { type: type });
-  if (typeof window.navigator.msSaveBlob !== 'undefined') {
-    window.navigator.msSaveBlob(blob, filename);
-  } else {
-    var URL = window.URL || window.webkitURL;
-    var downloadUrl = URL.createObjectURL(blob);
-    if (filename) {
-      var a = document.createElement("a");
-      if (typeof a.download === 'undefined') {
-        window.location = downloadUrl;
-      } else {
-        a.href = downloadUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-      }
-    } else {
-      window.location = downloadUrl;
-    }
-    setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100);
-  }
-}
-
 
 /**
  * Generate HTML element that handle certificate PEM file
@@ -235,6 +202,22 @@ UI.getCRL = function(element, cb) {
  * @returns {Object} cb - Return a promise from Certificate.prototype.parseP12()
  */
 UI.getP12 = function(element, cb) {
+  var self = this;
+  var e = document.getElementById(element);
+  e.innerHTML = html["get-p12.html"];
+  document.getElementById("pkiwebsdk-get-p12").addEventListener("change", function(evt){
+    var files = evt.target.files;
+    cb(UI.handler.P12(files[0]));
+  });
+}
+
+/**
+ * Generate HTML element that handle P12 container file in purpose of signing a document
+ *
+ * @params {String} element - Id of the parent element. Without # symbol.
+ * @returns {Object} cb - Return a promise from Certificate.prototype.parseP12()
+ */
+UI.getP12ToSign = function(element, cb) {
   var self = this;
   var e = document.getElementById(element);
   e.innerHTML = html["get-p12.html"];
@@ -293,8 +276,15 @@ UI.signPDF = function(element, cb) {
     UI.handler.PDFToSign(files[0]);
   });
   document.getElementById("pkiwebsdk-get-pdf-to-sign-trigger").addEventListener("click", function(evt){
-    UI.signInfo.date = new Date();
-    cb(UI.PDFToSign.sign(UI.P12ToSign.certificate, UI.P12ToSign.privateKey, UI.signInfo));
+    UI.P12ToSign.certificate.getSubject()
+      .then(function(subject){
+        UI.signInfo.date = new Date();
+        UI.signInfo.name = subject.commonName;
+        UI.signInfo.location = subject.localityName;
+        UI.signInfo.reason = document.getElementById("pkiwebsdk-p12-to-sign-info-reason").value;
+        UI.signInfo.contactInfo = document.getElementById("pkiwebsdk-p12-to-sign-info-contact-info").value;
+        cb(UI.PDFToSign.sign(UI.P12ToSign.certificate, UI.P12ToSign.privateKey, UI.signInfo));
+      })
   });
 }
 
