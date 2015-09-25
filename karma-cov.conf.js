@@ -16,7 +16,7 @@ module.exports = function(karma) {
     },
     browserify: {
       debug: true,
-      transform : [istanbul({"ignore" : ["lib/**"]})],
+      transform : [istanbul({"ignore" : ["**/lib/**"],})],
       extension: [".js"]
     },
 
