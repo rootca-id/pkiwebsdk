@@ -129,30 +129,33 @@ UI.handler.PDFToVerify = function(file) {
         var signatures = UI.PDFToVerify.getSignatures()
           .then(function(signatures){
             console.log(signatures);
-            var result = {
-              isVerified : signatures[0].verified,
-              isValid : true,
-              isTrusted : true
-            }
-            var certs = signatures[0].signedData.data.certificates;
-            console.log(certs);
-            async.eachSeries(certs, function iterator(item, cb){
-              if (result.isValid && result.isTrusted) {
-                certs[0].validate()
-                  .then(function(validationResult){
-                    result.isValid = validationResult.isValid;
-                    result.isTrusted = validationResult.isTrusted;
-                    cb();
-                  })
-                  .catch(function(err){
-                    reject(err);
-                  })
-              } else {
-                cb();
+            if (signatures.length > 0) {
+              var result = {
+                isVerified : signatures[0].verified,
+                isValid : true,
+                isTrusted : true
               }
-            }, function(done){
-              resolve(result);
-            })
+              var certs = signatures[0].signedData.data.certificates;
+              async.eachSeries(certs, function iterator(item, cb){
+                if (result.isValid && result.isTrusted) {
+                  certs[0].validate()
+                    .then(function(validationResult){
+                      result.isValid = validationResult.isValid;
+                      result.isTrusted = validationResult.isTrusted;
+                      cb();
+                    })
+                    .catch(function(err){
+                      reject(err);
+                    })
+                } else {
+                  cb();
+                }
+              }, function(done){
+                resolve(result);
+              })
+            } else {
+              resolve(false);
+            }
           })
           .catch(function(err){
             reject(err);
