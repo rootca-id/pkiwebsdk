@@ -1,0 +1,16 @@
+.content {
+	padding-top: 75px;
+	padding-bottom: 25px;
+}
+
+.input-group-addon {
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+    color: #FFF;
+    text-align: center;
+    background-color: #00458E;
+    border: 1px solid #00458E;
+    border-radius: 4px;
+}

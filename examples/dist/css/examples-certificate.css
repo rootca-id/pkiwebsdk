@@ -1,0 +1,22 @@
+.tab {
+    color: #00458E;
+    text-decoration: none;
+}
+
+.tab-container {
+	margin-top: 60px; 	
+}
+
+.row {
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
+.output {
+	margin-top: 50px;
+	margin-bottom: 40px;
+}
+
+.well-lg {
+	margin-top: 20px;
+}
