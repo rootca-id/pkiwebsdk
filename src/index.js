@@ -4,7 +4,7 @@ var PKIWebSDK = function() {
   this.sample = require('../test/assets/no-signature.pdf.js');
   this.Key = require('./key');
   this.UI = require('./ui');
-window.PKIWebSDK.Utils = require("./utils");
+  this.Utils = require("./utils");
 }
 var caStore = require("./castore");
 
