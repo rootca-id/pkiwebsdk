@@ -1,0 +1,131 @@
+body {
+	margin: 0px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #333;
+}
+
+#header {
+	background-color: #F8F8F8;
+	color: #777;
+	text-align: left;
+	padding: 2px;
+}
+
+.container {
+	padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.brand {
+	margin-left: 50px;
+}
+
+.generate {
+	text-align:right;
+	width:400px;
+	display:inline-block;
+	vertical-align:top;
+}
+
+.box {
+	margin:20px;
+	width:400px;
+	height:200px;
+	display:inline-block;
+	vertical-align:top;
+	background:#DFDFDF;
+	padding:20px;
+}
+
+#tabs {
+	border-bottom:1px solid #ccc;
+	height:33px;
+	margin:0 0 10px;
+	padding-top:5px;
+	background:#eee;
+}
+
+#tabs a {
+	float:left;
+	margin-left:2px;
+	border-radius:3px 3px 0 0;
+	border:1px solid #eee;
+	border-bottom-color:#ccc;
+	color:#08c;
+	height:32px;
+	line-height:32px;
+	padding:0 12px;
+	text-decoration:none;
+}
+
+#tabs a:hover {
+	background:#ddd;
+	color:#058;
+	border-color:#ddd #ddd #ccc;
+}
+
+#tabs a.active {
+	background:#fff;
+	color:#555;
+	border-color:#ccc #ccc #fff;
+}
+
+#tabs a.active:hover {
+	background:#fff;
+	color:#555;
+	border-color:#ccc #ccc #fff;
+}
+
+#tabs_data fieldset {
+	display:none;border:0;
+}
+
+#tabs_data fieldset div {
+	font-size:13px;
+}
+
+.output {
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-bottom: 50px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+   color: #fff;
+  background-color: #337ab7;
+  border-color: #2e6da4;
+}
+
+.btn:focus,
+.btn.focus {
+  color: #fff;
+  background-color: #286090;
+  border-color: #122b40;
+}
+.btn:hover {
+  color: #fff;
+  background-color: #286090;
+  border-color: #204d74;

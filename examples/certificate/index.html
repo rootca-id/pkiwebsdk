@@ -1,97 +1,105 @@
+<!DOCTYPE html>
 <html>
-    <head>
+	<head>
+		<meta charset="UTF-8">
+		<title>PKIWebSDK</title>
+		<link rel="stylesheet" href="../../build/examples-certificate.css">
         <script src="../../build/bundle.js"></script>
-        <style>
-          #tabs {border-bottom:1px solid #ccc;height:33px;margin:0 0 10px;padding-top:5px;background:#eee;}
-          #tabs a {float:left;margin-left:2px;border-radius:3px 3px 0 0;border:1px solid #eee;border-bottom-color:#ccc;color:#08c;height:32px;line-height:32px;padding:0 12px;text-decoration:none;}
-          #tabs a:hover {background:#ddd;color:#058;border-color:#ddd #ddd #ccc;}
-          #tabs a.active {background:#fff;color:#555;border-color:#ccc #ccc #fff;}
-          #tabs a.active:hover {background:#fff;color:#555;border-color:#ccc #ccc #fff;}
-          #tabs_data fieldset {display:none;border:0;}
-          #tabs_data fieldset div {font-size:13px;}
-        </style>
     </head>
+    
     <body>
-      <div id="tabs">
-        <a href="#" onclick="tab_click(0);">Generate certificate request</a>
-        <a href="#" onclick="tab_click(1);">Import</a>
-        <a href="#" onclick="tab_click(2);">Get property of</a>
-      </div>
-      <div id="tabs_data">
-        <fieldset>
-          <h4>Generate Certificate request</h4>
-          <div style="text-align:right;width:400px;display:inline-block;vertical-align:top;">
-                  <label>subject.commonName <input id="csr_subject_commonName" value="blankon.in"></input></label><br>
-                  <label>subject.countryName <input id="csr_subject_countryName" value="ID"></input></label><br>
-                  <label>subject.stateName <input id="csr_subject_stateName" value="Jabodetabek"></input></label><br>
-                  <label>subject.localityName <input id="csr_subject_localityName" value="Bojong"></input></label><br>
-                  <label>subject.organizationName <input id="csr_subject_organizationName" value="Uji coba"></input></label><br>
-                  <label>subject.organizationUnit <input id="csr_subject_organizationUnit" value="Uji coba"></input></label><br>
-          </div>
-          <br>
-          <br>
-          <input id="csr_password" placeholder="password"></input>
-          <button onClick="generateCSR()">generate pairKey and create a certificate request</button> 
-        </fieldset>
-        <fieldset>
-          <div style="margin:20px;width:370px;height:150px;display:inline-block;vertical-align:top;background:#DFDFDF;padding:20px;">
-            <h4>Parse a P12 file</h4>
-            <input type="file" id="files" name="files[]" multiple /><br>
-            <input id="p12passwordtoparse" placeholder="password"></input>
-            <button onClick="parseP12()">parse P12 to cert</button><br>
-          </div>
-          <div style="margin:20px;width:370px;height:150px;display:inline-block;vertical-align:top;background:#DFDFDF;padding:20px;">
-            <h4>Parse a Certificate (PEM)</h4>
-            <input type="file" id="files2" name="files[]" multiple />
-            <button onClick="fromPem()">parse</button>
-          </div>
-          <div style="margin:20px;width:370px;height:150px;display:inline-block;vertical-align:top;background:#DFDFDF;padding:20px;">
-            <h4>Parse a CRL (in PEM or DER format)</h4>
-            <input type="file" id="files3" name="files[]" multiple />
-            <button onClick="fromCRL()">parse</button>
-          </div>
-          <div style="margin:20px;width:370px;height:150px;display:inline-block;vertical-align:top;background:#DFDFDF;padding:20px;">
-            <h4>Verify Cert Chain (PEM)</h4>
-            <input type="file" id="certChain" name="files[]" multiple />
-            <button onClick="verifyChain()">verify</button>
-            <button onClick="trust()">trust</button>
-            <br><br>
-            Add the bottom level certificate first.
-            <div id="certChainList">Chain list :<br></div>
-            <br><button onClick="clearChain()">clear list</button>
-          </div>
-        </fieldset>
-        <fieldset>
-          <div style="margin:20px;width:370px;height:150px;display:inline-block;vertical-align:top;background:#DFDFDF;padding:20px;">
-            <h4>Parse a Certificate (PEM)</h4>
-            <input type="file" id="files4" name="files[]" multiple />
-            <button onClick="fromPem()">parse</button>
-          </div>
-          <br><br>
-          <button onClick="getUsage()">Get usage</button>
-          <button onClick="getSignature()">Get signature</button>
-          <button onClick="getPublicKey()">Get public key</button>
-          <button onClick="getPublicKeyAlgorithm()">Get public key algorithm</button>
-          <button onClick="getSerialNumber()">Get serial number</button>
-          <button onClick="getVersionNumber()">Get version number</button>
-          <button onClick="getSubject()">Get subject</button>
-          <button onClick="getIssuer()">Get issuer</button>
-        </fieldset>
-      </div>
-      <hr>
-      <h4>Output</h4>
-        <button onClick="removeTextArea()">clear output</button>
-        <br></br>
-        privateKey PEM 
-        <br>
-        <textarea id="privateKey" style="width:100%"></textarea><br>
-        <br>
-        certificate PEM<br>
-        <textarea id="certPem" style="width:100%"></textarea><br>
-        <br>
-        p12 in base64 string<br>
-        <textarea id="p12Base64" style="width:100%"></textarea>
-      </div>
+		<header id="header">
+			<div class="container">
+				<h3 class="brand">PKIWebSDK</h3>
+			</div>
+		</header>
+		
+		<div id="tabs">
+			<a href="#" onclick="tab_click(0);">Generate certificate request</a>
+			<a href="#" onclick="tab_click(1);">Import</a>
+			<a href="#" onclick="tab_click(2);">Get property of</a>
+		</div>
+		
+		<div class="container">
+			<div id="tabs_data">
+				<fieldset>
+				  <h3>Generate Certificate request</h3>
+				  <div class="generate">
+						  <label>subject.commonName <input id="csr_subject_commonName" value="blankon.in"></input></label><br>
+						  <label>subject.countryName <input id="csr_subject_countryName" value="ID"></input></label><br>
+						  <label>subject.stateName <input id="csr_subject_stateName" value="Jabodetabek"></input></label><br>
+						  <label>subject.localityName <input id="csr_subject_localityName" value="Bojong"></input></label><br>
+						  <label>subject.organizationName <input id="csr_subject_organizationName" value="Uji coba"></input></label><br>
+						  <label>subject.organizationUnit <input id="csr_subject_organizationUnit" value="Uji coba"></input></label><br>
+				  </div>
+				  <br>
+				  <br>
+				  <input id="csr_password" placeholder="password"></input>
+				  <button class="btn" onClick="generateCSR()">generate pairKey and create a certificate request</button> 
+				</fieldset>
+
+				<fieldset>
+				  <div class="box">
+					<h4>Parse a P12 file</h4>
+					<input type="file" id="files" name="files[]" multiple /><br><br>
+					<input id="p12passwordtoparse" placeholder="password"></input>
+					<button class="btn" onClick="parseP12()">parse P12 to cert</button><br>
+				  </div>
+				  <div class="box">
+					<h4>Parse a Certificate (PEM)</h4>
+					<input type="file" id="files2" name="files[]" multiple />
+					<button class="btn" onClick="fromPem()">parse</button>
+				  </div>
+				  <div class="box">
+					<h4>Parse a CRL (in PEM or DER format)</h4>
+					<input type="file" id="files3" name="files[]" multiple />
+					<button class="btn" onClick="fromCRL()">parse</button>
+				  </div>
+				  <div class="box">
+					<h4>Verify Cert Chain (PEM)</h4>
+					<input type="file" id="certChain" name="files[]" multiple />
+					<button class="btn" onClick="verifyChain()">verify</button>
+					<button class="btn" onClick="trust()">trust</button>
+					<br><br>
+					Add the bottom level certificate first.
+					<div id="certChainList">Chain list :<br></div>
+					<br><button class="btn" onClick="clearChain()">clear list</button>
+				  </div>
+				</fieldset>
+
+				<fieldset>
+				  <div class="box">
+					<h4>Parse a Certificate (PEM)</h4>
+					<input type="file" id="files4" name="files[]" multiple />
+					<button class="btn" onClick="fromPem()">parse</button>
+				  </div>
+				  <br><br>
+				  <button class="btn" onClick="getUsage()">Get usage</button>
+				  <button class="btn" onClick="getSignature()">Get signature</button>
+				  <button class="btn" onClick="getPublicKey()">Get public key</button>
+				  <button class="btn" onClick="getPublicKeyAlgorithm()">Get public key algorithm</button>
+				  <button class="btn" onClick="getSerialNumber()">Get serial number</button>
+				  <button class="btn" onClick="getVersionNumber()">Get version number</button>
+				  <button class="btn" onClick="getSubject()">Get subject</button>
+				  <button class="btn" onClick="getIssuer()">Get issuer</button>
+				</fieldset>
+			</div>
+
+			<hr>
+
+			<div class="output">
+			  <h4>Output</h4>
+				<button class="btn" onClick="removeTextArea()">clear output</button>
+				<br></br>
+				<p>privateKey PEM</p> 
+				<textarea id="privateKey" style="width:100%"></textarea><br>
+				<p>certificate PEM</p>
+				<textarea id="certPem" style="width:100%"></textarea><br>
+				<p>p12 in base64 string</p>
+				<textarea id="p12Base64" style="width:100%"></textarea>
+			</div>    
+		</div>    
+	</div>
             
             
       <script>
@@ -273,12 +281,9 @@
       var verifyChain = function(){
         removeTextArea(function(){
           certChain.validate()
-            .then(function(result){
-              console.log(result);
-              var msg = "The Signature of the PDF file is ";
-              msg += (result.isValid? "valid" : "not valid" );
-              msg += " and " + (result.isTrusted? "trusted" : "not trusted" );
-              alert(msg);
+            .then(function(isValid){
+              console.log(isValid);
+              alert("The certificate is : " + (isValid? "valid":"not valid"));
             })
             .catch(function(err){
               console.log(err.message);
