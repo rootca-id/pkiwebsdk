@@ -14,6 +14,7 @@
 			</div>
 		</header>
 
+<<<<<<< HEAD
 		<div class="container">
 			<div id="parse-pem"></div>
 			<div id="parse-crl"></div>
@@ -94,3 +95,49 @@
 		</script>
     </body>
 </html>
+=======
+    })
+    .catch(function(err){
+      alert(err.message);
+    })
+  })
+  window.PKIWebSDK.UI.getCertChain("validate-cert-chain", function(promise){
+    promise.then(function(result){
+      console.log(result);
+      var msg = "The certificate chain is " + (result.isVerified? "verified" : "not verified" );
+      msg += ", " + (result.isValid? "valid" : "not valid" );
+      msg += " and " + (result.isTrusted? "trusted" : "not trusted" );
+      alert(msg);
+    })
+    .catch(function(err){
+      alert(err.message);
+    })
+  })
+  window.PKIWebSDK.UI.signPDF("sign-a-pdf", function(promise){
+    promise.then(function(signed){
+      console.log(signed);
+      alert("Successfully signed");
+      window.PKIWebSDK.Utils.toFile(signed, "signed-data.pdf", "application/pdf");
+    })
+    .catch(function(err){
+      alert(err.message);
+    })
+  })
+  window.PKIWebSDK.UI.verifyPDF("verify-a-pdf", function(promise){
+    promise.then(function(result){
+      console.log(result);
+      if (result) {
+        var msg = "The Signature of the PDF file is " + (result.isVerified? "verified" : "not verified" );
+        msg += ", " + (result.isValid? "valid" : "not valid" );
+        msg += " and " + (result.isTrusted? "trusted" : "not trusted" );
+        alert(msg);
+      } else {
+        alert("No signature found in this document");
+      }        
+    })
+    .catch(function(err){
+      alert(err.message);
+    })
+  })
+</script>
+>>>>>>> 4d137aca293ab0769a32d097c5405b1a69648310

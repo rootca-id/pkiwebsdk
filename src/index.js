@@ -1,10 +1,10 @@
 var PKIWebSDK = function() {
-  this.Certificate = require('./certificate')
-  this.PDF = require('./pdf')
-  this.sample = require('../test/assets/no-signature.pdf.js')
-  this.Key = require('./key')
-  this.SignedData = require('./signed-data')
-  this.UI = require('./ui')
+  this.Certificate = require('./certificate');
+  this.PDF = require('./pdf');
+  this.sample = require('../test/assets/no-signature.pdf.js');
+  this.Key = require('./key');
+  this.UI = require('./ui');
+  this.Utils = require("./utils");
 }
 var caStore = require("./castore");
 
