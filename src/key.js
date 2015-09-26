@@ -186,4 +186,49 @@ Key.prototype.isPublic = function() {
   return (self.keyData.type == "public" ? true : false);
 }
 
+/* Encrypt data using public key
+ * @params {ArrayBuffer} data - Array buffer of the data
+ * @returns {ArrayBuffer} - Array buffer of encrypted data
+ */
+
+Key.prototype.encrypt = function(arrayBuffer) {
+  var self = this;
+  console.log(self.keyData)
+  return new Promise(function(resolve, reject){
+    if (self.keyData.type != "public") {
+      reject("Public key does not exist in this key object");
+    }
+    // Convert publicKey to forge's key object
+    self.toPEM()
+      .then(function(pem){
+        var publicKey = forge.pki.publicKeyFromPem(pem);
+        // Encrypt
+        var encrypted = publicKey.encrypt(window.PKIWebSDK.Utils.ab2Str(arrayBuffer));
+        resolve(window.PKIWebSDK.Utils.str2Ab(encrypted));
+      })
+  })
+}
+
+/* Decrypt data using private Key
+ * @params {ArrayBuffer} data - Array buffer of decrypted data
+ * @returns {ArrayBuffer} - Array buffer of decrypted data
+ */
+
+Key.prototype.decrypt = function(arrayBuffer){
+  var self = this;
+  return new Promise(function(resolve, reject){
+    if (self.keyData.type != "private") {
+      reject("Private key does not exist in this key object");
+    }
+    self.toPEM()
+      .then(function(pem){
+        var privateKey = forge.pki.privateKeyFromPem(pem);
+        var base64Data = window.PKIWebSDK.Utils.ab2Base64(arrayBuffer);
+        var data = forge.util.decode64(base64Data);
+        var decrypted = privateKey.decrypt(data);
+        resolve(window.PKIWebSDK.Utils.str2Ab(decrypted));
+      })
+  })
+}
+
 module.exports = Key;

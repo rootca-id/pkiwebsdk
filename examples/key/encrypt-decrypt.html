@@ -1,0 +1,105 @@
+<html>
+    <head>
+        <script src="../../build/bundle.js"></script>
+        <style>
+          #tabs {border-bottom:1px solid #ccc;height:33px;margin:0 0 10px;padding-top:5px;background:#eee;}
+          #tabs a {float:left;margin-left:2px;border-radius:3px 3px 0 0;border:1px solid #eee;border-bottom-color:#ccc;color:#08c;height:32px;line-height:32px;padding:0 12px;text-decoration:none;}
+          #tabs a:hover {background:#ddd;color:#058;border-color:#ddd #ddd #ccc;}
+          #tabs a.active {background:#fff;color:#555;border-color:#ccc #ccc #fff;}
+          #tabs a.active:hover {background:#fff;color:#555;border-color:#ccc #ccc #fff;}
+          #tabs_data fieldset {display:none;border:0;}
+          #tabs_data fieldset div {font-size:13px;}
+        </style>
+    </head>
+    <body>
+      <div id="tabs">
+        <a href="#" onclick="tab_click(0);">Encrypt</a>
+        <a href="#" onclick="tab_click(1);">Decrypt</a>
+      </div>
+      <div id="tabs_data">
+        <fieldset>
+          <textarea cols="50" rows="10" id="public-key"></textarea>     
+          <br><input type="file" id="file-to-be-encrypted"></input>
+          <br><button id="encrypt-trigger">Encrypt</button>
+        </fieldset>
+        <fieldset>
+          <textarea cols="50" rows="10" id="private-key"></textarea>     
+          <br><input type="file" id="file-to-be-decrypted"></input>
+          <br><button id="decrypt-trigger">Decrypt</button>
+        </fieldset>
+      </div>
+            
+      <script>
+      var fileToBeEncrypted = {};
+      var fileToBeDecrypted = {};
+      
+      // Handle file input for file that will be encrypted
+      document.getElementById('file-to-be-encrypted').addEventListener('change', function(evt){
+        files = evt.target.files; // FileList object  
+        // files is a FileList of File objects. List some properties.
+        // Read file as ArrayBuffer
+        var reader = new window.FileReader();
+        console.log(files[files.length-1]);
+        reader.readAsArrayBuffer(files[files.length-1]);
+        reader.onload = function(e) {
+          fileToBeEncrypted.data = reader.result;
+          fileToBeEncrypted.type = files[files.length-1].type;
+          fileToBeEncrypted.name = files[files.length-1].name;
+         }
+      });
+      
+      // Handle file input for file that will be decrypted
+      document.getElementById('file-to-be-decrypted').addEventListener('change', function(evt){
+        files = evt.target.files; // FileList object  
+        // files is a FileList of File objects. List some properties.
+        // Read file as ArrayBuffer
+        var reader = new window.FileReader();
+        console.log(files[files.length-1]);
+        reader.readAsArrayBuffer(files[files.length-1]);
+        reader.onload = function(e) {
+          fileToBeDecrypted.data = reader.result;
+          fileToBeDecrypted.type = files[files.length-1].type;
+          fileToBeDecrypted.name = files[files.length-1].name;
+         }
+      });
+
+      // Encrypt button click event, performs encryption
+      document.getElementById("encrypt-trigger").addEventListener("click", function(evt){
+        window.PKIWebSDK.Key.parsePEM(document.getElementById("public-key").value, "SHA-256")
+          .then(function(publicKey){
+            return publicKey.encrypt(fileToBeEncrypted.data)
+          })
+          .then(function(buf){
+            window.PKIWebSDK.Utils.toFile(buf, fileToBeEncrypted.name + "-encrypted", fileToBeEncrypted.type);
+          })
+      })
+      
+      // Decrypt button click event, performs decryption
+      document.getElementById("decrypt-trigger").addEventListener("click", function(evt){
+        window.PKIWebSDK.Key.parsePEM(document.getElementById("private-key").value, "SHA-256")
+          .then(function(privateKey){
+            return privateKey.decrypt(fileToBeDecrypted.data)
+          })
+          .then(function(buf){
+            window.PKIWebSDK.Utils.toFile(buf, fileToBeDecrypted.name + "-decrypted", fileToBeDecrypted.type);
+          })
+      })
+
+      var tabActive=1, tabs=document.getElementById('tabs').getElementsByTagName('a'), tabs_data=document.getElementById('tabs_data').getElementsByTagName('fieldset');
+      function tab_click(x){
+        if(x > -1 && x < tabs.length && x < tabs_data.length){
+          tabs[tabActive].setAttribute('class','');
+              tabs_data[tabActive].style.display='none';
+          tabActive=x;
+          tabs[tabActive].setAttribute('class','active');
+              tabs_data[tabActive].style.display='block';
+        } return false;
+      }
+      tab_click(0);
+      </script>
+    </body>
+</html>
+
+
+
+
