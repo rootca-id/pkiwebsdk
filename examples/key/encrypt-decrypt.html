@@ -72,6 +72,9 @@
           .then(function(buf){
             window.PKIWebSDK.Utils.toFile(buf, fileToBeEncrypted.name + "-encrypted", fileToBeEncrypted.type);
           })
+          .catch(function(err){
+            alert(err.message);
+          })
       })
       
       // Decrypt button click event, performs decryption
@@ -83,6 +86,10 @@
           .then(function(buf){
             window.PKIWebSDK.Utils.toFile(buf, fileToBeDecrypted.name + "-decrypted", fileToBeDecrypted.type);
           })
+          .catch(function(err){
+            alert(err.message);
+          })
+
       })
 
       var tabActive=1, tabs=document.getElementById('tabs').getElementsByTagName('a'), tabs_data=document.getElementById('tabs_data').getElementsByTagName('fieldset');

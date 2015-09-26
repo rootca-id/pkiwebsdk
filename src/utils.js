@@ -63,6 +63,22 @@ Utils.str2Ab = function (string) {
   return buf;
 }
 
+/* Convert base64 string to array buffer
+ * @params {String} - Base64 string
+ * @returns {ArrayBuffer} arrayBuffer - An array buffer of data
+ *
+ */
+
+Utils.base642Ab = function(base64) {
+  var binary_string = window.atob(base64);
+  var len = binary_string.length;
+  var bytes = new Uint8Array(len);
+  for (var i = 0; i < len; i++ ) {
+    bytes[i] = binary_string.charCodeAt(i);
+  }
+  return bytes.buffer;
+}
+
 /* Convert array buffer to base64 string
  * @params {ArrayBuffer} arrayBuffer - An array buffer of data
  * @returns {String} - Base64 string

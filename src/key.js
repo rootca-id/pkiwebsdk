@@ -203,7 +203,12 @@ Key.prototype.encrypt = function(arrayBuffer) {
       .then(function(pem){
         var publicKey = forge.pki.publicKeyFromPem(pem);
         // Encrypt
-        var encrypted = publicKey.encrypt(window.PKIWebSDK.Utils.ab2Str(arrayBuffer));
+        try {
+          var encrypted = publicKey.encrypt(window.PKIWebSDK.Utils.ab2Str(arrayBuffer));
+        } 
+        catch(err){
+          reject(err);
+        }
         resolve(window.PKIWebSDK.Utils.str2Ab(encrypted));
       })
   })
@@ -225,7 +230,12 @@ Key.prototype.decrypt = function(arrayBuffer){
         var privateKey = forge.pki.privateKeyFromPem(pem);
         var base64Data = window.PKIWebSDK.Utils.ab2Base64(arrayBuffer);
         var data = forge.util.decode64(base64Data);
-        var decrypted = privateKey.decrypt(data);
+        try {
+          var decrypted = privateKey.decrypt(data);
+        } 
+        catch(err){
+          reject(err);
+        }
         resolve(window.PKIWebSDK.Utils.str2Ab(decrypted));
       })
   })
