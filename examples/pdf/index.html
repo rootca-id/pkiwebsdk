@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Parse P12 to Cert</title>
-    <link rel="stylesheet" href="../../build/bootstrap.min.css">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>PKIWebSDK Examples - PDF</title>	
+		<link rel="stylesheet" href="../dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="../dist/css/style.css">
+		<script src="../../build/bundle.js"></script>
+	</head>
 
-	<script src="../../build/bundle.js"></script>
-    </head>
-
-    <body>
-<<<<<<< HEAD
-		<nav class="navbar navbar-default navbar-fixed-top">
+	<body>
+		<nav class="navbar navbar-blue navbar-fixed-top">
 		  <div class="container">
 			<div class="navbar-header">
 			  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -21,129 +20,155 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			  </button>
-			  <a class="navbar-brand" href="#">PKIWebSDK</a>
+			  <span><img src="../dist/img/logo.png" class="pull-left img-responsive"></span>
+			  <a class="navbar-brand" href="../index.html"> PKIWebSDK</a>
 			</div>
-			<div id="navbar-main" class="collapse navbar-collapse">
-			  <ul class="nav navbar-nav pull-left">
-				<li><a href="#">Parse P12 to Cert</a></li>
+			<div id="navbar" class="collapse navbar-collapse">
+			  <ul class="nav navbar-nav pull-right">
+				<li><a href="../certificate/index.html">Certificate</a></li>
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#">Key <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="../key/generate.html" target="_blank">Generate</a></li>
+							<li><a href="../key/sign.html" target="_blank">Sign</a></li>
+							<li><a href="../key/verify.html" target="_blank">Verify</a></li>
+						</ul>	
+				</li>	
+				<li class="active"><a href="index.html">PDF</a></li>
+				<li><a href="../signed-data/index.html">Signed Data</a></li>
+				<li><a href="../ui/index.html">UI</a></li>
 			  </ul>
-			</div><!--/.nav-collapse -->			
+			</div><!--/.nav-collapse -->
 		  </div>
-		</nav>		
-		
-		<div class="container" style="padding-top: 30px;">
-			<div class="col-sm-12" style="padding-top: 50px;">
-				<div id="parse-p12"></div><br>
-					<div class="col-sm-12 well">
-						<h4>PDF file to sign</h4> 
-						<input id="pdf-file" type="file"></input>
-						<br>
-						<h4>Get the signature of</h4> 
-						<input id="pdf-file-get-signature" type="file"></input>
-					</div>
+		</nav>
+
+		<div class="container">
+			<br><br>
+			<br><br>
+			<div class="row">
+				<div class="col-sm-12">
+					<div id="parse-p12"></div><br>
+						<div class="col-sm-12 well">
+							<div class="col-sm-6">
+								<h4>Parse P12 to Cert</h4>
+								<div id="parse-p12"></div>
+								<br> 
+								<h4>PDF file to sign</h4>
+								<input id="pdf-file" type="file" class="filestyle" data-buttonBefore="true" data-icon="false" data-buttonName="btn-primary">
+								<br>
+								<h4>Get the signature of</h4> 
+								<input id="pdf-file-get-signature" type="file" class="filestyle" data-buttonBefore="true" data-icon="false" data-buttonName="btn-primary"></input>
+								<br>
+								<h4>Signature</h4>
+									<div class="col-sm-12 input-group">
+										<textarea class="form-control" cols="50" rows="10" id="signature"></textarea>
+									</div>
+								<br>
+							</div>
+						</div>
+						<br><br>
+					<h3>Parse P12 in purpose of signing a document</h3>
+					<div id="parse-p12-to-sign"></div>	
+				</div>
 			</div>
 		</div><!-- /.container -->
-=======
-            Parse P12 to Cert <div id="parse-p12"></div><br>
-            <br>
-            PDF file to sign <input id="pdf-file" type="file"></input>
-            <br>
-            Get the signature of <input id="pdf-file-get-signature" type="file"></input><br>
-            Signature <br>
-            <textarea cols="50" rows="10" id="signature"></textarea>
-            <hr>
-            Parse P12 in purpose of signing a document <div id="parse-p12-to-sign"></div><br>
-            <br>
-            <br>
->>>>>>> 4d137aca293ab0769a32d097c5405b1a69648310
-    </body>
 
-  <script>
-    var certificate;
-    var privateKey;
-    var pdfData;
-    var pdf;
-  
-    // Render an element that handle P12 file
-    window.PKIWebSDK.UI.getP12("parse-p12", function(promise){
-      promise.then(function(result){
-        console.log(result);
-        certificate = result.certificate;
-        window.PKIWebSDK.Key.parsePEM(result.privateKey, "SHA-256")
-          .then(function(key){
-            privateKey = key;
-            var msg = "P12 was successfully parsed. Select a pdf file to be signed. Subject of the current certificate :\n";
-            certificate.getSubject()
-              .then(function(subject){
-                msg += JSON.stringify(subject);
-                alert(msg);
-              })
-          })
-          .catch(function(err){
-            alert(err.message);
-          })
-      })
-      .catch(function(err){
-        alert(err.message);
-      })
-    })
+	<footer>
+		<p>&copy; 2015 <a href="http://kominfo.go.id/" class="footer-text"> Direktorat Keamanan Informasi - Kementerian Komunikasi dan Informatika Republik Indonesia</a></p>
+	</footer>
+
+	  <script>
+		var certificate;
+		var privateKey;
+		var pdfData;
+		var pdf;
+	  
+		// Render an element that handle P12 file
+		window.PKIWebSDK.UI.getP12("parse-p12", function(promise){
+		  promise.then(function(result){
+			console.log(result);
+			certificate = result.certificate;
+			window.PKIWebSDK.Key.parsePEM(result.privateKey, "SHA-256")
+			  .then(function(key){
+				privateKey = key;
+				var msg = "P12 was successfully parsed. Select a pdf file to be signed. Subject of the current certificate :\n";
+				certificate.getSubject()
+				  .then(function(subject){
+					msg += JSON.stringify(subject);
+					alert(msg);
+				  })
+			  })
+			  .catch(function(err){
+				alert(err.message);
+			  })
+		  })
+		  .catch(function(err){
+			alert(err.message);
+		  })
+		})
+		
+		// Event listener to #pdf-file element. Sign the pdf file when added.
+		document.getElementById('pdf-file').addEventListener('change', function(evt){
+		  var files = evt.target.files; // FileList object  
+		  // Read file as ArrayBuffer
+		  var reader = new window.FileReader()
+		  reader.readAsArrayBuffer(files[files.length-1]);
+		  reader.onload = function(e) {
+			pdfData = reader.result;
+			pdf = new window.PKIWebSDK.PDF(new Uint8Array(pdfData));
+			var info = {
+			  name : "Someone",
+			  reason : "Test",
+			  location : "Greater Jakarta Area",
+			  contactInfo : "email@domain"
+			}
+			pdf.sign(certificate, privateKey, info)
+			  .then(function(doc){
+				console.log(doc);
+				window.PKIWebSDK.Utils.toFile(doc, "signed-data", "application/pdf");
+			  })
+			  .catch(function(err){
+				alert(err.message);
+			  })
+		   }
+		});
+		
+		// Event listener of #pdf-file-get-signature element. Obtains signature information.
+		document.getElementById('pdf-file-get-signature').addEventListener('change', function(evt){
+		  var files = evt.target.files; // FileList object  
+		  // Read file as ArrayBuffer
+		  var reader = new window.FileReader()
+		  reader.readAsArrayBuffer(files[files.length-1]);
+		  reader.onload = function(e) {
+			pdfData = reader.result;
+			pdf = new window.PKIWebSDK.PDF(new Uint8Array(pdfData));
+			pdf.getSignatures()
+			.then(function(result){
+				console.log(result);
+				alert("Successfully obtained the signature.");
+				document.getElementById("signature").value = result[0].signedData.data.rawCapture.signature;
+			  })
+			  .catch(function(err){
+				alert(err.message);
+			  })
+		   }
+		});
+		
+		// Render an element that handle P12 file in purpose of signing a document
+		window.PKIWebSDK.UI.signPDF("parse-p12-to-sign", function(promise){
+		  promise.then(function(doc){
+			window.PKIWebSDK.Utils.toFile(doc, "signed-data", "application/pdf");
+		  })
+		  .catch(function(err){
+			alert(err.message);
+		  })
+		})
+	  
+	  </script>
+
+	<script src="../dist/js/jquery-2.1.4.min.js"></script>
+	<script src="../dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../dist/js/bootstrap-filestyle.min.js"></script>
     
-    // Event listener to #pdf-file element. Sign the pdf file when added.
-    document.getElementById('pdf-file').addEventListener('change', function(evt){
-      var files = evt.target.files; // FileList object  
-      // Read file as ArrayBuffer
-      var reader = new window.FileReader()
-      reader.readAsArrayBuffer(files[files.length-1]);
-      reader.onload = function(e) {
-        pdfData = reader.result;
-        pdf = new window.PKIWebSDK.PDF(new Uint8Array(pdfData));
-        var info = {
-          name : "Someone",
-          reason : "Test",
-          location : "Greater Jakarta Area",
-          contactInfo : "email@domain"
-        }
-        pdf.sign(certificate, privateKey, info)
-          .then(function(doc){
-            console.log(doc);
-            window.PKIWebSDK.Utils.toFile(doc, "signed-data", "application/pdf");
-          })
-          .catch(function(err){
-            alert(err.message);
-          })
-       }
-    });
-    
-    // Event listener of #pdf-file-get-signature element. Obtains signature information.
-    document.getElementById('pdf-file-get-signature').addEventListener('change', function(evt){
-      var files = evt.target.files; // FileList object  
-      // Read file as ArrayBuffer
-      var reader = new window.FileReader()
-      reader.readAsArrayBuffer(files[files.length-1]);
-      reader.onload = function(e) {
-        pdfData = reader.result;
-        pdf = new window.PKIWebSDK.PDF(new Uint8Array(pdfData));
-        pdf.getSignatures()
-        .then(function(result){
-            console.log(result);
-            alert("Successfully obtained the signature.");
-            document.getElementById("signature").value = result[0].signedData.data.rawCapture.signature;
-          })
-          .catch(function(err){
-            alert(err.message);
-          })
-       }
-    });
-    
-    // Render an element that handle P12 file in purpose of signing a document
-    window.PKIWebSDK.UI.signPDF("parse-p12-to-sign", function(promise){
-      promise.then(function(doc){
-        window.PKIWebSDK.Utils.toFile(doc, "signed-data", "application/pdf");
-      })
-      .catch(function(err){
-        alert(err.message);
-      })
-    })
-  
-  </script>
+  </body>
 </html>
