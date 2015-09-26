@@ -40,12 +40,34 @@ Utils.toFile = function(arrayBuffer, filename, type){
   }
 }
 
+/* Convert array buffer to string
+ * @params {ArrayBuffer} arrayBuffer - An array buffer of data
+ * @returns {String} - String
+ *
+ */
+Utils.ab2Str = function (buf) {
+  return String.fromCharCode.apply(null, new Uint8Array(buf));
+}
+
+/* Convert string to array buffer
+ * @params {String} - String
+ * @returns {ArrayBuffer} arrayBuffer - An array buffer of data
+ *
+ */
+Utils.str2Ab = function (string) {
+  var buf = new ArrayBuffer(string.length);
+  var bufView = new Uint8Array(buf);
+  for (var i=0, strLen=string.length; i<strLen; i++) {
+    bufView[i] = string.charCodeAt(i);
+  }
+  return buf;
+}
+
 /* Convert array buffer to base64 string
  * @params {ArrayBuffer} arrayBuffer - An array buffer of data
  * @returns {String} - Base64 string
  *
  */
-
 Utils.ab2Base64 = function(arrayBuffer) {
   var base64    = "";
   var encodings = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -83,15 +105,6 @@ Utils.ab2Base64 = function(arrayBuffer) {
     base64 += encodings[a] + encodings[b] + encodings[c] + "="
   }
   return base64
-}
-
-Utils.string2Ab = function (str) {
-  var buf = new ArrayBuffer(str.length*2);
-  var bufView = new Uint16Array(buf);
-  for (var i=0, strLen=str.length; i<strLen; i++) {
-    bufView[i] = str.charCodeAt(i);
-  }
-  return buf;
 }
 
 module.exports = Utils;
