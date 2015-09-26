@@ -24,12 +24,16 @@ gulp.task("browserify", function(){
     .pipe(source("bundle.js"))
     .pipe(gulp.dest("build"));
 })
+gulp.task("css", function(){
+  return gulp.src("html/src/style.css")
+    .pipe(gulp.dest("build"));
+})
 gulp.task("cleanPostBuild", function(){
   return gulp.src("html/html.js", {read:false})
     .pipe(rimraf({force:true}));
 })
 
-var tasks = ["clean", "html", "browserify", "cleanPostBuild"];
+var tasks = ["clean", "html", "browserify", "css", "cleanPostBuild"];
 gulp.task("default", gulpSync.sync(tasks));
 
 
