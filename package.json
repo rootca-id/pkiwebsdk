@@ -20,6 +20,7 @@
     "browserify-shim": "^3.8.10",
     "gulp": "^3.9.0",
     "gulp-html-to-js": "0.0.1",
+    "gulp-inline-css": "^2.0.0",
     "gulp-minify": "0.0.5",
     "gulp-rimraf": "^0.1.1",
     "gulp-sync": "^0.1.4",
