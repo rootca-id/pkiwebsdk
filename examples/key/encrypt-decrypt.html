@@ -70,7 +70,11 @@
             return publicKey.encrypt(fileToBeEncrypted.data)
           })
           .then(function(buf){
-            window.PKIWebSDK.Utils.toFile(buf, fileToBeEncrypted.name + "-encrypted", fileToBeEncrypted.type);
+            var splitted = fileToBeEncrypted.name.split(".");
+            var extension = splitted[splitted.length-1];
+            splitted.pop();
+            var name = splitted.join(".");
+            window.PKIWebSDK.Utils.toFile(buf, name + "-encrypted." + extension, fileToBeEncrypted.type);
           })
           .catch(function(err){
             alert(err.message);
@@ -84,7 +88,11 @@
             return privateKey.decrypt(fileToBeDecrypted.data)
           })
           .then(function(buf){
-            window.PKIWebSDK.Utils.toFile(buf, fileToBeDecrypted.name + "-decrypted", fileToBeDecrypted.type);
+            var splitted = fileToBeDecrypted.name.split(".");
+            var extension = splitted[splitted.length-1];
+            splitted.pop();
+            var name = splitted.join(".");
+            window.PKIWebSDK.Utils.toFile(buf, name + "-decrypted." + extension, fileToBeDecrypted.type);
           })
           .catch(function(err){
             alert(err.message);
