@@ -385,7 +385,27 @@ describe("Key", function() {
           done();
         })
     })
-    /* it("should fail to decrypt an array buffer using publicKey", function(done){ */
-    /* }) */
+    it("should fail to encrypt because of file size is bigger than k length of modulus minus 11 (see rfc2313)", function(done){
+      var publicKey, privateKey;
+      var file = "aGVsbG8KYXJlc3RuaWFyc2Vyc2VuIHRvaXJhcyBudG9pYXJuIHN0aWFlcm5zIHRvYWllcm50b2FyaWVuc3Qgb2lhcm5zdCBvYWlyZXN0biBhaXJlbnN0b2lhcmVudGF5b3dmdXRuYSd1dG5hdXl3Zid0bmFpcnNldGtpZndla3Rudy95J2Z1dGthdy8nZnlraXNldGtmdWhueTMndWhwYXd5b3V0aGEgaXJzZXRvYWlyc2VuaXJhZXNudG9yZW50IGFveXV0bmFvc3J5dW50YW9pdW50Znl3dWFpcnNlbnRhaW9yZXNudCBvYXJpZXNuZWluaWVl";
+      var arrayBuffer = Utils.base642Ab(file);
+      Key.parsePEM(publicKeyPem, "SHA-256")
+        .then(function(key){
+          publicKey = key;
+          return Key.parsePEM(unmatchedPrivateKeyPem, "SHA-256");
+        })
+        .then(function(key){
+          privateKey = key;
+          return publicKey.encrypt(arrayBuffer); 
+        })
+        .then(function(encrypted){
+          expect(1).toBe(2);
+          done();
+        })
+        .catch(function(err){
+          console.log(err.message);
+          done();
+        })
+    })
   });
 });
