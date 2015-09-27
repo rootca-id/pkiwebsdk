@@ -9,6 +9,23 @@
 		<link rel="stylesheet" href="../dist/css/style.css">
 		<link rel="stylesheet" href="../dist/css/examples-certificate.css">
         <script src="../../build/bundle.js"></script>
+        <style>
+		* {
+		  margin: 0;
+		}
+		html, body {
+		  height: 100%;
+		}
+		.page-wrap {
+		  min-height: 90%;
+		  /* equal to footer height */
+		  margin-bottom: 0px; 
+		}
+		.page-wrap:after {
+		  content: "";
+		  display: block;
+		}
+        </style>
     </head>
     
     <body>
@@ -43,7 +60,7 @@
 		  </div>
 		</nav>
 
-		<div class="container">
+		<div class="container page-wrap" style="margin-top: 1%;">
 			<div class="tab-container">
 				<ul class="nav nav-tabs">
 					<li class="active"><a class="tab" href="#fromder" data-toggle="tab">From DER</a></li>
@@ -79,7 +96,7 @@
 			</div>
 		</div>    
 
-	<footer>
+	<footer class="site-footer">
 		<p>&copy; 2015 <a href="http://kominfo.go.id/" class="footer-text">Direktorat Keamanan Informasi - Kementerian Komunikasi dan Informatika Republik Indonesia</a></p>
 	</footer>
             
@@ -150,7 +167,8 @@
             window.PKIWebSDK.UI.toFile(result , "signed-data.der", "application/pcks7");
           })
       })
-
+	
+	  /*	
       var tabActive=1, tabs=document.getElementById('tabs').getElementsByTagName('a'), tabs_data=document.getElementById('tabs_data').getElementsByTagName('fieldset');
       function tab_click(x){
         if(x > -1 && x < tabs.length && x < tabs_data.length){
@@ -162,6 +180,7 @@
         } return false;
       }
       tab_click(0);
+      */
       </script>
 
 	<script src="../dist/js/jquery-2.1.4.min.js"></script>
