@@ -187,7 +187,7 @@ Key.prototype.isPublic = function() {
 }
 
 /* Encrypt data using public key
- * @params {ArrayBuffer} data - Array buffer of the data
+ * @params {ArrayBuffer} data - Array buffer of the data. The data's size must be less than 245 byte
  * @returns {ArrayBuffer} - Array buffer of encrypted data
  */
 
@@ -198,6 +198,11 @@ Key.prototype.encrypt = function(arrayBuffer) {
     if (self.keyData.type != "public") {
       reject("Public key does not exist in this key object");
     }
+    if (arrayBuffer.byteLength > 245) {
+      var err = new Error();
+      err.message = "The data to be encrypted must be less than 246 byte";
+      return reject(err);
+    }
     // Convert publicKey to forge's key object
     self.toPEM()
       .then(function(pem){
@@ -207,7 +212,7 @@ Key.prototype.encrypt = function(arrayBuffer) {
           var encrypted = publicKey.encrypt(window.PKIWebSDK.Utils.ab2Str(arrayBuffer));
         } 
         catch(err){
-          reject(err);
+          return reject(err);
         }
         resolve(window.PKIWebSDK.Utils.str2Ab(encrypted));
       })
@@ -234,7 +239,7 @@ Key.prototype.decrypt = function(arrayBuffer){
           var decrypted = privateKey.decrypt(data);
         } 
         catch(err){
-          reject(err);
+          return reject(err);
         }
         resolve(window.PKIWebSDK.Utils.str2Ab(decrypted));
       })
