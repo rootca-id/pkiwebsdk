@@ -187,7 +187,7 @@ Key.prototype.isPublic = function() {
 }
 
 /* Encrypt data using public key
- * @params {ArrayBuffer} data - Array buffer of the data. The data's size must be less than 245 byte
+ * @params {ArrayBuffer} data - Array buffer of the data. The data's size must be less than public's key k-11 octet
  * @returns {ArrayBuffer} - Array buffer of encrypted data
  */
 
