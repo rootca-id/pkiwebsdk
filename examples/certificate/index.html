@@ -222,10 +222,6 @@
 				<div class="col-sm-12 input-group">
 					<textarea class="form-control" id="certPem" style="width:100%"></textarea><br>
 				</div>
-			<!--
-			<p>p12 in base64 string</p>
-			<textarea id="p12Base64" style="width:100%"></textarea>
-			-->
 		</div>		    
 	</div>    
             
@@ -290,8 +286,6 @@
       var removeTextArea = function(cb){
         var text = document.getElementById("privateKey");
         text.value = "";
-        var text = document.getElementById("p12Base64");
-        text.value = "";
         var text = document.getElementById("certPem");
         text.value = "";
         cb();
@@ -300,8 +294,6 @@
       var generateP12 = function(){
         var pem = document.getElementById("privateKey").value; 
         certificate.toP12(pem, document.getElementById("p12password").value).then(function(p12){
-          var p12text = document.getElementById("p12Base64");
-          p12text.value = p12;
       
           var a = document.getElementById("link");
           a.href = "data:application/x-pkcs12;base64,"+ p12;
