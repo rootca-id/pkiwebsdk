@@ -1,0 +1,33 @@
+.navbar-blue {
+    background-color: #1979D0;
+    border-color: #1462A9;
+}
+
+.navbar-blue .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
+    color: #FFF;
+    background-color: #00458E;
+}
+
+a {
+    color: #FFF;
+    text-decoration: none;
+}
+
+.btn-primary {
+	color:#fff;
+	background-color:#00458E;
+	border-color:#1462A9;
+}
+
+footer {
+    padding: 20px 0px;
+    color: #a9a9a9;
+    font-size: 13px;
+	background-color: #2A2A2A;
+	text-align: center;
+}
+
+.footer-text {
+    color: #a9a9a9;
+    text-decoration: none;
+}

@@ -145,7 +145,7 @@ var signerInfoFromASN1 = function(asn1) {
  * @param {String} rawData - The raw data of the PKCS#7 signed data in DER format
  * @returns {SignedDataObject}
  */
-SignedData.fromDER = function fromDER(rawData) {
+SignedData.parseDER = function parseDER(rawData) {
   var asn1 = forge.asn1.fromDer(rawData);
   var signedData = forge.pkcs7.messageFromAsn1(asn1); 
   var signedDataASN1 = asn1.value[1].value[0];

@@ -1,84 +1,137 @@
-<script src="../../build/bundle.js"></script>
-Parse Cert PEM <div id="parse-pem"></div><br>
-Parse CRL <div id="parse-crl"></div><br>
-Parse P12 to Cert. Fill the password then select a p12 file <div id="parse-p12"></div><br>
-Validate certificate chain <div id="validate-cert-chain"></div><br>
-<hr>
-Sign a PDF file<br>
-<div id="sign-a-pdf"></div>
-<hr>
-Verify a PDF file<br>
-<div id="verify-a-pdf"></div>
-<script>
-  window.PKIWebSDK.UI.getCertPEM("parse-pem", function(promise){
-    promise.then(function(cert){
-      console.log(cert);
-      cert.getSubject().then(function(subject){
-        alert("PEM successfully parsed. \n\n" + JSON.stringify(subject));
-      })
-    })
-    .catch(function(err){
-      alert(err.message);
-    })
-  })
-  window.PKIWebSDK.UI.getCRL("parse-crl", function(promise){
-    promise.then(function(revocationList){
-      console.log(revocationList);
-      alert("CRL successfully parsed. \n\n" + revocationList);
-    })
-    .catch(function(err){
-      alert(err.message);
-    })
-  })
-  window.PKIWebSDK.UI.getP12("parse-p12", function(promise){
-    promise.then(function(result){
-      console.log(result);
-      result.certificate.getSubject().then(function(subject){
-              alert("P12 successfully parsed. \n\n CERTIFICATE :\n" + JSON.stringify(subject));
-              alert("PRIVATE KEY : \n\n" + result.privateKey);
-      })
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>PKIWebSDK Examples - UI</title>
+		<link rel="stylesheet" href="../dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="../dist/css/style.css">
+        <script src="../../build/bundle.js"></script>
+    </head>
+    
+    <body>
+		<nav class="navbar navbar-blue navbar-fixed-top">
+		  <div class="container">
+			<div class="navbar-header">
+			  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			  </button>
+			  <span><img src="../dist/img/logo.png" class="pull-left img-responsive"></span>
+			  <a class="navbar-brand" href="../index.html"> PKIWebSDK</a>
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+			  <ul class="nav navbar-nav pull-right">
+				<li><a href="../certificate/index.html">Certificate</a></li>
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#">Key <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="../key/generate.html" target="_blank">Generate</a></li>
+							<li><a href="../key/sign.html" target="_blank">Sign</a></li>
+							<li><a href="../key/verify.html" target="_blank">Verify</a></li>
+						</ul>	
+				</li>	
+				<li><a href="../pdf/index.html">PDF</a></li>
+				<li><a href="../signed-data/index.html">Signed Data</a></li>
+				<li class="active"><a href="index.html">UI</a></li>
+			  </ul>
+			</div><!--/.nav-collapse -->
+		  </div>
+		</nav>
 
-    })
-    .catch(function(err){
-      alert(err.message);
-    })
-  })
-  window.PKIWebSDK.UI.getCertChain("validate-cert-chain", function(promise){
-    promise.then(function(result){
-      console.log(result);
-      var msg = "The certificate chain is " + (result.isVerified? "verified" : "not verified" );
-      msg += ", " + (result.isValid? "valid" : "not valid" );
-      msg += " and " + (result.isTrusted? "trusted" : "not trusted" );
-      alert(msg);
-    })
-    .catch(function(err){
-      alert(err.message);
-    })
-  })
-  window.PKIWebSDK.UI.signPDF("sign-a-pdf", function(promise){
-    promise.then(function(signed){
-      console.log(signed);
-      alert("Successfully signed");
-      window.PKIWebSDK.Utils.toFile(signed, "signed-data.pdf", "application/pdf");
-    })
-    .catch(function(err){
-      alert(err.message);
-    })
-  })
-  window.PKIWebSDK.UI.verifyPDF("verify-a-pdf", function(promise){
-    promise.then(function(result){
-      console.log(result);
-      if (result) {
-        var msg = "The Signature of the PDF file is " + (result.isVerified? "verified" : "not verified" );
-        msg += ", " + (result.isValid? "valid" : "not valid" );
-        msg += " and " + (result.isTrusted? "trusted" : "not trusted" );
-        alert(msg);
-      } else {
-        alert("No signature found in this document");
-      }        
-    })
-    .catch(function(err){
-      alert(err.message);
-    })
-  })
-</script>
+		<div class="container" style="margin-top: 75px;">
+			<div id="parse-pem"></div>
+			<div id="parse-crl"></div>
+			<div id="parse-p12"></div>
+			<div id="validate-cert-chain"></div>
+			<div id="sign-a-pdf"></div>
+			<div id="verify-a-pdf"></div>
+		</div>
+
+	<footer>
+		<p>&copy; 2015 <a href="http://kominfo.go.id/" class="footer-text">Direktorat Keamanan Informasi - Kementerian Komunikasi dan Informatika Republik Indonesia</a></p>
+	</footer>
+
+	<script>
+	  window.PKIWebSDK.UI.getCertPEM("parse-pem", function(promise){
+		promise.then(function(cert){
+		  console.log(cert);
+		  cert.getSubject().then(function(subject){
+			alert("PEM successfully parsed. \n\n" + JSON.stringify(subject));
+		  })
+		})
+		.catch(function(err){
+		  alert(err.message);
+		})
+	  })
+	  window.PKIWebSDK.UI.getCRL("parse-crl", function(promise){
+		promise.then(function(revocationList){
+		  console.log(revocationList);
+		  alert("CRL successfully parsed. \n\n" + revocationList);
+		})
+		.catch(function(err){
+		  alert(err.message);
+		})
+	  })
+	  window.PKIWebSDK.UI.getP12("parse-p12", function(promise){
+		promise.then(function(result){
+		  console.log(result);
+		  result.certificate.getSubject().then(function(subject){
+				  alert("P12 successfully parsed. \n\n CERTIFICATE :\n" + JSON.stringify(subject));
+				  alert("PRIVATE KEY : \n\n" + result.privateKey);
+		  })
+
+		})
+		.catch(function(err){
+		  alert(err.message);
+		})
+	  })
+	  window.PKIWebSDK.UI.getCertChain("validate-cert-chain", function(promise){
+		promise.then(function(result){
+		  console.log(result);
+		  var msg = "The certificate chain is " + (result.isVerified? "verified" : "not verified" );
+		  msg += ", " + (result.isValid? "valid" : "not valid" );
+		  msg += " and " + (result.isTrusted? "trusted" : "not trusted" );
+		  alert(msg);
+		})
+		.catch(function(err){
+		  alert(err.message);
+		})
+	  })
+	  window.PKIWebSDK.UI.signPDF("sign-a-pdf", function(promise){
+		promise.then(function(signed){
+		  console.log(signed);
+		  alert("Successfully signed");
+		  window.PKIWebSDK.Utils.toFile(signed, "signed-data.pdf", "application/pdf");
+		})
+		.catch(function(err){
+		  alert(err.message);
+		})
+	  })
+	  window.PKIWebSDK.UI.verifyPDF("verify-a-pdf", function(promise){
+		promise.then(function(result){
+		  console.log(result);
+		  if (result) {
+			var msg = "The Signature of the PDF file is " + (result.isVerified? "verified" : "not verified" );
+			msg += ", " + (result.isValid? "valid" : "not valid" );
+			msg += " and " + (result.isTrusted? "trusted" : "not trusted" );
+			alert(msg);
+		  } else {
+			alert("No signature found in this document");
+		  }        
+		})
+		.catch(function(err){
+		  alert(err.message);
+		})
+	  })
+	</script>
+		
+	<script src="../dist/js/jquery-2.1.4.min.js"></script>
+	<script src="../dist/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="../dist/js/bootstrap-filestyle.min.js"></script>
+
+  </body>
+</html>
