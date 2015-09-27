@@ -2,7 +2,11 @@
 <div class="pkiwebsdk-container">
 	<h4>Validate certificate chain</h4> 
 	<p>Upload your certificate</p>
-	<input type="file" id="pkiwebsdk-get-cert-chain" multiple />
+		<input id="pkiwebsdk-get-cert-chain-uploadfile" placeholder="Choose File" disabled="disabled" />
+		<div class="pkiwebsdk-fileupload pkiwebsdk-button">
+			<span>Choose File</span>
+			<input id="pkiwebsdk-get-cert-chain" type="file" class="pkiwebsdkupload" multiple />
+		</div>			
 	<br>
 	<button class="pkiwebsdk-button" id="pkiwebsdk-get-cert-chain-validate">Verify</button>
 	<button class="pkiwebsdk-button" id="pkiwebsdk-get-cert-chain-trust">Trust</button>

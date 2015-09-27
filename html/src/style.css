@@ -50,3 +50,19 @@
 	background-color: #286090;
 	border-color: #204d74;
 }
+.pkiwebsdk-fileupload {
+    position: relative;
+    overflow: hidden;
+    margin: 10px;
+}
+.pkiwebsdk-fileupload input.pkiwebsdkupload {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    padding: 0;
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
