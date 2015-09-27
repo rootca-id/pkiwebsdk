@@ -198,15 +198,16 @@ Key.prototype.encrypt = function(arrayBuffer) {
     if (self.keyData.type != "public") {
       reject("Public key does not exist in this key object");
     }
-    if (arrayBuffer.byteLength > 245) {
-      var err = new Error();
-      err.message = "The data to be encrypted must be less than 246 byte";
-      return reject(err);
-    }
     // Convert publicKey to forge's key object
     self.toPEM()
       .then(function(pem){
         var publicKey = forge.pki.publicKeyFromPem(pem);
+        var limit = Math.ceil(publicKey.n.bitLength() / 8) - 11;
+        if (arrayBuffer.byteLength > limit) {
+          var err = new Error();
+          err.message = "The data to be encrypted must be less than " + (limit + 1) + " bytes";
+          return reject(err);
+        }
         // Encrypt
         try {
           var encrypted = publicKey.encrypt(window.PKIWebSDK.Utils.ab2Str(arrayBuffer));
