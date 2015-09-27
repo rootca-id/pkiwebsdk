@@ -7,6 +7,23 @@
     <title>PKIWebSDK Examples</title>
     <link rel="stylesheet" href="dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="dist/css/style.css">
+        <style>
+		* {
+		  margin: 0;
+		}
+		html, body {
+		  height: 100%;
+		}
+		.jumbotron {
+		  min-height: 90%;
+		  /* equal to footer height */
+		  margin-bottom: 0px; 
+		}
+		.jumbotron:after {
+		  content: "";
+		  display: block;
+		}
+        </style>    
   </head>
   <body>
 
@@ -42,7 +59,7 @@
     </nav>
 
 	<div class="jumbotron" style="margin-bottom: 0px;">
-		<div class="container" style="padding-bottom: 130px">
+		<div class="container">
 			<h2 style="padding-top: 30px">Welcome to PKIWebSDK Examples</h2>
 			<p>This example contains:</p>
 			<p><a href="certificate/index.html" class="btn btn-primary">Certificate</a></p>
