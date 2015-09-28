@@ -25,7 +25,7 @@
 			console.log(parsedPEM);
 			parsedPEM.sign(data)
 			  .then(function(signature){
-				toFile(signature); 
+				PKIWebSDK.Utils.toFile(signature, "signature.txt", "text/plain");
 			  })
 			  .catch(function(err){
 				alert(err);
@@ -36,31 +36,6 @@
 		  })
 	  }
 	  
-	  var toFile = function(arrayBuffer){
-		// downloading!
-		var blob = new Blob([arrayBuffer], { type: "text/plain" });
-		var filename = "signature";
-		if (typeof window.navigator.msSaveBlob !== 'undefined') {
-		  window.navigator.msSaveBlob(blob, filename);
-		} else {
-		  var URL = window.URL || window.webkitURL;
-		  var downloadUrl = URL.createObjectURL(blob);
-		  if (filename) {
-			var a = document.createElement("a");
-			if (typeof a.download === 'undefined') {
-			  window.location = downloadUrl;
-			} else {
-			  a.href = downloadUrl;
-			  a.download = filename;
-			  document.body.appendChild(a);
-			  a.click();
-			}
-		  } else {
-			window.location = downloadUrl;
-		  }
-		  setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100);
-		}
-	  }
 	  setTimeout(function(){
 		document.getElementById('files').addEventListener('change', function(evt){
 		  console.log("file added");

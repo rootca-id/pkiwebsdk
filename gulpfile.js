@@ -22,7 +22,7 @@ gulp.task("html", function(){
   return gulp.src("build/*.html")
     .pipe(htmlToJs({concat: 'html.js'}))
     .pipe(minify())
-    .pipe(gulp.dest("./html/"));
+    .pipe(gulp.dest("html"));
 })
 gulp.task("browserify", function(){
   return browserify("src/index.js")
@@ -31,7 +31,7 @@ gulp.task("browserify", function(){
     .pipe(gulp.dest("build"));
 })
 gulp.task("cleanPostBuild", function(){
-  return gulp.src(["html/html*", "html/html-min.js", "build/*.html"], {read:false})
+  return gulp.src(["html/html.js", "build/*.html"], {read:false})
     .pipe(rimraf({force:true}));
 })
 
