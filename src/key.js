@@ -59,10 +59,33 @@ Key.generatePair = function(algorithm) {
  */
 Key.parsePEM = function(pem, algorithm) {
   var arr = pem.split("-----");
-  var usage = (arr[1] == "BEGIN RSA PRIVATE KEY") ? "sign" : "verify";
+  var usage = (arr[1] == "BEGIN RSA PRIVATE KEY" || arr[1] == "BEGIN PRIVATE KEY") ? "sign" : "verify";
   var self = this;
   return new Promise(function(resolve, reject){
-    var jwk = pem2Jwk(pem);
+    var jwk;
+    try {
+      jwk = pem2Jwk(pem);
+    } 
+    catch (err) {
+      if (err.message === "Failed to match tag: \"bitstr\" at: [\"privateKey\"]") {
+        if (arr[1] == "BEGIN RSA PRIVATE KEY" || arr[1] == "BEGIN PRIVATE KEY") {
+          var key = forge.pki.privateKeyFromPem(pem);
+          pem = forge.pki.privateKeyToPem(key);
+        } else if (arr[1] == "BEGIN RSA PUBLIC KEY" || arr[1] == "BEGIN PUBLIC KEY") {
+          var key = forge.pki.publicKeyFromPem(pem);
+          pem = forge.pki.publicKeyToPem(key);
+        } else {
+          var err = new Error();
+          err.message = "Invalid Key PEM";
+          return reject(err);
+        }
+        jwk = pem2Jwk(pem);
+      } else {
+        var err = new Error();
+        err.message = "Invalid Key PEM";
+        return reject(err);
+      }
+    }
     cryptoSubtle.importKey(
       "jwk", 
       jwk, 

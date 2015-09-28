@@ -1,5 +1,5 @@
 "use strict";
-
+require("../src/index");
 var cryptoSubtle = window.crypto.subtle || window.crypto.webkitSubtle || window.msCrypto.subtle;
 var Key = require("../src/key");
 var Utils = require("../src/utils");
@@ -16,6 +16,56 @@ var string2Ab = function(str, cb) {
   }
   return cb(buf);
 }
+var openSSLPrivateKey = "-----BEGIN PRIVATE KEY-----\n"
++ "MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDtKQttB3u1Nesn\n"
++ "OPzeXELo7z2hy14d2IH9B0866JICiJ4IEr3TwsGecjk2e9gWG5HP8DNr4Kgksgdx\n"
++ "5VZItim8csjs1ZyTK7DxGxhiZWOB9J1gBQd5hUHXOjSj/Cg03A6WXQIOD9XSLcQR\n"
++ "t5cawpcopTPxjr16qLjrQuIWvMMU0RsjxoR6IvOWBuDJiIWMIi7gxuZhvrgGmkEG\n"
++ "xa3ILda6LxHFji+23OKT8JusSW4Yh7cmCU9toPfMy4Y79f/tYlKK2fiNtSEH/p7W\n"
++ "XBMc6Nbr0QjO4HDH8sn+SgBqZdL3rqdl0Lep+CoufBSSF91QF2rfMtJPX6l5/uXA\n"
++ "vO0D6valAgMBAAECggEBAI+EwzFb0fU7h+7Ygc5eru8fuIBs/au6Fg/1mHDhxVpb\n"
++ "KqdgEBhSR7GHFjBuibn3PSpFBhlGfvqV8gNu8eRWuLMeE5GfQ32cdxuxdfQ1vx4p\n"
++ "1gMBiCB2D/4bbze9pOc4NGuyJUg1NQRYRcsi+wJqt+cU8nZAF1JfQGi+tOtll/jD\n"
++ "2Bc1MqljhEAGt2HuCmtfm5H0xEKe28kg0y7f5vgZO07NHJaqX1OodKDVy7J8ruR2\n"
++ "XAXmPiGep7qrAfYlrtyAtXWVtrPemdskHtpGjciood+tmE+N/+9UApn1lOU8+jc2\n"
++ "7Cs1fq2R/592ZoilwOmWfZgExBB9WW5c7b3yphxAMYECgYEA+OourjXTaZ8y+9DF\n"
++ "3J6FYmVnkKYg86yiSZkh+tVDE4riNxq/IQCHrghBUo65L5GybRi95+bwHWlCAFAo\n"
++ "ulRpwat1gB6ffCTty+6oMTFO0Ud2sOJRekQvT/enDbhagxG+B2joL/yU1SAKkemO\n"
++ "mjV8EExEmUrscJCSRm9qIYbGuS0CgYEA8+k1c+dfVHGArp4ZXAC7TGGnbzHgB7BO\n"
++ "Eopogkd5eG/scr7MvyY8XXYO5ENIgkUC4iB9VsvHVUfrJHiSZaAZk4sFEM9ol0TU\n"
++ "znl4ZOG5F6Lb2p1hjL/lwKEjlocRicIllawVKN/PHu3scyWhL8uTy0J82VKE3tRd\n"
++ "v+i56t3YrlkCgYAIq8fCg9eAh240PXqXC+KjodqwvEjLlEj2/WGkpkc26BCnUMQ1\n"
++ "txoC4wC7ioNC9/VaPZFoAbB9pcwJzMEOdKBWgc2PEAIIRhUOlJrBU/Fl8vJciRXD\n"
++ "h5qKU5s7LB/jDvwqr+neuhLJNduIZ7VzA8f1nWKKYITKCw89auYsktBbZQKBgDPb\n"
++ "y5+e++fKUh/OQXoMNcZhpOXBZu57j73la573b14p/c3Pv1yM1pzQcw4ZOBtqbNiD\n"
++ "K+L+ZJ0/M0GH2Sh+R7HVBviyAHzZB532uaBJVb8uwyvR9mGkk0bHe/ePNC1j9/XA\n"
++ "pqcQHstmrrU0tPaihAPdWQojv1hZMq2Q36aOEHnRAoGAPASy342k7F0LnYyyw3cY\n"
++ "DAluhzJg0ayU/6W+tWEXwpfesY6WryshFES4IaxdzHlrX0Gp6JyNxKs/tFOga6z9\n"
++ "WAjT6KWHVmKLX0mGsCo/EYwgbr2VUUrCs7ZViLvpt90g215e1M8n2+dupybocTot\n"
++ "nZHDe4Hnz6SIbqUwenlbJyc=\n"
++ "-----END PRIVATE KEY-----\n";
+
+var openSSLPublicKey = "-----BEGIN PUBLIC KEY-----\n"
++ "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7SkLbQd7tTXrJzj83lxC\n"
++ "6O89octeHdiB/QdPOuiSAoieCBK908LBnnI5NnvYFhuRz/Aza+CoJLIHceVWSLYp\n"
++ "vHLI7NWckyuw8RsYYmVjgfSdYAUHeYVB1zo0o/woNNwOll0CDg/V0i3EEbeXGsKX\n"
++ "KKUz8Y69eqi460LiFrzDFNEbI8aEeiLzlgbgyYiFjCIu4MbmYb64BppBBsWtyC3W\n"
++ "ui8RxY4vttzik/CbrEluGIe3JglPbaD3zMuGO/X/7WJSitn4jbUhB/6e1lwTHOjW\n"
++ "69EIzuBwx/LJ/koAamXS966nZdC3qfgqLnwUkhfdUBdq3zLST1+pef7lwLztA+r2\n"
++ "pQIDAQAB\n"
++ "-----END PUBLIC KEY-----\n";
+
+var invalidOpenSSLPublicKey = "-----BEGIN PUBLIC KEY-----\n"
++ "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7SkLbQd7tTXrJzj83lxC\n"
++ "6O89octeHdiB/QdPOuiSAoieCBK908LBnnI5NnvYFhuRz/Aza+CoJLIHceVWSLYp\n"
++ "vHLI7NWckyuw8RsYYmVjgfSdYAUHeYVB1zo0o/woNNwOll0CDg/V0i3EEbeXGsKX\n"
++ "KKUz8Y69eqi460LiFrzDFNEbI8aEeiLzlgbgyYiFjCIu4MbmYb64BppBBsWtyC3W\n"
++ "ui8RxY4vttzik/CbrEluGIe3JglPbaD3zMuGO/X/7WJSitn4jbUhB/6e1lwTHOjW\n"
++ "69EIzuBwx/LJ/koAamXS966nZdC3qfgqLnwUkhfdUBdq3zLST1+pef7lwLztA+r2\n"
++ "QIDAQA\n"
++ "-----END PUBLIC KEY-----\n";
+
+
 var publicKeyPem = "-----BEGIN RSA PUBLIC KEY-----\n"
   + "MIIBCgKCAQEA0DtRP6gWQhH1IpRzpAdSPiManyPOIxcv0Wh2WLQouS07sk7zd4Cg\n"
   + "CmMRQ7KTY7T+10eAl0WkLxg1DASJtqt4V+6OpdmgrXSxGspQgqqxooDW8Sy8PBAx\n"
@@ -188,6 +238,40 @@ describe("Key", function() {
           done();
         })
     });
+    it("should parse OpenSSL-generated PEM string (private) to key object", function(done) {
+      Key.parsePEM(openSSLPrivateKey, "SHA-256").then(function(obj){
+        expect(obj.keyData.type).toEqual("private");
+        done();
+      })
+      .catch(function(err){
+        console.log(err.message);
+        expect(1).toBe(2);
+        done();
+      })
+    });
+    it("should parse OpenSSL-generated PEM string (public) to key object", function(done) {
+      Key.parsePEM(openSSLPublicKey, "SHA-256").then(function(obj){
+        expect(obj.keyData.type).toEqual("public");
+        done();
+      })
+      .catch(function(err){
+        console.log(err.message);
+        expect(1).toBe(2);
+        done();
+      })
+    });
+    it("should fail to parse OpenSSL-generated PEM  because of invalid PEM string", function(done) {
+      Key.parsePEM(invalidOpenSSLPublicKey, "SHA-256").then(function(obj){
+        expect(1).toBe(2);
+        done();
+      })
+      .catch(function(err){
+        console.log(err.message);
+        expect(err.message).toBe("Invalid Key PEM");
+        done();
+      })
+    });
+
 
     it("should sign and verify a data, the result is valid", function(done) {
       string2Ab("hello world", function(data){
