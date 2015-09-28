@@ -22,14 +22,14 @@
 			keyPair.publicKey.toPEM()
 			  .then(function(pemString){
 				console.log(pemString);
-				var privateKeyContainer = document.getElementById("privateKeyContainer");
-				privateKeyContainer.innerHTML = pemString;
+				var publicKeyContainer = document.getElementById("publicKeyContainer");
+				publicKeyContainer.innerHTML = pemString;
 			  })
 			keyPair.privateKey.toPEM()
 			  .then(function(pemString){
 				console.log(pemString);
-				var publicKeyContainer = document.getElementById("publicKeyContainer");
-				publicKeyContainer.innerHTML = pemString;
+				var privateKeyContainer = document.getElementById("privateKeyContainer");
+				privateKeyContainer.innerHTML = pemString;
 			  })
 		  })
 		  .catch(function(err){
@@ -80,8 +80,8 @@
 						<span class="input-group-addon" onClick="generatePair()">Generate</span>
 					</div>
 					<div class="input-group col-sm-8">
-						<textarea class="form-control" style="margin-top: 20px; margin-bottom: 20px;" cols="80" rows="10" id="privateKeyContainer"></textarea>
-						<textarea class="form-control" cols="80" rows="30" id="publicKeyContainer"></textarea>
+						<textarea class="form-control" style="margin-top: 20px; margin-bottom: 20px;" cols="80" rows="10" id="publicKeyContainer"></textarea>
+						<textarea class="form-control" cols="80" rows="30" id="privateKeyContainer"></textarea>
 					</div>
 			</div>
 		</div><!-- /.container -->
