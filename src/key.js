@@ -59,10 +59,33 @@ Key.generatePair = function(algorithm) {
  */
 Key.parsePEM = function(pem, algorithm) {
   var arr = pem.split("-----");
-  var usage = (arr[1] == "BEGIN RSA PRIVATE KEY") ? "sign" : "verify";
+  var usage = (arr[1] == "BEGIN RSA PRIVATE KEY" || arr[1] == "BEGIN PRIVATE KEY") ? "sign" : "verify";
   var self = this;
   return new Promise(function(resolve, reject){
-    var jwk = pem2Jwk(pem);
+    var jwk;
+    try {
+      jwk = pem2Jwk(pem);
+    } 
+    catch (err) {
+      if (err.message === "Failed to match tag: \"bitstr\" at: [\"privateKey\"]") {
+        if (arr[1] == "BEGIN RSA PRIVATE KEY" || arr[1] == "BEGIN PRIVATE KEY") {
+          var key = forge.pki.privateKeyFromPem(pem);
+          pem = forge.pki.privateKeyToPem(key);
+        } else if (arr[1] == "BEGIN RSA PUBLIC KEY" || arr[1] == "BEGIN PUBLIC KEY") {
+          var key = forge.pki.publicKeyFromPem(pem);
+          pem = forge.pki.publicKeyToPem(key);
+        } else {
+          var err = new Error();
+          err.message = "Invalid Key PEM";
+          return reject(err);
+        }
+        jwk = pem2Jwk(pem);
+      } else {
+        var err = new Error();
+        err.message = "Invalid Key PEM";
+        return reject(err);
+      }
+    }
     cryptoSubtle.importKey(
       "jwk", 
       jwk, 
@@ -184,6 +207,67 @@ Key.prototype.isPrivate = function() {
 Key.prototype.isPublic = function() {
   var self = this;
   return (self.keyData.type == "public" ? true : false);
+}
+
+/* Encrypt data using public key
+ * @params {ArrayBuffer} data - Array buffer of the data. The data's size must be less than public's key k-11 octet
+ * @returns {ArrayBuffer} - Array buffer of encrypted data
+ */
+
+Key.prototype.encrypt = function(arrayBuffer) {
+  var self = this;
+  console.log(self.keyData)
+  return new Promise(function(resolve, reject){
+    if (self.keyData.type != "public") {
+      reject("Public key does not exist in this key object");
+    }
+    // Convert publicKey to forge's key object
+    self.toPEM()
+      .then(function(pem){
+        var publicKey = forge.pki.publicKeyFromPem(pem);
+        var limit = Math.ceil(publicKey.n.bitLength() / 8) - 11;
+        if (arrayBuffer.byteLength > limit) {
+          var err = new Error();
+          err.message = "The data to be encrypted must be less than " + (limit + 1) + " bytes";
+          return reject(err);
+        }
+        // Encrypt
+        try {
+          var encrypted = publicKey.encrypt(window.PKIWebSDK.Utils.ab2Str(arrayBuffer));
+        } 
+        catch(err){
+          return reject(err);
+        }
+        resolve(window.PKIWebSDK.Utils.str2Ab(encrypted));
+      })
+  })
+}
+
+/* Decrypt data using private Key
+ * @params {ArrayBuffer} data - Array buffer of decrypted data
+ * @returns {ArrayBuffer} - Array buffer of decrypted data
+ */
+
+Key.prototype.decrypt = function(arrayBuffer){
+  var self = this;
+  return new Promise(function(resolve, reject){
+    if (self.keyData.type != "private") {
+      reject("Private key does not exist in this key object");
+    }
+    self.toPEM()
+      .then(function(pem){
+        var privateKey = forge.pki.privateKeyFromPem(pem);
+        var base64Data = window.PKIWebSDK.Utils.ab2Base64(arrayBuffer);
+        var data = forge.util.decode64(base64Data);
+        try {
+          var decrypted = privateKey.decrypt(data);
+        } 
+        catch(err){
+          return reject(err);
+        }
+        resolve(window.PKIWebSDK.Utils.str2Ab(decrypted));
+      })
+  })
 }
 
 module.exports = Key;

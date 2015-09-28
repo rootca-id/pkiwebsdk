@@ -5,6 +5,7 @@ var PKIWebSDK = function() {
   this.Key = require('./key');
   this.UI = require('./ui');
   this.Utils = require("./utils");
+  this.EncryptedData = require("./encrypted-data");
 }
 var caStore = require("./castore");
 
