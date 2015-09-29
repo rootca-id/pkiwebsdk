@@ -290,7 +290,9 @@
         text.value = "";
         var text = document.getElementById("certPem");
         text.value = "";
-        cb();
+        if (cb) {
+          cb();
+        }
       }
       
       var generateP12 = function(){
@@ -386,7 +388,7 @@
               text.value = privateKey;
               console.log(newCert);
               document.getElementById("certPem").value = window.PKIWebSDK.private.forge.pki.certificateToPem(newCert.certData[0]);
-              alert("P12 parsed successfully. See console.log in Inspect Element")      
+              alert("P12 parsed successfully. The result is printed in Output section bellow")      
             });
         })
       }
