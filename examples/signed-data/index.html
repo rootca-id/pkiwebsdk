@@ -166,7 +166,7 @@
       document.getElementById("to-sign-trigger").addEventListener("click", function(evt){
         window.PKIWebSDK.SignedData.sign(certificateToSign, privateKeyToSign, fileToBeSigned)
           .then(function(result){
-            window.PKIWebSDK.UI.toFile(result , "signed-data.der", "application/pcks7");
+            window.PKIWebSDK.Utils.toFile(result , "signed-data.der", "application/pcks7");
           })
       })
 	
