@@ -408,9 +408,9 @@
       var verifyChain = function(){
         removeTextArea(function(){
           certChain.validate()
-            .then(function(isValid){
-              console.log(isValid);
-              alert("The certificate is : " + (isValid? "valid":"not valid"));
+            .then(function(result){
+              console.log(result.isValid);
+              alert("The certificate is : " + (result.isValid? "valid":"not valid") + " and " + (result.isTrusted? "trusted" : "not trusted"));
             })
             .catch(function(err){
               console.log(err.message);
@@ -423,8 +423,8 @@
       var trust = function(){
         removeTextArea(function(){
           window.PKIWebSDK.Certificate.trust(certChain.certData)
-            .then(function(isValid, caStore){
-              alert("The certificate chain is : " + (isValid? "valid":"not valid"));
+            .then(function(result, caStore){
+              alert("The certificate is : " + (result.isValid? "valid":"not valid") + " and " + (result.isTrusted? "trusted" : "not trusted"));
               console.log(caStore);
             })
             .catch(function(err){
