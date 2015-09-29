@@ -180,6 +180,9 @@ UI.getCertPEM = function(element, cb) {
     console.log(files);
     cb(UI.handler.PEM(files[0]));
   });
+  document.getElementById("pkiwebsdk-get-cert-pem").onchange = function () {
+    document.getElementById("pkiwebsdk-get-cert-pem-uploadfile").value = this.value.substring(12);
+  };
 }
 
 /**
@@ -196,6 +199,9 @@ UI.getCRL = function(element, cb) {
     var files = evt.target.files; 
     cb(UI.handler.CRL(files[0]));
   });
+  document.getElementById("pkiwebsdk-get-crl").onchange = function () {
+    document.getElementById("pkiwebsdk-get-crl-uploadfile").value = this.value.substring(12);
+  };
 }
 
 /**
@@ -212,6 +218,9 @@ UI.getP12 = function(element, cb) {
     var files = evt.target.files;
     cb(UI.handler.P12(files[0]));
   });
+  document.getElementById("pkiwebsdk-get-p12").onchange = function () {
+    document.getElementById("pkiwebsdk-get-p12-uploadfile").value = this.value.substring(12);
+  };  
 }
 
 /**
@@ -258,6 +267,9 @@ UI.getCertChain = function(element, cb) {
     var list = document.getElementById("pkiwebsdk-cert-chain-list");
     list.innerHTML = "Chain list :";
   });
+  document.getElementById("pkiwebsdk-get-cert-chain").onchange = function () {
+    document.getElementById("pkiwebsdk-get-cert-chain-uploadfile").value = this.value.substring(12);
+  };  
 }
 
 /**
@@ -289,6 +301,12 @@ UI.signPDF = function(element, cb) {
         cb(UI.PDFToSign.sign(UI.P12ToSign.certificate, UI.P12ToSign.privateKey, UI.signInfo));
       })
   });
+  document.getElementById("pkiwebsdk-get-p12-to-sign").onchange = function () {
+    document.getElementById("pkiwebsdk-get-p12-to-sign-uploadfile").value = this.value.substring(12);
+  };  
+  document.getElementById("pkiwebsdk-get-pdf-to-sign").onchange = function () {
+    document.getElementById("pkiwebsdk-get-pdf-to-sign-uploadfile").value = this.value.substring(12);
+  };    
 }
 
 /**
@@ -305,6 +323,9 @@ UI.verifyPDF = function(element, cb) {
     var files = evt.target.files;
     cb(UI.handler.PDFToVerify(files[0]));
   });
+  document.getElementById("pkiwebsdk-get-pdf-to-verify").onchange = function () {
+    document.getElementById("pkiwebsdk-get-pdf-to-verify-uploadfile").value = this.value.substring(12);
+  };    
 }
 
 module.exports = UI;

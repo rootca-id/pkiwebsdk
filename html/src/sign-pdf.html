@@ -7,14 +7,22 @@
 	<p>Fill your contact info</p>
 	<input type="text" id="pkiwebsdk-p12-to-sign-info-contact-info" placeholder="contact info">
 	<br><br>
-	<p>Fill your password</p>
+	<p>Fill your .p12 password</p>
 	<input type="password" id="pkiwebsdk-p12-password-to-sign" placeholder="password"></input>
 	<br><br>
 	<p>Upload your .p12 to sign</p>
-	<input type="file" id="pkiwebsdk-get-p12-to-sign"></input>
+		<input id="pkiwebsdk-get-p12-to-sign-uploadfile" placeholder="Choose File" disabled="disabled" />
+		<div class="pkiwebsdk-fileupload pkiwebsdk-button">
+			<span>Choose File</span>
+			<input id="pkiwebsdk-get-p12-to-sign" type="file" class="pkiwebsdkupload" />
+		</div>				
 	<br>
 	<p>Upload your pdf file to sign</p>
-	<input type="file" id="pkiwebsdk-get-pdf-to-sign"></input>
+		<input id="pkiwebsdk-get-pdf-to-sign-uploadfile" placeholder="Choose File" disabled="disabled" />
+		<div class="pkiwebsdk-fileupload pkiwebsdk-button">
+			<span>Choose File</span>
+			<input id="pkiwebsdk-get-pdf-to-sign" type="file" class="pkiwebsdkupload" />
+		</div>				
 	<br>
 	<button class="pkiwebsdk-button" id="pkiwebsdk-get-pdf-to-sign-trigger">Sign</button>
 </div>

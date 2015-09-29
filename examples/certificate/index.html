@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>PKIWebSDK Examples - Certificate</title>	
+		<title>PKI WebSDK Examples - Certificate</title>	
 		<link rel="stylesheet" href="../dist/css/bootstrap.min.css">
 		<link rel="stylesheet" href="../dist/css/style.css">
 		<link rel="stylesheet" href="../dist/css/examples-certificate.css">
@@ -22,7 +22,7 @@
 				<span class="icon-bar"></span>
 			  </button>
 			  <span><img src="../dist/img/logo.png" class="pull-left img-responsive"></span>
-			  <a class="navbar-brand" href="../index.html"> PKIWebSDK</a>
+			  <a class="navbar-brand" href="../index.html"> PKI WebSDK</a>
 			</div>
 			<div id="navbar" class="collapse navbar-collapse">
 			  <ul class="nav navbar-nav pull-right">
@@ -33,10 +33,12 @@
 							<li><a href="../key/generate.html" target="_blank">Generate</a></li>
 							<li><a href="../key/sign.html" target="_blank">Sign</a></li>
 							<li><a href="../key/verify.html" target="_blank">Verify</a></li>
+							<li><a href="../key/encrypt-decrypt.html" target="_blank">Encrypt Decrypt</a></li>
 						</ul>	
 				</li>	
 				<li><a href="../pdf/index.html">PDF</a></li>
 				<li><a href="../signed-data/index.html">Signed Data</a></li>
+				<li><a href="../encrypted-data/encrypt-decrypt.html">Encrypted Data</a></li>				
 				<li><a href="../ui/index.html">UI</a></li>
 			  </ul>
 			</div><!--/.nav-collapse -->
@@ -222,10 +224,6 @@
 				<div class="col-sm-12 input-group">
 					<textarea class="form-control" id="certPem" style="width:100%"></textarea><br>
 				</div>
-			<!--
-			<p>p12 in base64 string</p>
-			<textarea id="p12Base64" style="width:100%"></textarea>
-			-->
 		</div>		    
 	</div>    
             
@@ -290,18 +288,16 @@
       var removeTextArea = function(cb){
         var text = document.getElementById("privateKey");
         text.value = "";
-        var text = document.getElementById("p12Base64");
-        text.value = "";
         var text = document.getElementById("certPem");
         text.value = "";
-        cb();
+        if (cb) {
+          cb();
+        }
       }
       
       var generateP12 = function(){
         var pem = document.getElementById("privateKey").value; 
         certificate.toP12(pem, document.getElementById("p12password").value).then(function(p12){
-          var p12text = document.getElementById("p12Base64");
-          p12text.value = p12;
       
           var a = document.getElementById("link");
           a.href = "data:application/x-pkcs12;base64,"+ p12;
@@ -392,7 +388,7 @@
               text.value = privateKey;
               console.log(newCert);
               document.getElementById("certPem").value = window.PKIWebSDK.private.forge.pki.certificateToPem(newCert.certData[0]);
-              alert("P12 parsed successfully. See console.log in Inspect Element")      
+              alert("P12 parsed successfully. The result is printed in Output section bellow")      
             });
         })
       }
