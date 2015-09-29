@@ -24,10 +24,24 @@
 - You should alerted about whether the signature is valid or not.
 - You may try again with modified hello.txt file or different file and expecting invalid result.
 
+### Encrypt
+- Prepare a file to be decrypted. The file size should less than or eiqual to the modulus k-11 octets. 245 byte for 2048 bit key or 501 byte for 4096 bit key.
+- Open example/key/encrypt-decrypt.html.
+- On ``Encrypt`` section, paste public key PEM to the textarea input.
+- Then choose the prepared file
+- Click ``Encrypt`` button. You should receive an encrypted file
+
+### Decrypt
+- Open example/key/encrypt-decrypt.html.
+- On ``Decrypt`` section, paste the private key (the pair of public key that used to encrypt the original file) to the text area input.
+- Choose an encrypted file, then click ``Decrypt`` button.
+- You should receive a decrypted file which is same as the original file.
 
 ## OpenSSL Compatibility Check
 
 ### PKI-WebSDK -> OpenSSL
+
+#### Generate, Sign, Verify
 
 - You have already sign a file using PKI-WebSDK. Now you have : key pair, hello.txt, signature.txt
 
@@ -72,7 +86,11 @@ $ openssl rsa -in private.pem -RSAPublicKey_out -out public-by-openssl-rsa.pem
 
 Then compare public.pem and public-by-openssl-rsa.pem, apart from their header and footer.
 
+#### Encrypt & Decrypt
+
 ### OpenSSL -> PKI-WebSDK
+
+#### Generate, Sign, Verify
 
 - Remove the existing key and signature. You only have hello.txt to be signed.
 - Generate RSA private key using openSSL
@@ -90,3 +108,5 @@ $ openssl rsa -in priv.pem -RSAPublicKey_out -out public.pem
 - Now you have both private and public key. Open example/sign.html. Choose the hello.txt file and paste the private key in the provided textarea. Then, click "sign".
 - You should receive a signature.txt file that contains the signature. Open example/verify.html, choose the signature.txt file as Signature and hello.txt file as Data. Paste the public key in the provided textarea. Then, click "verify".
 - You should alerted that the signature is valid.
+
+#### Encrypt & Decrypt
