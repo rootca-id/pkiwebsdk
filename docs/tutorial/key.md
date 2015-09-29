@@ -110,3 +110,13 @@ $ openssl rsa -in priv.pem -RSAPublicKey_out -out public.pem
 - You should alerted that the signature is valid.
 
 #### Encrypt & Decrypt
+
+You may try to encrypt a file using PKIWebSDK and decrypt it back using OpenSSL. Or encrypt it using OpenSSL and decrypt it back using PKIWebSDK.
+
+##### Encrypt with openssl publickey
+
+``openssl rsautl -encrypt -inkey publickey.pem -pubin -in hello.txt -out hello-encrypted.txt``
+
+##### Decrypt with openssl privatekey
+
+``openssl rsautl -decrypt -inkey privatekey.pem -in hello-encrypted.txt -out hello-decrypted.txt``
