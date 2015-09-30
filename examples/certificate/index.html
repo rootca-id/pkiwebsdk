@@ -385,7 +385,7 @@
               console.log(result.privateKey);
               privateKeySample = result.privateKey;      
               var text = document.getElementById("privateKey");
-              text.value = privateKey;
+              text.value = result.privateKey;
               console.log(newCert);
               document.getElementById("certPem").value = window.PKIWebSDK.private.forge.pki.certificateToPem(newCert.certData[0]);
               alert("P12 parsed successfully. The result is printed in Output section bellow")      
