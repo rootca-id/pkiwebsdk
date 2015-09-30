@@ -51,6 +51,69 @@ Key.generatePair = function(algorithm) {
 }
 
 /**
+ * Wrap private key to PKCS8
+ * @returns {String} - PEM string of PKCS8
+ * 
+ */
+
+ Key.prototype.toPKCS8 = function(password){
+  var self = this;
+  return new Promise(function(resolve, reject){
+    if (self.keyData.type != "private") {
+      reject(new Error("Must be a private key"));
+    }
+    cryptoSubtle.exportKey("jwk", self.keyData)
+      .then(function(jwk){
+        try {
+          var privateKey = forge.pki.privateKeyFromPem(jwk2Pem(jwk));
+          var rsaPrivateKey = forge.pki.privateKeyToAsn1(privateKey);
+          var privateKeyInfo = forge.pki.wrapRsaPrivateKey(rsaPrivateKey);
+          var encryptedPrivateKeyInfo = forge.pki.encryptPrivateKeyInfo(privateKeyInfo, password, {algorithm : "aes256"});
+          var pem = forge.pki.encryptedPrivateKeyInfo = forge.pki.encryptedPrivateKeyToPem(encryptedPrivateKeyInfo);
+          resolve(pem);
+        }
+        catch(err) {
+          reject(err);
+        }
+      })
+  })
+ }
+
+/** 
+ * Decrypt PKCS8 PEM
+ * 
+ * @param {String} pem - PEM string of PKCS8.
+ * @returns {Key} - Key object of decrypted private key.
+ * @static
+ */
+
+Key.decryptPKCS8 = function(pkcs8, password) {
+  return new Promise(function(resolve, reject){
+    try {
+      var encryptedPrivateKeyInfo = forge.pki.encryptedPrivateKeyFromPem(pkcs8);
+      var privateKeyInfo = forge.pki.decryptPrivateKeyInfo(encryptedPrivateKeyInfo, password);
+      var pem = forge.pki.privateKeyInfoToPem(privateKeyInfo);
+      Key.parsePEM(pem, "SHA-256")
+        .then(function(privateKey){
+          resolve(privateKey);
+        })
+        .catch(function(err){
+          reject(err);
+        })
+    }
+    catch(err) {
+      if (err.message == "Cannot read encrypted PBE data block. Unsupported OID.") {
+        err.message += " The algorithm used in this PKCS8 is no longer supported.";
+      }
+      if (err.message == "Cannot read property 'tagClass' of null") {
+        err.message += ". Wrong password?";
+      }
+      reject(err);
+    }
+  })  
+}
+
+/**
  * Parse PEM string to key object.
  * @param {String} pem - the PEM string that will be parsed
  * @param {string} algorithm - the algorithm used in this PEM string

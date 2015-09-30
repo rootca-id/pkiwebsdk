@@ -9,34 +9,6 @@
     <link rel="stylesheet" href="../dist/css/style.css">
 	<link rel="stylesheet" href="../dist/css/examples-key.css">
 	<script src="../../build/bundle.js"></script>
-	<script>
-	  console.log(PKIWebSDK);
-	  var generatePair = function(){
-		var algorithm = document.getElementById("algorithm").value;
-		if (!algorithm || algorithm.length < 1) {
-		  alert("You must input algorithm string");
-		}
-		PKIWebSDK.Key.generatePair(algorithm)
-		  .then(function(keyPair){
-			console.log(keyPair);
-			keyPair.publicKey.toPEM()
-			  .then(function(pemString){
-				console.log(pemString);
-				var publicKeyContainer = document.getElementById("publicKeyContainer");
-				publicKeyContainer.innerHTML = pemString;
-			  })
-			keyPair.privateKey.toPEM()
-			  .then(function(pemString){
-				console.log(pemString);
-				var privateKeyContainer = document.getElementById("privateKeyContainer");
-				privateKeyContainer.innerHTML = pemString;
-			  })
-		  })
-		  .catch(function(err){
-			alert(err);
-		  });
-	  }
-	</script>
   </head>
   <body>
 
@@ -76,17 +48,102 @@
 		<div class="container">
 			<div class="col-sm-12 content">
 				<h4>Generate Pair</h4>
-				<p>Choose your algorithm</p>
 					<div class="input-group col-sm-6">
-						<input class="form-control" id="algorithm" placeholder="Algorithm, ex : SHA-256"></input>
-						<span class="input-group-addon" onClick="generatePair()">Generate</span>
+            Choose your algorithm <input class="form-control" id="algorithm" placeholder="Algorithm, ex : SHA-256"></input>
+          </div>
+          <br>
+          <div class="input-group col-sm-6">
+            <div>
+              <span class="input-group-addon" onClick="generatePair()">Generate</span>
+            </div>
+					</div>
+          <div class="input-group col-sm-6">
+                  or
+					</div>
+          <div class="input-group col-sm-6">
+            <input id="pkcs8-password" placeholder="PKCS8 password"></input><button class="btn-primary" onClick="generatePair({encrypt:true})">Generate and encrypt private key to PKCS8</button>
 					</div>
 					<div class="input-group col-sm-8">
 						<textarea class="form-control" style="margin-top: 20px; margin-bottom: 20px;" cols="80" rows="10" id="publicKeyContainer"></textarea>
 						<textarea class="form-control" cols="80" rows="30" id="privateKeyContainer"></textarea>
 					</div>
 			</div>
+			<div class="col-sm-12 content">
+				<h4>Decrypt PKCS8 PEM</h4>
+					<div class="input-group col-sm-6">
+            Choose your PKCS8 file in PEM format <input class="form-control" type="file" id="pkcs8-file"></input>
+          </div>
+          <div class="input-group col-sm-6">
+            <input id="pkcs8-password-to-decrypt" placeholder="PKCS8 password"></input><button class="btn-primary" onClick="decryptPKCS8()">Decrypt PKCS8 PEM</button>
+					</div>
+					<div class="input-group col-sm-8">
+						<textarea class="form-control" cols="80" rows="30" id="decryptedPrivateKeyContainer"></textarea>
+					</div>
+			</div>
 		</div><!-- /.container -->
+    <script>
+      var pkcs8PEM;
+      (function(){
+		    document.getElementById('pkcs8-file').addEventListener('change', function(evt){
+		      console.log("file added");
+		      files = evt.target.files; // FileList object  
+		      // files is a FileList of File objects. List some properties.
+		      // Read file as ArrayBuffer
+		      console.log(files[0]);
+		      var reader = new window.FileReader()
+		      reader.readAsText(files[0]);
+		      reader.onload = function(e) {
+		    	  pkcs8PEM = reader.result;
+		      }
+		    });
+      })();
+      var decryptPKCS8 = function() {
+        window.PKIWebSDK.Key.decryptPKCS8(pkcs8PEM, document.getElementById("pkcs8-password-to-decrypt").value)
+          .then(function(privateKey){
+            console.log("decrypted");
+            privateKey.toPEM()
+              .then(function(pemString){
+                document.getElementById("decryptedPrivateKeyContainer").value = pemString;
+              })
+              .catch(function(err){
+                alert(err.message);
+              })
+          })
+          .catch(function(err){
+            alert(err.message);
+          })
+      }
+	   var generatePair = function(opt){
+		    var algorithm = document.getElementById("algorithm").value;
+		    if (!algorithm || algorithm.length < 1) {
+		      alert("You must input algorithm string");
+		    }
+		    PKIWebSDK.Key.generatePair(algorithm)
+		      .then(function(keyPair){
+		    	keyPair.publicKey.toPEM()
+		    	  .then(function(pemString){
+		    		var publicKeyContainer = document.getElementById("publicKeyContainer");
+		    		publicKeyContainer.innerHTML = pemString;
+          })
+          if (opt && opt.encrypt) {
+            keyPair.privateKey.toPKCS8(document.getElementById("pkcs8-password").value)
+              .then(function(pemString){
+		    	  	  var privateKeyContainer = document.getElementById("privateKeyContainer");
+		    	  	  privateKeyContainer.innerHTML = pemString;
+              })
+           } else {
+		    	  keyPair.privateKey.toPEM()
+		    	    .then(function(pemString){
+		    	  	  var privateKeyContainer = document.getElementById("privateKeyContainer");
+                privateKeyContainer.innerHTML = pemString;
+		    	    })
+		          .catch(function(err){
+		    	      alert(err);
+		          });
+          }
+        })
+	   }
+	</script>
 
 		<footer>
 			<p>&copy; 2015 <a href="http://kominfo.go.id/" class="footer-text"> Direktorat Keamanan Informasi - Kementerian Komunikasi dan Informatika Republik Indonesia</a></p>
