@@ -110,7 +110,7 @@
 							<h4>Parse a P12 file</h4>
 								<div class="row">
 									<div class="col-sm-6">
-										<p>Upload your .p12 file</p>
+										<p>Choose your .p12 file</p>
 										<input type="file" id="files" name="files[]" multiple class="filestyle" data-buttonBefore="true" data-icon="false" data-buttonName="btn-primary"/><br><br>
 									</div>	
 								</div>
@@ -127,7 +127,7 @@
 							<p></p>
 								<div class="row">
 									<div class="col-sm-6">
-										<p>Upload your .pem file</p>
+										<p>Choose your .pem file</p>
 										<input type="file" id="files2" name="files[]" multiple class="filestyle" data-buttonBefore="true" data-icon="false" data-buttonName="btn-primary"/>										
 									</div>
 								</div>	
@@ -142,7 +142,7 @@
 							<p></p>
 								<div class="row">
 									<div class="col-sm-6">
-										<p>Upload your .pem or .der file</p>
+										<p>Choose your .pem or .der file</p>
 										<input type="file" id="files3" name="files[]" multiple class="filestyle" data-buttonBefore="true" data-icon="false" data-buttonName="btn-primary"/>
 									</div>
 								</div>	
@@ -157,7 +157,7 @@
 							<p></p>
 								<div class="row">
 									<div class="col-sm-6">
-										<p>Upload your .pem file</p>
+										<p>Choose your .pem file</p>
 										<input type="file" id="certChain" name="files[]" multiple class="filestyle" data-buttonBefore="true" data-icon="false" data-buttonName="btn-primary"/>
 									</div>
 								</div>	
@@ -182,7 +182,7 @@
 							<h4>Parse a Certificate (PEM)</h4>
 								<div class="row">
 									<div class="col-sm-6">
-										<p>Upload your .pem file</p>
+										<p>Choose your .pem file</p>
 										<input type="file" id="files4" name="files[]" multiple class="filestyle" data-buttonBefore="true" data-icon="false" data-buttonName="btn-primary"/>
 									</div>
 								</div>	
@@ -385,7 +385,7 @@
               console.log(result.privateKey);
               privateKeySample = result.privateKey;      
               var text = document.getElementById("privateKey");
-              text.value = privateKey;
+              text.value = result.privateKey;
               console.log(newCert);
               document.getElementById("certPem").value = window.PKIWebSDK.private.forge.pki.certificateToPem(newCert.certData[0]);
               alert("P12 parsed successfully. The result is printed in Output section bellow")      
@@ -399,7 +399,10 @@
           cert.parsePEM(dataText)
             .then(function(cert){
               certificate = cert;
-              alert("Certificate PEM parsed successfully. See console.log in Inspect Element")      
+              certificate.getSubject()
+                .then(function(subject){
+                  alert("Certificate PEM parsed successfully. Subject of the certificate : " + JSON.stringify(subject));      
+                })
               console.log(cert);
             })
         })
@@ -408,9 +411,9 @@
       var verifyChain = function(){
         removeTextArea(function(){
           certChain.validate()
-            .then(function(isValid){
-              console.log(isValid);
-              alert("The certificate is : " + (isValid? "valid":"not valid"));
+            .then(function(result){
+              console.log(result.isValid);
+              alert("The certificate is : " + (result.isValid? "valid":"not valid") + " and " + (result.isTrusted? "trusted" : "not trusted"));
             })
             .catch(function(err){
               console.log(err.message);
@@ -423,8 +426,8 @@
       var trust = function(){
         removeTextArea(function(){
           window.PKIWebSDK.Certificate.trust(certChain.certData)
-            .then(function(isValid, caStore){
-              alert("The certificate chain is : " + (isValid? "valid":"not valid"));
+            .then(function(result, caStore){
+              alert("The certificate is : " + (result.isValid? "valid":"not valid") + " and " + (result.isTrusted? "trusted" : "not trusted"));
               console.log(caStore);
             })
             .catch(function(err){
@@ -567,20 +570,6 @@
         var certChainList = document.getElementById("certChainList");
         certChainList.innerHTML += files[files.length-1].name + "<br>";
       });
-      
-      /*
-      var tabActive=1, tabs=document.getElementById('tabs').getElementsByTagName('a'), tabs_data=document.getElementById('tabs_data').getElementsByTagName('fieldset');
-      function tab_click(x){
-        if(x > -1 && x < tabs.length && x < tabs_data.length){
-          tabs[tabActive].setAttribute('class','');
-              tabs_data[tabActive].style.display='none';
-          tabActive=x;
-          tabs[tabActive].setAttribute('class','active');
-              tabs_data[tabActive].style.display='block';
-        } return false;
-      }
-      tab_click(0);
-      */
       </script>
 	
 	<script src="../dist/js/jquery-2.1.4.min.js"></script>

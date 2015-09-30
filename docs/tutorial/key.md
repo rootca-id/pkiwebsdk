@@ -25,11 +25,11 @@
 - You may try again with modified hello.txt file or different file and expecting invalid result.
 
 ### Encrypt
-- Prepare a file to be decrypted. The file size should less than or eiqual to the modulus k-11 octets. 245 byte for 2048 bit key or 501 byte for 4096 bit key.
+- Prepare a file to be decrypted. The file size should less than or equal to the modulus k-11 octets. 245 byte for 2048 bit key or 501 byte for 4096 bit key.
 - Open example/key/encrypt-decrypt.html.
 - On ``Encrypt`` section, paste public key PEM to the textarea input.
-- Then choose the prepared file
-- Click ``Encrypt`` button. You should receive an encrypted file
+- Then choose the prepared file.
+- Click ``Encrypt`` button. You should receive an encrypted file.
 
 ### Decrypt
 - Open example/key/encrypt-decrypt.html.
@@ -110,3 +110,13 @@ $ openssl rsa -in priv.pem -RSAPublicKey_out -out public.pem
 - You should alerted that the signature is valid.
 
 #### Encrypt & Decrypt
+
+You may try to encrypt a file using PKIWebSDK and decrypt it back using OpenSSL. Or encrypt it using OpenSSL and decrypt it back using PKIWebSDK.
+
+##### Encrypt with openssl publickey
+
+``openssl rsautl -encrypt -inkey publickey.pem -pubin -in hello.txt -out hello-encrypted.txt``
+
+##### Decrypt with openssl privatekey
+
+``openssl rsautl -decrypt -inkey privatekey.pem -in hello-encrypted.txt -out hello-decrypted.txt``
