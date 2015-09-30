@@ -399,7 +399,10 @@
           cert.parsePEM(dataText)
             .then(function(cert){
               certificate = cert;
-              alert("Certificate PEM parsed successfully. See console.log in Inspect Element")      
+              certificate.getSubject()
+                .then(function(subject){
+                  alert("Certificate PEM parsed successfully. Subject of the certificate : " + JSON.stringify(subject));      
+                })
               console.log(cert);
             })
         })
@@ -567,20 +570,6 @@
         var certChainList = document.getElementById("certChainList");
         certChainList.innerHTML += files[files.length-1].name + "<br>";
       });
-      
-      /*
-      var tabActive=1, tabs=document.getElementById('tabs').getElementsByTagName('a'), tabs_data=document.getElementById('tabs_data').getElementsByTagName('fieldset');
-      function tab_click(x){
-        if(x > -1 && x < tabs.length && x < tabs_data.length){
-          tabs[tabActive].setAttribute('class','');
-              tabs_data[tabActive].style.display='none';
-          tabActive=x;
-          tabs[tabActive].setAttribute('class','active');
-              tabs_data[tabActive].style.display='block';
-        } return false;
-      }
-      tab_click(0);
-      */
       </script>
 	
 	<script src="../dist/js/jquery-2.1.4.min.js"></script>
