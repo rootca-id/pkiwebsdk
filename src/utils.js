@@ -11,9 +11,9 @@ var Utils = function() {
 /**
  * Transfer an array buffer data to client as file download
  *
- * @params {ArrayBuffer} arrayBuffer - An array buffer
- * @params {ArrayBuffer} filename - File name with extension
- * @params {ArrayBuffer} type - File type, ex : "application/pdf"
+ * @param {ArrayBuffer} arrayBuffer - An array buffer
+ * @param {ArrayBuffer} filename - File name with extension
+ * @param {ArrayBuffer} type - File type, ex : "application/pdf"
  */
 
 Utils.toFile = function(arrayBuffer, filename, type){
@@ -40,8 +40,10 @@ Utils.toFile = function(arrayBuffer, filename, type){
   }
 }
 
-/* Convert array buffer to string
- * @params {ArrayBuffer} arrayBuffer - An array buffer of data
+/**
+ * Convert array buffer to string
+ *
+ * @param {ArrayBuffer} arrayBuffer - An array buffer of data
  * @returns {String} - String
  *
  */
@@ -49,8 +51,10 @@ Utils.ab2Str = function (buf) {
   return String.fromCharCode.apply(null, new Uint8Array(buf));
 }
 
-/* Convert string to array buffer
- * @params {String} - String
+/**
+ * Convert string to array buffer
+ *
+ * @param {String} - String
  * @returns {ArrayBuffer} arrayBuffer - An array buffer of data
  *
  */
@@ -63,12 +67,13 @@ Utils.str2Ab = function (string) {
   return buf;
 }
 
-/* Convert base64 string to array buffer
- * @params {String} - Base64 string
+/** 
+ * Convert base64 string to array buffer
+ *
+ * @param {String} - Base64 string
  * @returns {ArrayBuffer} arrayBuffer - An array buffer of data
  *
  */
-
 Utils.base642Ab = function(base64) {
   var binary_string = window.atob(base64);
   var len = binary_string.length;
@@ -79,8 +84,10 @@ Utils.base642Ab = function(base64) {
   return bytes.buffer;
 }
 
-/* Convert array buffer to base64 string
- * @params {ArrayBuffer} arrayBuffer - An array buffer of data
+/**
+ * Convert array buffer to base64 string
+ *
+ * @param {ArrayBuffer} arrayBuffer - An array buffer of data
  * @returns {String} - Base64 string
  *
  */

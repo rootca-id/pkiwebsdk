@@ -34,59 +34,6 @@ var forge = window.forge;
 var Key = require("./key");
 var jwk2Pem = require("pem-jwk").jwk2pem;
 
-/* https://gist.github.com/jonleighton/958841
- * Convert an arrayBuffer to base64 string; 
- *
- * @param {Buffer} - an arrayBuffer
- * @results {String} - a Base64 string
- */
-var ab2Base64 = function(arrayBuffer) {
-  var base64    = "";
-  var encodings = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-  var bytes         = new Uint8Array(arrayBuffer)
-  var byteLength    = bytes.byteLength
-  var byteRemainder = byteLength % 3
-  var mainLength    = byteLength - byteRemainder
-  var a, b, c, d
-  var chunk
-  // Main loop deals with bytes in chunks of 3
-  for (var i = 0; i < mainLength; i = i + 3) {
-    // Combine the three bytes into a single integer
-    chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2]
-    // Use bitmasks to extract 6-bit segments from the triplet
-    a = (chunk & 16515072) >> 18 // 16515072 = (2^6 - 1) << 18
-    b = (chunk & 258048)   >> 12 // 258048   = (2^6 - 1) << 12
-    c = (chunk & 4032)     >>  6 // 4032     = (2^6 - 1) << 6
-    d = chunk & 63               // 63       = 2^6 - 1
-    // Convert the raw binary segments to the appropriate ASCII encoding
-    base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d]
-  }
-  // Deal with the remaining bytes and padding
-  if (byteRemainder == 1) {
-    chunk = bytes[mainLength]
-    a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2
-    // Set the 4 least significant bits to zero
-    b = (chunk & 3)   << 4 // 3   = 2^2 - 1
-    base64 += encodings[a] + encodings[b] + "=="
-  }
-  return base64
-}
-
-/* 
- * Convert string to arrayBuffer
- *
- * @param {String} - a string
- * @results {Buffer} - an arrayBuffer
- */
-var string2Ab = function(str) {
-  var buf = new ArrayBuffer(str.length*2);
-  var bufView = new Uint16Array(buf);
-  for (var i=0, strLen=str.length; i<strLen; i++) {
-    bufView[i] = str.charCodeAt(i);
-  }
-  return buf;
-}
-
 /**
  * X509 certificate management
  *
@@ -111,7 +58,7 @@ var Certificate = function(certs) {
 Certificate.getRevocationList = function(data){
   var self = this;
   return new Promise(function(resolve, reject){
-    var b64 = ab2Base64(data);
+    var b64 = window.PKIWebSDK.Utils.ab2Base64(data);
     var decoded = forge.util.decode64(b64);
     if (decoded.substr(0,5) == "-----") {
       decoded = forge.pem.decode(decoded)[0].body;
@@ -384,7 +331,7 @@ Certificate.prototype.toP12 = function(privateKeyPem, password) {
  * Build a new certificate object from PEM format
  *
  * @param {String} pem - PEM string of certificate(s)
- * @returns {Object} - a forge certificate object, passed to Certificate object itself
+ * @returns {Object} - A forge certificate object, passed to Certificate object itself
  */
 Certificate.prototype.parsePEM = function(pemString) {
   var self = this;
@@ -412,21 +359,25 @@ Certificate.prototype.parsePEM = function(pemString) {
   })
 }
 
+/**
+ * @typedef ParseP12Result
+ * @type Object
+ * @property {String} privateKey - Private key in PEM format.
+ * @property {Object} certificate - The certificate objVdect, will be passed to Certificate object itself too.
+ */
 
 /**
  * Build a new certificate object from a p12 format
  * 
  * @param {ArrayBuffer} data - An array buffer of .p12 file
- * @params {String} [password] - Password to open P12 container
- * @returns {Object} result - An object that contains certificate and private key
- * @returns {Object} result.certificate - The certificate object, will be passed to Certificate object itself too.
- * @returns {Object} result.privateKey - Private key in PEM format
+ * @param {String} [password] - Password to open P12 container
+ * @returns {ParseP12Result} - An object that contains certificate and private key
  *.
  */
 Certificate.prototype.parseP12 = function(data, password) {
   var self = this;
   return new Promise(function(resolve, reject){
-    var p12Der = forge.util.decode64(ab2Base64(data));
+    var p12Der = forge.util.decode64(window.PKIWebSDK.Utils.ab2Base64(data));
     var p12Asn1 = forge.asn1.fromDer(p12Der);
     var p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password);
     var certBags = p12.getBags({bagType: forge.pki.oids.certBag});
@@ -448,15 +399,19 @@ Certificate.prototype.parseP12 = function(data, password) {
   })
 }
 
-/*
- * Real validate function : check expirate date, verify cert, verify cert path
- * @params {Array} chain - An array of certs. Sorted by certificate level. The parent/top level certificate is the last item in array.
- * @returns {Object} result - The result of validation
- * @returns {Boolean} result.isValid - Whether the certificate valid or not
- * @returns {Boolean} result.isTrusted - Whether the certificate trusted or not
- * @static
+/**
+ * @typedef RealValidateResult
+ * @property {Boolean} isValid - Whether the certificate valid or not
+ * @property {Boolean} isTrusted - Whether the certificate trusted or not
  */
 
+/**
+ * Real validate function to check expirate date, verify cert, verify cert path
+ *
+ * @param {Array} chain - An array of certs. Sorted by certificate level. The parent/top level certificate is the last item in array.
+ * @returns {RealValidateResult} - The result of validation
+ * @static
+ */
 Certificate.realValidate = function(chain){
   return new Promise(function(resolve, reject) {
     if (!chain || chain.length == 0) {
@@ -539,12 +494,17 @@ Certificate.realValidate = function(chain){
 }
 
 /**
+ * @typedef ValidateResult
+ * @type Object
+ * @property {Boolean} isValid - Whether the certificate valid or not
+ * @property {Boolean} isTrusted - Whether the certificate trusted or not
+ */
+
+/**
  * Validates the certificate 
  *
  * @param {Array} chain - An array of cert chain in forge cert object format. Sorted by certificate level. The parent/top level certificate is the last item in array. 
- * @returns {Object} result - The result of validation
- * @returns {Boolean} result.isValid - Whether the certificate valid or not
- * @returns {Boolean} result.isTrusted - Whether the certificate trusted or not
+ * @returns {ValidateResult} - The result of validation
  */
 Certificate.prototype.validate = function() {
   var self = this;
@@ -562,12 +522,18 @@ Certificate.prototype.validate = function() {
 }
 
 /**
+ * @typedef TrustResult
+ * @type Object
+ * @property {Boolean} isValid - Whether the certificate valid or not
+ * @property {Boolean} isTrusted - Whether the certificate trusted or not
+ */
+
+/**
  * Trust the certificate 
+ *
  * @description - If valid, the certificate(s) will be merged to CA Store
  * @param {Array} chain - An array of cert chain in forge cert object format. Sorted by certificate level. The parent/top level certificate is the last item in array.
- * @returns {Object} result - The result of validation
- * @returns {Boolean} result.isValid - Whether the certificate valid or not
- * @returns {Boolean} result.isTrusted - Whether the certificate trusted or not
+ * @returns {TrustResult} - The result of validation
  */
 Certificate.trust = function(chain) {
   var self = this;
@@ -680,7 +646,7 @@ Certificate.prototype.getPublicKey = function() {
 Certificate.prototype.getSignature = function() {
   var self = this;
   return new Promise(function(resolve, reject){
-    var signature = string2Ab(self.certData[0].signature);
+    var signature = window.PKIWebSDK.Utils.string2Ab(self.certData[0].signature);
     resolve(signature);
   })
 }

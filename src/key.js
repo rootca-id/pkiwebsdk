@@ -21,10 +21,19 @@ var Key = function(key) {
 }
 
 /**
+ * @typedef GeneratePairResult
+ * @type Object
+ * @property {Key} privateKey - An object containing both private and public keys
+ * @property {Key} publicKey - An object containing both private and public keys
+ *
+ *
+ */
+
+/**
  * Generates a key pair
  *
  * @param {String} algorithm - The algorithm used to generate the key pair
- * @returns {Object} - An object containing both private and public keys
+ * @returns {GeneratePairResult} - An object containing both private and public keys
  * @static
  */
 Key.generatePair = function(algorithm) {
@@ -52,6 +61,8 @@ Key.generatePair = function(algorithm) {
 
 /**
  * Wrap private key to PKCS8
+ *
+ * @param {String} password - password to encrypt PKCS8
  * @returns {String} - PEM string of PKCS8
  * 
  */
@@ -83,6 +94,7 @@ Key.generatePair = function(algorithm) {
  * Decrypt PKCS8 PEM
  * 
  * @param {String} pem - PEM string of PKCS8.
+ * @param {String} password - Password to decrypt the PKCS8.
  * @returns {Key} - Key object of decrypted private key.
  * @static
  */
@@ -115,9 +127,10 @@ Key.decryptPKCS8 = function(pkcs8, password) {
 
 /**
  * Parse PEM string to key object.
+ *
  * @param {String} pem - the PEM string that will be parsed
  * @param {string} algorithm - the algorithm used in this PEM string
- * @returns {Object} - A Key object
+ * @returns {Key} - A Key object
  * @static
  */
 Key.parsePEM = function(pem, algorithm) {
@@ -166,6 +179,7 @@ Key.parsePEM = function(pem, algorithm) {
 
 /**
  * Gets string representation of the key in PEM format
+ *
  * @returns {String} - A PEM string
  */
 Key.prototype.toPEM = function() {
@@ -183,6 +197,7 @@ Key.prototype.toPEM = function() {
 
 /**
  * Gets JSON web key representation of the key
+ *
  * @returns {Object} - A JSON web key object
  */
 Key.prototype.toJwk = function() {
@@ -198,6 +213,7 @@ Key.prototype.toJwk = function() {
 
 /**
  * Signs data using the key
+ *
  * @param {ArrayBuffer} data - the data to be signed
  * @returns {ArrayBuffer} - An ArrayBuffer of signature
  */
@@ -226,8 +242,9 @@ Key.prototype.sign = function(data) {
 
 /**
  * Verify data using the key
- * @param {ArrayBuffer} signature - the signature
- * @param {ArrayBuffer} data - the data to be checked
+ *
+ * @param {ArrayBuffer} signature - The signature
+ * @param {ArrayBuffer} data - The data to be checked
  * @returns {Boolean} - A boolean value that represents whether the signature is valid
  */
 Key.prototype.verify = function(signature, data) {
@@ -255,7 +272,8 @@ Key.prototype.verify = function(signature, data) {
 }
 
 /**
- * Gets information whether the key is a private key 
+ * Gets information whether the key is a private key
+ *
  * @returns {Boolean} - A boolean value that represents whether the ky is a private key
  */
 Key.prototype.isPrivate = function() {
@@ -265,6 +283,7 @@ Key.prototype.isPrivate = function() {
 
 /**
  * Gets information whether the key is a public key 
+ *
  * @returns {Boolean} - A boolean value that represents whether the ky is a public key
  */
 Key.prototype.isPublic = function() {
@@ -272,8 +291,10 @@ Key.prototype.isPublic = function() {
   return (self.keyData.type == "public" ? true : false);
 }
 
-/* Encrypt data using public key
- * @params {ArrayBuffer} data - Array buffer of the data. The data's size must be less than public's key k-11 octet
+/**
+ * Encrypt data using public key
+ *
+ * @param {ArrayBuffer} data - Array buffer of the data. The data's size must be less than public's key k-11 octet
  * @returns {ArrayBuffer} - Array buffer of encrypted data
  */
 
@@ -306,8 +327,10 @@ Key.prototype.encrypt = function(arrayBuffer) {
   })
 }
 
-/* Decrypt data using private Key
- * @params {ArrayBuffer} data - Array buffer of decrypted data
+/** 
+ * Decrypt data using private Key
+ *
+ * @param {ArrayBuffer} data - Array buffer of decrypted data
  * @returns {ArrayBuffer} - Array buffer of decrypted data
  */
 

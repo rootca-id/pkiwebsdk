@@ -93,7 +93,8 @@ var digestAlgorithmMap = {
  */
 
 /**
- * Gets signatures embedded in the PDF file 
+ * Gets signatures embedded in the PDF file
+ *
  * @returns {Signature} - the signatures with embedded certificates. One can then validate the certificates using the method in {Certificate} class
  */
 PDF.prototype.getSignatures = function(cb) {
