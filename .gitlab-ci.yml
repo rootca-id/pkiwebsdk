@@ -8,10 +8,6 @@ stages:
 trigger:
   stage: test
 
-  only:
-    - master
-    - pdf-verification
-
   script:
     - "curl -X POST -F token=30dc778384e638b43e0f105cda758d https://gitlab.com/ci/api/v1/projects/7264/refs/pdf-verification/trigger"
 
