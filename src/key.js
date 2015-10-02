@@ -2,6 +2,7 @@
 
 var pem2Jwk = require("pem-jwk").pem2jwk;
 var jwk2Pem = require("pem-jwk").jwk2pem;
+var Utils = require("./utils");
 
 // Wrapping webcrypto api
 var cryptoSubtle = window.crypto.subtle || window.crypto.webkitSubtle || window.msCrypto.subtle;
@@ -60,7 +61,7 @@ Key.generatePair = function(algorithm) {
 }
 
 /**
- * Wrap private key to PKCS8
+ * Encrypt private key to PKCS8
  *
  * @param {String} password - password to encrypt PKCS8
  * @returns {String} - PEM string of PKCS8
@@ -101,26 +102,38 @@ Key.generatePair = function(algorithm) {
 
 Key.decryptPKCS8 = function(pkcs8, password) {
   return new Promise(function(resolve, reject){
+    var wrapError = function(err){
+      if (err.message == "Cannot read encrypted PBE data block. Unsupported OID.") {
+        err.message += " The algorithm used in this PKCS8 is no longer supported.";
+      } else {
+        err.message += ". Invalid PKCS8 PEM or wrong password?";
+      }
+      return err
+    }
     try {
       var encryptedPrivateKeyInfo = forge.pki.encryptedPrivateKeyFromPem(pkcs8);
+    }
+    catch(err) {
+      reject(wrapError(err));
+    }
+    try {
       var privateKeyInfo = forge.pki.decryptPrivateKeyInfo(encryptedPrivateKeyInfo, password);
+    }
+    catch(err) {
+      reject(wrapError(err));
+    }
+    try {
       var pem = forge.pki.privateKeyInfoToPem(privateKeyInfo);
       Key.parsePEM(pem, "SHA-256")
         .then(function(privateKey){
           resolve(privateKey);
         })
         .catch(function(err){
-          reject(err);
+          reject(wrapErr(err));
         })
     }
     catch(err) {
-      if (err.message == "Cannot read encrypted PBE data block. Unsupported OID.") {
-        err.message += " The algorithm used in this PKCS8 is no longer supported.";
-      }
-      if (err.message == "Cannot read property 'tagClass' of null") {
-        err.message += ". Wrong password?";
-      }
-      reject(err);
+      reject(wrapError(err));
     }
   })  
 }
@@ -317,12 +330,12 @@ Key.prototype.encrypt = function(arrayBuffer) {
         }
         // Encrypt
         try {
-          var encrypted = publicKey.encrypt(window.PKIWebSDK.Utils.ab2Str(arrayBuffer));
+          var encrypted = publicKey.encrypt(Utils.ab2Str(arrayBuffer));
         } 
         catch(err){
           return reject(err);
         }
-        resolve(window.PKIWebSDK.Utils.str2Ab(encrypted));
+        resolve(Utils.str2Ab(encrypted));
       })
   })
 }
@@ -343,7 +356,7 @@ Key.prototype.decrypt = function(arrayBuffer){
     self.toPEM()
       .then(function(pem){
         var privateKey = forge.pki.privateKeyFromPem(pem);
-        var base64Data = window.PKIWebSDK.Utils.ab2Base64(arrayBuffer);
+        var base64Data = Utils.ab2Base64(arrayBuffer);
         var data = forge.util.decode64(base64Data);
         try {
           var decrypted = privateKey.decrypt(data);
@@ -351,7 +364,7 @@ Key.prototype.decrypt = function(arrayBuffer){
         catch(err){
           return reject(err);
         }
-        resolve(window.PKIWebSDK.Utils.str2Ab(decrypted));
+        resolve(Utils.str2Ab(decrypted));
       })
   })
 }

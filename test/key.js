@@ -586,7 +586,7 @@ describe("Key", function() {
           done();
         })
         .catch(function(err){
-          expect(err.message).toBe("Cannot read property 'tagClass' of null. Wrong password?");
+          expect(err.message.substr(-36)).toBe("Invalid PKCS8 PEM or wrong password?");
           done();
         })
     })

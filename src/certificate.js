@@ -32,6 +32,7 @@ require("../lib/forge/pkcs7asn1.js");
 
 var forge = window.forge;
 var Key = require("./key");
+var Utils = require("./utils");
 var jwk2Pem = require("pem-jwk").jwk2pem;
 
 /**
@@ -58,7 +59,7 @@ var Certificate = function(certs) {
 Certificate.getRevocationList = function(data){
   var self = this;
   return new Promise(function(resolve, reject){
-    var b64 = window.PKIWebSDK.Utils.ab2Base64(data);
+    var b64 = Utils.ab2Base64(data);
     var decoded = forge.util.decode64(b64);
     if (decoded.substr(0,5) == "-----") {
       decoded = forge.pem.decode(decoded)[0].body;
@@ -377,7 +378,7 @@ Certificate.prototype.parsePEM = function(pemString) {
 Certificate.prototype.parseP12 = function(data, password) {
   var self = this;
   return new Promise(function(resolve, reject){
-    var p12Der = forge.util.decode64(window.PKIWebSDK.Utils.ab2Base64(data));
+    var p12Der = forge.util.decode64(Utils.ab2Base64(data));
     var p12Asn1 = forge.asn1.fromDer(p12Der);
     var p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password);
     var certBags = p12.getBags({bagType: forge.pki.oids.certBag});
@@ -646,7 +647,7 @@ Certificate.prototype.getPublicKey = function() {
 Certificate.prototype.getSignature = function() {
   var self = this;
   return new Promise(function(resolve, reject){
-    var signature = window.PKIWebSDK.Utils.string2Ab(self.certData[0].signature);
+    var signature = Utils.str2Ab(self.certData[0].signature);
     resolve(signature);
   })
 }
