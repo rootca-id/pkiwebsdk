@@ -10,8 +10,9 @@ var EncryptedData = function() {
 
 /**
  * Encrypt data using PKCS7
- * @params {Certificate} cert - Certificate object
- * @params {ArrayBuffer} content - Array buffer of data that will be encrypted
+ *
+ * @param {Certificate} cert - Certificate object
+ * @param {ArrayBuffer} content - Array buffer of data that will be encrypted
  * @returns {ArrayBuffer} - Array buffer of PKCS7 DER
  */
 
@@ -36,6 +37,7 @@ EncryptedData.encrypt = function (cert, content) {
 
 /**
  * Parse PKCS7 DER
+ *
  * @params {String} arrayBuffer - Array buffer of PKCS7 DER
  * @returns {EncryptedData} - EncryptedData object
  * @static
@@ -66,6 +68,7 @@ EncryptedData.parseDER = function(arrayBuffer){
 
 /**
  * Decrypt PKCS7
+ *
  * @params {Key} privateKey - Private key
  * @returns {ArrayBuffer} - Array buffer of the decrypted content
  */

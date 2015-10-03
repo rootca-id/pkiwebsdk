@@ -168,8 +168,8 @@ UI.handler.PDFToVerify = function(file) {
 /**
  * Generate HTML element that handle certificate PEM file
  *
- * @params {String} element - Id of the parent element. Without # symbol.
- * @returns {Object} cb - Return a promise from Certificate.prototype.parsePEM()
+ * @param {String} element - Id of the parent element. Without # symbol.
+ * @returns {Certificate} cb - Callback, return a promise from Certificate.prototype.parsePEM()
  */
 UI.getCertPEM = function(element, cb) {
   var self = this;
@@ -188,8 +188,8 @@ UI.getCertPEM = function(element, cb) {
 /**
  * Generate HTML element that handle Certificate Revocation List file
  *
- * @params {String} element - Id of the parent element. Without # symbol.
- * @returns {Object} cb - Return a promise from Certificate.getREvocationList()
+ * @param {String} element - Id of the parent element. Without # symbol.
+ * @returns {Object} cb - Callback, return a promise from Certificate.getREvocationList()
  */
 UI.getCRL = function(element, cb) {
   var self = this;
@@ -207,8 +207,8 @@ UI.getCRL = function(element, cb) {
 /**
  * Generate HTML element that handle P12 container file to get certificate
  *
- * @params {String} element - Id of the parent element. Without # symbol.
- * @returns {Object} cb - Return a promise from Certificate.prototype.parseP12()
+ * @param {String} element - Id of the parent element. Without # symbol.
+ * @returns {ParseP12Result} cb - Callback, return a promise from Certificate.prototype.parseP12()
  */
 UI.getP12 = function(element, cb) {
   var self = this;
@@ -226,8 +226,8 @@ UI.getP12 = function(element, cb) {
 /**
  * Generate HTML element that handle P12 container file in purpose of signing a document
  *
- * @params {String} element - Id of the parent element. Without # symbol.
- * @returns {Object} cb - Return a promise from Certificate.prototype.parseP12()
+ * @param {String} element - Id of the parent element. Without # symbol.
+ * @returns {ParseP12Result} cb - Callback, return a promise from Certificate.prototype.parseP12()
  */
 UI.getP12ToSign = function(element, cb) {
   var self = this;
@@ -242,8 +242,9 @@ UI.getP12ToSign = function(element, cb) {
 /**
  * Generate HTML element that handle P12 container file to get private key
  *
- * @params {String} element - Id of the parent element. Without # symbol.
- * @returns {Object} cb - Return a promise from Certificate.prototype.validate() or Certificate.trust()
+ * @param {String} element - Id of the parent element. Without # symbol.
+ * @returns {ValidateResult} cb - Callback, return a promise from Certificate.prototype.validate()
+ * @returns {TrustResult} cb - Callback, return a promise from Certificate.trust()
  */
 UI.getCertChain = function(element, cb) {
   var self = this;
@@ -275,8 +276,8 @@ UI.getCertChain = function(element, cb) {
 /**
  * Generate HTML element that handle P12 and PDF file, in purpose of signing the PDF.
  *
- * @params {String} element - Id of the parent element. Without # symbol.
- * @returns {Object} cb - Return a promise from PDF.prototype.sign()
+ * @param {String} element - Id of the parent element. Without # symbol.
+ * @returns {String} cb - Callback, return a promise from PDF.prototype.sign()
  */
 UI.signPDF = function(element, cb) {
   var self = this;
@@ -312,8 +313,9 @@ UI.signPDF = function(element, cb) {
 /**
  * Generate HTML element that handle PDF file, in purpose of verifying the PDF.
  *
- * @params {String} element - Id of the parent element. Without # symbol.
- * @returns {Object} cb - Return a promise from PDF.prototype.verify()
+ * @param {String} element - Id of the parent element. Without # symbol.
+ * @returns {ValidateResult} cb - Callback, return a promise from Certificate.prototype.validate()
+ * @returns {TrustResult} cb - Callback, return a promise from Certificate.trust()
  */
 UI.verifyPDF = function(element, cb) {
   var self = this;
