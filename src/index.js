@@ -7,6 +7,9 @@ var PKIWebSDK = function() {
   this.UI = require('./ui');
   this.SignedData = require("./signed-data");
   this.EncryptedData = require("./encrypted-data");
+  this.version = function(){
+    return require("../package.json").version;
+  }
 }
 var caStore = require("./castore");
 
