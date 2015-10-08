@@ -30,6 +30,8 @@ UI.handler.PEM = function(file) {
         var cert = new window.PKIWebSDK.Certificate();
         resolve(cert.parsePEM(reader.result));
       }
+    } else {
+      reject(new Error("Parameter should not be empty"));
     }
   })
 }
@@ -41,6 +43,8 @@ UI.handler.CRL = function(file) {
       reader.onload = function(e) {
         resolve(window.PKIWebSDK.Certificate.getRevocationList(reader.result));
        }
+    } else {
+      reject(new Error("Parameter should not be empty"));
     }
   })
 }
@@ -56,6 +60,8 @@ UI.handler.P12 = function(file) {
         var cert = new window.PKIWebSDK.Certificate();
         resolve(cert.parseP12(reader.result, password));
        }
+    } else {
+      reject(new Error("Parameter should not be empty"));
     }
   })
 }
@@ -74,6 +80,8 @@ UI.handler.certChain = function(file) {
             list.innerHTML += "<br> - " + file.name;
           })
       }
+    } else {
+      reject(new Error("Parameter should not be empty"));
     }
   })
 }
@@ -102,6 +110,37 @@ UI.handler.P12ToSign = function(file) {
             resolve();
           })
        }
+    } else {
+      reject(new Error("Parameter should not be empty"));
+    }
+  })
+}
+UI.handler.P12ToSignFile = function(file) {
+  console.log(file);
+  return new Promise(function(resolve, reject){
+    if (file) {
+      var reader = new window.FileReader()
+      var password = document.getElementById("pkiwebsdk-p12-password-to-sign-file").value; 
+      reader.readAsArrayBuffer(file);
+      reader.onload = function(e) {
+        var cert = new window.PKIWebSDK.Certificate();
+        var result;
+        cert.parseP12(reader.result, password)
+          .then(function(p12){
+            result = p12;
+            UI.P12ToSign.certificate = result.certificate;
+            return result.certificate.getSubject();
+          })
+          .then(function(subject){
+            return window.PKIWebSDK.Key.parsePEM(result.privateKey, "SHA-256")
+          })
+          .then(function(privateKey){
+            UI.P12ToSign.privateKey = privateKey;
+            resolve();
+          })
+       }
+    } else {
+      reject(new Error("Parameter should not be empty"));
     }
   })
 }
@@ -115,6 +154,72 @@ UI.handler.PDFToSign = function(file) {
         UI.PDFToSign = new window.PKIWebSDK.PDF(reader.result);
         resolve();
       }
+    } else {
+      reject(new Error("Parameter should not be empty"));
+    }
+  })
+}
+UI.handler.fileToSign = function(file) {
+  console.log(file);
+  return new Promise(function(resolve, reject){
+    if (file) {
+      var reader = new window.FileReader()
+      reader.readAsArrayBuffer(file);
+      reader.onload = function(e) {
+        UI.fileToSign = reader.result;
+        resolve();
+      }
+    } else {
+      reject(new Error("Parameter should not be empty"));
+    }
+  })
+}
+UI.handler.fileToBeVerified = function(file) {
+  console.log(file);
+  return new Promise(function(resolve, reject){
+    if (file) {
+      var reader = new window.FileReader()
+      reader.readAsArrayBuffer(file);
+      reader.onload = function(e) {
+        UI.fileToBeVerified = reader.result;
+        resolve();
+      }
+    } else {
+      reject(new Error("Parameter should not be empty"));
+    }
+  })
+}
+UI.handler.certToVerifyFile = function(file) {
+  console.log(file);
+  return new Promise(function(resolve, reject){
+    if (file) {
+      var reader = new window.FileReader()
+      reader.readAsText(file);
+      reader.onload = function(e) {
+        var cert = new window.PKIWebSDK.Certificate();
+        cert.parsePEM(reader.result)
+          .then(function(cert){
+            UI.certToVerifyFile = cert;
+            resolve();
+          })
+      }
+    } else {
+      reject(new Error("Parameter should not be empty"));
+    }
+  })
+}
+UI.handler.P7ToVerifyFile = function(file) {
+  console.log(file);
+  return new Promise(function(resolve, reject){
+    if (file) {
+      var reader = new window.FileReader()
+      reader.readAsArrayBuffer(file);
+      reader.onload = function(e) {
+        UI.P7ToVerifyFile = window.PKIWebSDK.Utils.ab2Str(reader.result);
+        resolve();
+      }
+    } else {
+      reject(new Error("Parameter should not be empty"));
     }
   })
 }
@@ -161,6 +266,8 @@ UI.handler.PDFToVerify = function(file) {
             reject(err);
           })
         }
+    } else {
+      reject(new Error("Parameter should not be empty"));
     }
   })
 }
@@ -202,6 +309,71 @@ UI.getCRL = function(element, cb) {
   document.getElementById("pkiwebsdk-get-crl").onchange = function () {
     document.getElementById("pkiwebsdk-get-crl-uploadfile").value = this.value.substring(12);
   };
+}
+
+/**
+ * Generate HTML element that handle P12 to sign a file
+ *
+ * @param {String} element - Id of the parent element. Without # symbol.
+ * @returns {ParseP12Result} cb - Callback, return a promise from SignedData.prototype.sign()
+ */
+UI.signFile = function(element, cb) {
+  var self = this;
+  var e = document.getElementById(element);
+  e.innerHTML = html["sign-file.html"];
+  document.getElementById("pkiwebsdk-get-p12-to-sign-file").addEventListener("change", function(evt){
+    var files = evt.target.files;
+    UI.handler.P12ToSignFile(files[0]);
+  });
+  document.getElementById("pkiwebsdk-get-file-to-sign").addEventListener("change", function(evt){
+    var files = evt.target.files;
+    UI.handler.fileToSign(files[0]);
+  });
+  document.getElementById("pkiwebsdk-get-file-to-sign-trigger").addEventListener("click", function(evt){
+    cb(window.PKIWebSDK.SignedData.sign(self.P12ToSign.certificate, self.P12ToSign.privateKey, self.fileToSign));
+  });
+  document.getElementById("pkiwebsdk-get-p12-to-sign-file").onchange = function () {
+    document.getElementById("pkiwebsdk-get-p12-to-sign-file-uploadfile").value = this.value.substring(12);
+  };  
+  document.getElementById("pkiwebsdk-get-file-to-sign").onchange = function () {
+    document.getElementById("pkiwebsdk-get-file-to-sign-uploadfile").value = this.value.substring(12);
+  };  
+}
+
+/**
+ * Generate HTML element that handle P12 to sign a file
+ *
+ * @param {String} element - Id of the parent element. Without # symbol.
+ * @returns {ParseP12Result} cb - Callback, return a promise from SignedData.prototype.sign()
+ */
+UI.verifyFile = function(element, cb) {
+  var self = this;
+  var e = document.getElementById(element);
+  e.innerHTML = html["verify-file.html"];
+  document.getElementById("pkiwebsdk-get-cert-to-verify-file").addEventListener("change", function(evt){
+    var files = evt.target.files;
+    UI.handler.certToVerifyFile(files[0]);
+  });
+  document.getElementById("pkiwebsdk-get-p7-to-verify-file").addEventListener("change", function(evt){
+    var files = evt.target.files;
+    UI.handler.P7ToVerifyFile(files[0]);
+  });
+  document.getElementById("pkiwebsdk-get-file-to-be-verified").addEventListener("change", function(evt){
+    var files = evt.target.files;
+    UI.handler.fileToBeVerified(files[0]);
+  });
+  document.getElementById("pkiwebsdk-get-file-to-verify-trigger").addEventListener("click", function(evt){
+    cb(window.PKIWebSDK.SignedData.verify(self.certToVerifyFile, self.P7ToVerifyFile, self.fileToBeVerified));
+  });
+  document.getElementById("pkiwebsdk-get-p7-to-verify-file").onchange = function () {
+    document.getElementById("pkiwebsdk-get-p7-to-verify-file-uploadfile").value = this.value.substring(12);
+  };  
+  document.getElementById("pkiwebsdk-get-cert-to-verify-file").onchange = function () {
+    document.getElementById("pkiwebsdk-get-cert-to-verify-file-uploadfile").value = this.value.substring(12);
+  };  
+  document.getElementById("pkiwebsdk-get-file-to-be-verified").onchange = function () {
+    document.getElementById("pkiwebsdk-get-file-to-be-verified-uploadfile").value = this.value.substring(12);
+  };  
 }
 
 /**

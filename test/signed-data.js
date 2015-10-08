@@ -90,10 +90,7 @@ describe("SignedData", function() {
         SignedData.verify(certSample, raw, data)
           .then(function(result){
             console.log(result);
-            var p = SignedData.parseDER(raw);
-            var d = p.getData().signerInfo[0];
-            expect(d.issuer.C).toBe('ID');
-            expect(d.authenticatedAttributes.digest).toBe('edeaaff3f1774ad2888673770c6d64097e391bc362d7d6fb34982ddf0efd18cb');
+            expect(result).toBe(true);
             done();
           })
       });

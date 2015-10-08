@@ -188,7 +188,7 @@ SignedData.prototype.getData = function getData() {
  * Verify detached PKCS#7 DER, certificate and a file together
  * @param {Certificate} cert - Certificate object
  * @param {rawData} der - Detached PKCS#7 in DER 
- * @param {ArrayBuffer} data - Array buffer of data that you whatn to verify
+ * @param {ArrayBuffer} data - Array buffer of data that you want to verify
  * @returns {Boolean} - Boolean value that represents whether the file is verified or not
  */
  
@@ -201,6 +201,8 @@ SignedData.verify = function verify(cert, der, data) {
     var signedDataHash = d.authenticatedAttributes.digest;
     var hash = forge.md.sha256.create();
     var dataHash = hash.update(Utils.ab2Str(data)).digest().toHex();
+    console.log(signedDataHash);
+    console.log(dataHash);
     cert.getIssuer()
       .then(function(issuer){
         // Verify

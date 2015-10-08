@@ -1,0 +1,24 @@
+<link rel="stylesheet" href="style.css">
+<div class="pkiwebsdk-container">
+	<h4>Verify file, certificate and detached PKCS#7</h4>
+	<p>Choose your certificate file (PEM)</p>
+		<input id="pkiwebsdk-get-cert-to-verify-file-uploadfile" placeholder="Choose File" disabled="disabled" />
+		<div class="pkiwebsdk-fileupload pkiwebsdk-button">
+			<span>Choose File</span>
+			<input id="pkiwebsdk-get-cert-to-verify-file" type="file" class="pkiwebsdkupload" />
+    </div>
+	<p>Choose your detached PKCS#7 file</p>
+		<input id="pkiwebsdk-get-p7-to-verify-file-uploadfile" placeholder="Choose File" disabled="disabled" />
+		<div class="pkiwebsdk-fileupload pkiwebsdk-button">
+			<span>Choose File</span>
+			<input id="pkiwebsdk-get-p7-to-verify-file" type="file" class="pkiwebsdkupload" />
+    </div>
+	<p>Choose your file that which to be verified</p>
+		<input id="pkiwebsdk-get-file-to-be-verified-uploadfile" placeholder="Choose File" disabled="disabled" />
+		<div class="pkiwebsdk-fileupload pkiwebsdk-button">
+			<span>Choose File</span>
+			<input id="pkiwebsdk-get-file-to-be-verified" type="file" class="pkiwebsdkupload" />
+		</div>				
+	<br>
+	<button class="pkiwebsdk-button" id="pkiwebsdk-get-file-to-verify-trigger">Verify</button>
+</div>
