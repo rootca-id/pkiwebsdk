@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="style.css">
+<div class="pkiwebsdk-container">
+	<h4>Sign File</h4>
+	<p>Fill the password</p>
+	<input type="password" id="pkiwebsdk-p12-password-to-sign-file" placeholder="password"></input>
+	<br><br>
+	<p>Choose your .p12 file</p>
+		<input id="pkiwebsdk-get-p12-to-sign-file-uploadfile" placeholder="Choose File" disabled="disabled" />
+		<div class="pkiwebsdk-fileupload pkiwebsdk-button">
+			<span>Choose File</span>
+			<input id="pkiwebsdk-get-p12-to-sign-file" type="file" class="pkiwebsdkupload" />
+    </div>
+	<p>Choose your file which to be signed</p>
+		<input id="pkiwebsdk-get-file-to-sign-uploadfile" placeholder="Choose File" disabled="disabled" />
+		<div class="pkiwebsdk-fileupload pkiwebsdk-button">
+			<span>Choose File</span>
+			<input id="pkiwebsdk-get-file-to-sign" type="file" class="pkiwebsdkupload" />
+		</div>				
+	<br>
+	<button class="pkiwebsdk-button" id="pkiwebsdk-get-file-to-sign-trigger">Sign</button>
+</div>

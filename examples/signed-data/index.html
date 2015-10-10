@@ -67,6 +67,8 @@
 				<ul class="nav nav-tabs">
 					<li class="active"><a class="tab" href="#signing" data-toggle="tab">Signing</a></li>
 					<li><a class="tab" href="#fromder" data-toggle="tab">From DER</a></li>
+					<li><a class="tab" href="#signfile" data-toggle="tab">Sign object data</a></li>
+					<li><a class="tab" href="#verifyfile" data-toggle="tab">Verify detached PKCS#7</a></li>
 				</ul>
 				<div id="myTabContent" class="tab-content">
 					<div class="tab-pane fade active in" id="signing">
@@ -94,6 +96,32 @@
 							</div>
 						</div>
 					</div>
+					
+					<div class="tab-pane fade" id="signfile">`
+	          <p>Fill the password</p>
+	          <input type="password" id="get-password-to-sign-object" placeholder="password"></input>
+	          <br><br>
+	          <p>Choose your .p12 file</p>
+	          	<input id="get-p12-to-sign-object" type="file" class="pkiwebsdkupload" />
+              <br>
+	          	<div>Write your object in JSON format</div>
+              <textarea rows="10" cols="50" id="get-object-to-sign"></textarea>
+	          <br>
+	          <button class="pkiwebsdk-button" id="to-sign-object-trigger">Sign</button>
+					</div>
+					
+					<div class="tab-pane fade" id="verifyfile">`
+	          <p>Choose your certificate file (PEM)</p>
+	          <input id="get-cert-to-verify-object" type="file" class="pkiwebsdkupload" />
+            <br>
+	          <p>Choose your detached PKCS#7 file</p>
+	          <input id="get-p7-to-verify-object" type="file" class="pkiwebsdkupload" />
+            <br>
+	          <p>Write your object data (in JSON) that which to be verified</p>
+            <textarea rows="10" cols="50" id="get-object-to-be-verified"></textarea>
+	          <br>
+	          <button class="pkiwebsdk-button" id="to-verify-object-trigger">Verify</button>
+					</div>
 				</div>
 			</div>
 		</div>    
@@ -102,7 +130,7 @@
 		<p>&copy; 2015 <a href="http://kominfo.go.id/" class="footer-text">Direktorat Keamanan Informasi - Kementerian Komunikasi dan Informatika Republik Indonesia</a></p>
 	</footer>
             
-      <script>
+    <script>
       var derData;
       var fileToBeSigned;
       var certificateToSign;
@@ -169,24 +197,91 @@
             window.PKIWebSDK.Utils.toFile(result , "signed-data.der", "application/pcks7");
           })
       })
+      
+      var p12ToSignObject, certToVerifyObject, derToVerifyObject;
+      // Sign
+      document.getElementById("get-p12-to-sign-object").addEventListener("change", function(evt){
+        var files = evt.target.files;
+        var reader = new window.FileReader();
+        reader.readAsArrayBuffer(files[files.length-1]);
+        reader.onload = function(e) {
+          p12ToSignObject = reader.result;
+        }
+      })
+      document.getElementById("to-sign-object-trigger").addEventListener("click", function(evt){
+        // Parse P12
+        var cert = new window.PKIWebSDK.Certificate();
+        cert.parseP12(p12ToSignObject, document.getElementById("get-password-to-sign-object").value)
+          .then(function(result){
+            console.log(result);
+            var json = document.getElementById("get-object-to-sign").value;
+            var obj = JSON.parse(json);
+            var stringified = JSON.stringify(json);
+            var data = window.PKIWebSDK.Utils.str2Ab(stringified);
+            window.PKIWebSDK.Key.parsePEM(result.privateKey, "SHA-256")
+              .then(function(privateKey){
+                console.log(privateKey);
+                window.PKIWebSDK.SignedData.sign(result.certificate, privateKey, data)
+                .then(function(result){
+                  console.log(result);
+                  window.PKIWebSDK.Utils.toFile(result, "signed-data.der", "application/pkcs7");
+                })
+                .catch(function(err){
+                  console.log(err)
+                  alert(err);
+                })
+              })
+              .catch(function(err){
+                console.log(err);
+                alert(err);
+              })
+          })
+          .catch(function(err){
+            console.log(err);
+            alert(err);
+          })
+      })
+      
+      // Verify
+      document.getElementById("get-cert-to-verify-object").addEventListener("change", function(evt){
+        var files = evt.target.files;
+        var reader = new window.FileReader();
+        reader.readAsText(files[files.length-1]);
+        reader.onload = function(e) {
+          certToVerifyObject = reader.result;
+        }
+      })
+      document.getElementById("get-p7-to-verify-object").addEventListener("change", function(evt){
+        var files = evt.target.files;
+        var reader = new window.FileReader();
+        reader.readAsArrayBuffer(files[files.length-1]);
+        reader.onload = function(e) {
+          derToVerifyObject = window.PKIWebSDK.Utils.ab2Str(reader.result);
+        }
+      })
+      document.getElementById("to-verify-object-trigger").addEventListener("click", function(evt){
+        var cert = new window.PKIWebSDK.Certificate();
+        cert.parsePEM(certToVerifyObject)
+        .then(function(cert){
+            var json = document.getElementById("get-object-to-be-verified").value;
+            var obj = JSON.parse(json);
+            var stringified = JSON.stringify(json);
+            var data = window.PKIWebSDK.Utils.str2Ab(stringified);
+            window.PKIWebSDK.SignedData.verify(cert, derToVerifyObject, data)
+              .then(function(result){
+                alert(result ? "Valid" : "Not valid");
+              })
+          })
+          .catch(function(err){
+            console.log(err);        
+            alert(err);
+          })
+      })
 	
-	  /*	
-      var tabActive=1, tabs=document.getElementById('tabs').getElementsByTagName('a'), tabs_data=document.getElementById('tabs_data').getElementsByTagName('fieldset');
-      function tab_click(x){
-        if(x > -1 && x < tabs.length && x < tabs_data.length){
-          tabs[tabActive].setAttribute('class','');
-              tabs_data[tabActive].style.display='none';
-          tabActive=x;
-          tabs[tabActive].setAttribute('class','active');
-              tabs_data[tabActive].style.display='block';
-        } return false;
-      }
-      tab_click(0);
-      */
-      </script>
+    </script>
 
-	<script src="../dist/js/jquery-2.1.4.min.js"></script>
-	<script src="../dist/js/bootstrap.min.js"></script>
+	  <script src="../dist/js/jquery-2.1.4.min.js"></script>
+	  <script src="../dist/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../dist/js/bootstrap-filestyle.min.js"></script>
 
   </body>
