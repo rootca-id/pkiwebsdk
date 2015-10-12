@@ -305,7 +305,8 @@
           p12ToSignObject = reader.result;
         }
       })
-      document.getElementById("to-sign-form-trigger").addEventListener("click", function(evt){
+      var formInputStringified;
+      var signFormInput = function(){
         // Parse P12
         var cert = new window.PKIWebSDK.Certificate();
         cert.parseP12(p12ToSignObject, document.getElementById("get-password-to-sign-form").value)
@@ -317,9 +318,9 @@
               value : document.getElementById("form-to-sign-value").value,
               info : document.getElementById("form-to-sign-info").value,
             }
-            var stringified = JSON.stringify(json);
-            console.log(stringified);
-            var data = window.PKIWebSDK.Utils.str2Ab(stringified);
+            formInputStringified = JSON.stringify(json);
+            console.log(formInputStringified);
+            var data = window.PKIWebSDK.Utils.str2Ab(formInputStringified);
             window.PKIWebSDK.Key.parsePEM(result.privateKey, "SHA-256")
               .then(function(privateKey){
                 console.log(privateKey);
@@ -342,6 +343,22 @@
             console.log(err);
             alert(err);
           })
+      }
+      document.getElementById("to-sign-form-trigger").addEventListener("click", function(evt){
+        var json = {
+          sender : document.getElementById("form-to-sign-sender").value,
+          recipient : document.getElementById("form-to-sign-recipient").value,
+          value : document.getElementById("form-to-sign-value").value,
+          info : document.getElementById("form-to-sign-info").value,
+        }
+        formInputStringified = JSON.stringify(json);
+        var msg = "The data bellow will be signed before submitted"
+        msg += "\n\n" + formInputStringified + "\n\n";
+        msg += "Please click OK to sign.";
+        var c = confirm(msg);
+        if (c) {
+          signFormInput();
+        }
       })
 	
     </script>
