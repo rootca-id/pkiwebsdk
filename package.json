@@ -1,6 +1,6 @@
 {
   "name": "pki-websdk",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "PKI WebSDK",
   "scripts": {
     "test": "./node_modules/.bin/gulp && ./node_modules/.bin/karma start --singleRun",
@@ -14,7 +14,7 @@
     "type": "git",
     "url": "git@bitbucket.org:kodekreatif/kominfo-pki-websdk.git"
   },
-  "license": "Private",
+  "license": "GPL version 3",
   "devDependencies": {
     "brfs": "^1.4.0",
     "browserify": "^11.0.1",
