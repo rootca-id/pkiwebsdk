@@ -686,6 +686,7 @@ describe("Certificate suite", function() {
       var cert = new Certificate();
       cert.parsePEM(bundledPEM)
         .then(function(cert){
+          console.log(cert);
           expect(cert).toBeDefined();
           expect(cert.certData.length).toEqual(3);
           certChainSample = cert;
@@ -790,15 +791,13 @@ describe("Certificate suite", function() {
       certSample.validate()
         .then(function(result){
           expect(result.isValid).toBe(true);
-          expect(result.isTrusted).toBe(true);
+          expect(result.isTrusted).toBe(false);
           done();
         })
         .catch(function(err){
           if (err) {
             console.log(err.message);
           }
-          expect(result.isValid).toBe(true);
-          expect(result.isTrusted).toBe(true);
           expect(1).toBe(2);
           done();
         })
@@ -843,7 +842,8 @@ describe("Certificate suite", function() {
         .then(function(result){
           console.log("validation result");
           console.log(result);
-          expect(result.isValid).toBe(false);
+          expect(result.isValid).toBe(true);
+          expect(result.isTrusted).toBe(false);
           done();
         })
         .catch(function(err){
@@ -920,10 +920,12 @@ describe("Certificate suite", function() {
     it("should be able to check validity of certificate chain", function(done) {
       certChainSample.validate()
         .then(function(result){
+          console.log(result);
           expect(result.isValid).toBe(true);
           done();
         })
         .catch(function(err){
+          console.log(err);
           if (err) {
             console.log(err.message);
           }
@@ -987,7 +989,8 @@ describe("Certificate suite", function() {
             .then(function(result){
               console.log("validation result");
               console.log(result);
-              expect(result.isValid).toBe(false);
+              expect(result.isValid).toBe(true);
+              expect(result.isTrusted).toBe(false);
               done();
             })
             .catch(function(err){
