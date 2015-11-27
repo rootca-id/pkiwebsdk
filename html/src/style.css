@@ -66,3 +66,75 @@
     opacity: 0;
     filter: alpha(opacity=0);
 }
+.pkiwebsdk-modal{
+  background-color:#fff;
+  color:black;
+  border-radius:5px;
+}
+.pkiwebsdk-modal-content{
+  background-color:#fff !important;
+}
+.pkiwebsdk-modal-header {
+  background:#2B67BF !important;
+  padding:10px;
+  color:white !important;
+  font-size:14px;
+  min-height:20px;
+  border-top-left-radius:5px;
+  border-top-right-radius:5px;
+}
+.pkiwebsdk-modal-content {
+  padding:10px;
+  width:80vh;
+}
+.pkiwebsdk-modal-well {
+  min-height: 20px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #f5f5f5;
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+}
+.pkiwebsdk-modal-h4 {
+  margin-bottom:10px;
+}
+.pkiwebsdk-modal-input {
+  min-height: 10px;
+  padding: 10px;
+  width:90%;
+  background-color: #fff;
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.05);
+}
+.pkiwebsdk-modal-button:hover {
+  background:#2B67BF !important;
+}
+.pkiwebsdk-modal-button {
+  -webkit-user-select: none;
+  background-color: #00458E;
+  background-image: none;
+  border: 1px solid transparent;
+  border-color: #1462A9;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 12px;
+  font-weight: normal;
+  line-height: 1.42857143;
+  margin-bottom: 0;
+  padding: 6px 12px;
+  text-align: center;
+  touch-action: manipulation;
+  user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.pkiwebsdk-modal-img {
+  margin-right:15px;
+  margin-bottom:15px;
+}
