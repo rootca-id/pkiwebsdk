@@ -679,6 +679,9 @@ UI.verifyPDFWithModal = function(toBeVerified, filename) {
       })
       document.getElementById("pkiwebsdk-modal-verify-download").addEventListener("click", function(evt){
         var ab = PKIWebSDK.Utils.base642Ab(base64);
+        if (filename.split(".").slice(-1)[0].toLowerCase() !== "pdf") {
+          filename += ".pdf";
+        }
         PKIWebSDK.Utils.toFile(ab, filename, "application/pdf");
       })
     }, 500)
