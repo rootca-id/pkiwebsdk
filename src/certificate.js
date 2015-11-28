@@ -431,12 +431,9 @@ Certificate.realValidate = function(chain){
     }
     var  rootCa = caStoreCerts[0];
     var isTop = false;
+    var hasError = false;
     var i = 0;
       while (!isTop) {
-        if (!result.isValid) {
-          resolve(result);
-          break;
-        }
         var error = null;
         var cert = chain[i];
         if (i < (chain.length -1)) {
@@ -467,11 +464,17 @@ Certificate.realValidate = function(chain){
             isTop = false;
           } else {
             result.isTrusted = false;
+            if (hasError) {
+              result.isValid = false;
+            }
           }
         } else {
           if (isTop && cert.isIssuer(parent)) {
             if (!cert.isIssuer(rootCa)) {
               result.isTrusted = false;
+            }
+            if (hasError) {
+              result.isValid = false;
             }
           } 
           // Verify certificate signature
@@ -485,7 +488,8 @@ Certificate.realValidate = function(chain){
         
         // Set isValid to be false if there is any error
         if (error != null) {
-          result.isValid = false;
+          console.log(error);
+          hasError  = true;
         }
         if (isTop) {
           resolve(result);  
