@@ -69,6 +69,7 @@
 					<li><a class="tab" href="#fromder" data-toggle="tab">From DER</a></li>
 					<li><a class="tab" href="#signfile" data-toggle="tab">Sign object data</a></li>
 					<li><a class="tab" href="#verifyfile" data-toggle="tab">Verify detached PKCS#7</a></li>
+					<li><a class="tab" href="#signform" data-toggle="tab">Sign form input</a></li>
 				</ul>
 				<div id="myTabContent" class="tab-content">
 					<div class="tab-pane fade active in" id="signing">
@@ -121,6 +122,21 @@
             <textarea rows="10" cols="50" id="get-object-to-be-verified"></textarea>
 	          <br>
 	          <button class="pkiwebsdk-button" id="to-verify-object-trigger">Verify</button>
+					</div>
+					<div class="tab-pane fade" id="signform">`
+	          <p>Fill the password</p>
+	          <input type="password" id="get-password-to-sign-form" placeholder="password"></input>
+	          <br><br>
+	          <p>Choose your .p12 file</p>
+	          	<input id="get-p12-to-sign-form" type="file" class="pkiwebsdkupload" />
+              <br>
+              <!--INPUT-->
+              <input id="form-to-sign-sender" placeholder="Penerima"></input><br>
+              <input id="form-to-sign-recipient" placeholder="Pengirim"></input><br>
+              <input id="form-to-sign-value" placeholder="Nominal"></input><br>
+              <input id="form-to-sign-info" placeholder="Info tambahan"></input><br>
+	          <br>
+	          <button class="pkiwebsdk-button" id="to-sign-form-trigger">Submit and Sign</button>
 					</div>
 				</div>
 			</div>
@@ -199,6 +215,7 @@
       })
       
       var p12ToSignObject, certToVerifyObject, derToVerifyObject;
+
       // Sign
       document.getElementById("get-p12-to-sign-object").addEventListener("change", function(evt){
         var files = evt.target.files;
@@ -216,7 +233,8 @@
             console.log(result);
             var json = document.getElementById("get-object-to-sign").value;
             var obj = JSON.parse(json);
-            var stringified = JSON.stringify(json);
+            var stringified = JSON.stringify(obj);
+            console.log(stringified);
             var data = window.PKIWebSDK.Utils.str2Ab(stringified);
             window.PKIWebSDK.Key.parsePEM(result.privateKey, "SHA-256")
               .then(function(privateKey){
@@ -265,7 +283,7 @@
         .then(function(cert){
             var json = document.getElementById("get-object-to-be-verified").value;
             var obj = JSON.parse(json);
-            var stringified = JSON.stringify(json);
+            var stringified = JSON.stringify(obj);
             var data = window.PKIWebSDK.Utils.str2Ab(stringified);
             window.PKIWebSDK.SignedData.verify(cert, derToVerifyObject, data)
               .then(function(result){
@@ -276,6 +294,71 @@
             console.log(err);        
             alert(err);
           })
+      })
+      
+      // Sign Form Input
+      document.getElementById("get-p12-to-sign-form").addEventListener("change", function(evt){
+        var files = evt.target.files;
+        var reader = new window.FileReader();
+        reader.readAsArrayBuffer(files[files.length-1]);
+        reader.onload = function(e) {
+          p12ToSignObject = reader.result;
+        }
+      })
+      var formInputStringified;
+      var signFormInput = function(){
+        // Parse P12
+        var cert = new window.PKIWebSDK.Certificate();
+        cert.parseP12(p12ToSignObject, document.getElementById("get-password-to-sign-form").value)
+          .then(function(result){
+            console.log(result);
+            var json = {
+              sender : document.getElementById("form-to-sign-sender").value,
+              recipient : document.getElementById("form-to-sign-recipient").value,
+              value : document.getElementById("form-to-sign-value").value,
+              info : document.getElementById("form-to-sign-info").value,
+            }
+            formInputStringified = JSON.stringify(json);
+            console.log(formInputStringified);
+            var data = window.PKIWebSDK.Utils.str2Ab(formInputStringified);
+            window.PKIWebSDK.Key.parsePEM(result.privateKey, "SHA-256")
+              .then(function(privateKey){
+                console.log(privateKey);
+                window.PKIWebSDK.SignedData.sign(result.certificate, privateKey, data)
+                .then(function(result){
+                  console.log(result);
+                  window.PKIWebSDK.Utils.toFile(result, "signed-data.der", "application/pkcs7");
+                })
+                .catch(function(err){
+                  console.log(err)
+                  alert(err);
+                })
+              })
+              .catch(function(err){
+                console.log(err);
+                alert(err);
+              })
+          })
+          .catch(function(err){
+            console.log(err);
+            alert(err);
+          })
+      }
+      document.getElementById("to-sign-form-trigger").addEventListener("click", function(evt){
+        var json = {
+          sender : document.getElementById("form-to-sign-sender").value,
+          recipient : document.getElementById("form-to-sign-recipient").value,
+          value : document.getElementById("form-to-sign-value").value,
+          info : document.getElementById("form-to-sign-info").value,
+        }
+        formInputStringified = JSON.stringify(json);
+        var msg = "The data bellow will be signed before submitted"
+        msg += "\n\n" + formInputStringified + "\n\n";
+        msg += "Please click OK to sign.";
+        var c = confirm(msg);
+        if (c) {
+          signFormInput();
+        }
       })
 	
     </script>
