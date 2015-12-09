@@ -425,13 +425,15 @@ Certificate.realValidate = function(chain){
       isValid : true,
       isTrusted : true
     } 
+    var caStoreCerts = []
+    for (var x in PKIWebSDK.private.caStore.certs) {
+      caStoreCerts.push(PKIWebSDK.private.caStore.certs[x]);
+    }
+    var  rootCa = caStoreCerts[0];
     var isTop = false;
+    var hasError = false;
     var i = 0;
       while (!isTop) {
-        if (!result.isValid) {
-          resolve(result);
-          break;
-        }
         var error = null;
         var cert = chain[i];
         if (i < (chain.length -1)) {
@@ -440,7 +442,6 @@ Certificate.realValidate = function(chain){
           var parent = cert;
           isTop = true;
         }
-  
         // Check expiry
         var now = new Date();
         if ( (cert.validity.notAfter.getTime() < now.getTime())
@@ -458,21 +459,24 @@ Certificate.realValidate = function(chain){
           // If it is the last cert in chain and not a self-signed, add caStore's certs to the chain
           // and redo the loop 1 step
           if (isTop) {
-            var caStoreCerts = []
-            for (var x in PKIWebSDK.private.caStore.certs) {
-              caStoreCerts.push(PKIWebSDK.private.caStore.certs[x]);
-            }
             chain = chain.concat(caStoreCerts.reverse());
             i--;
             isTop = false;
           } else {
             result.isTrusted = false;
-            error = {
-              message: 'Certificate is not trusted.',
-              error: forge.pki.certificateError.unknown_ca
-            };
+            if (hasError) {
+              result.isValid = false;
+            }
           }
         } else {
+          if (isTop && cert.isIssuer(parent)) {
+            if (!cert.isIssuer(rootCa)) {
+              result.isTrusted = false;
+            }
+            if (hasError) {
+              result.isValid = false;
+            }
+          } 
           // Verify certificate signature
           if (!parent.verify(cert)) {
             error = {
@@ -484,7 +488,8 @@ Certificate.realValidate = function(chain){
         
         // Set isValid to be false if there is any error
         if (error != null) {
-          result.isValid = false;
+          console.log(error);
+          hasError  = true;
         }
         if (isTop) {
           resolve(result);  

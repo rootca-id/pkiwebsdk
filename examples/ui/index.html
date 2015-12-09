@@ -53,6 +53,14 @@
 			<div id="verify-a-pdf"></div>
 			<div id="sign-a-file"></div>
 			<div id="verify-a-file"></div>
+      <div class="col-sm-12 well">
+       <h4>Sign and Verify PDF with modal</h4>
+          Sign PDF<br>
+          <input type="file" id="sign-pdf-with-modal">
+          <br><br>
+          Verify PDF<br>
+          <input type="file" id="verify-pdf-with-modal">
+      </div>
 		</div>
 
 	<footer>
@@ -96,8 +104,8 @@
 	  window.PKIWebSDK.UI.getCertChain("validate-cert-chain", function(promise){
 		  promise.then(function(result){
 		    console.log(result);
-		    var msg = "The certificate chain is " + (result.isVerified? "verified" : "not verified" );
-		    msg += ", " + (result.isValid? "valid" : "not valid" );
+		    var msg = "The certificate chain is ";
+		    msg += (result.isValid? "valid" : "not valid" );
 		    msg += " and " + (result.isTrusted? "trusted" : "not trusted" );
 		    alert(msg);
 		  })
@@ -148,7 +156,43 @@
 		  .catch(function(err){
 		    alert(err.message);
 		  })
-	  })
+    })
+
+    // Modal
+    var ab, filename;
+    // An example function that will be called in showSignModal's callback;
+    var afterSign = function(ab){
+      var filenameSplitted = filename.split(".");
+      filename = filenameSplitted.slice(0,-1) + "-signed." + filenameSplitted.slice(-1);
+      PKIWebSDK.Utils.toFile(ab, filename, "application/pdf");
+    }
+    // Listener to pdf file input element 
+    document.getElementById('sign-pdf-with-modal').addEventListener('change', function(evt){
+	  	files = evt.target.files; // FileList object
+	  	// files is a FileList of File objects. List some properties.
+	  	// Read file as ArrayBuffer
+	  	var reader = new window.FileReader()
+	  	reader.readAsArrayBuffer(files[files.length-1]);
+      reader.onload = function(e) {
+        filename = files[files.length-1].name;
+        ab = reader.result;
+        PKIWebSDK.UI.signPDFWithModal(ab, filename, afterSign);
+	  	}
+    });
+    // Listener to pdf file input element 
+    document.getElementById('verify-pdf-with-modal').addEventListener('change', function(evt){
+	  	files = evt.target.files; // FileList object
+	  	// files is a FileList of File objects. List some properties.
+	  	// Read file as ArrayBuffer
+	  	var reader = new window.FileReader()
+	  	reader.readAsArrayBuffer(files[files.length-1]);
+      reader.onload = function(e) {
+        filename = files[files.length-1].name;
+        ab = reader.result;
+        PKIWebSDK.UI.verifyPDFWithModal(ab, filename);
+	  	}
+    });
+
 	</script>
 		
 	<script src="../dist/js/jquery-2.1.4.min.js"></script>
