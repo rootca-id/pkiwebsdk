@@ -8,6 +8,7 @@ var async = require("async");
 // Obtains HTML template
 var html = require("../html/html-min.js");
 require("uglipop");
+var SignedData = require("../src/signed-data");
 
 /**
  * Represents a UI object
@@ -601,6 +602,87 @@ UI.signPDFWithModal = function(ab, filename, cb) {
 }
 
 /**
+ * Sign any data with modal
+ *
+ * @param {ArrayBuffer} ab - Array buffer of the file that will be signed
+ * @param {String} filename - File name of the file
+ * @returns {ArrayBuffer} - Array buffer of the signed file, passed in cb function
+ */
+UI.signAnyWithModal = function(ab, filename, cb) {
+  var self = this;
+  var p12;
+  // Show the popup modal
+  uglipop({
+    class:'pkiwebsdk-modal', //styling class for Modal
+    source:'html',
+    content: html["sign-any-with-modal.html"]
+    // Begin of HTML modal
+    // End of HTML modal
+  });
+  // Wait for rendered popup, then set a listerner to some element
+	setTimeout(function(){
+    // Get some variables
+    document.getElementById("pkiwebsdk-modal-sign-any-file-name").innerHTML = filename;
+    document.getElementById("pkiwebsdk-modal-sign-any-file-size").innerHTML = PKIWebSDK.Utils.humanReadableSize(ab.byteLength);
+    // Event listeners
+    document.getElementById('pkiwebsdk-modal-sign-any-p12').addEventListener('change', function(evt){
+	  	var files = evt.target.files; // FileList object
+	  	// files is a FileList of File objects. List some properties.
+	  	// Read file as ArrayBuffer
+	  	var reader = new window.FileReader()
+	  	reader.readAsArrayBuffer(files[files.length-1]);
+	  	reader.onload = function(e) {
+        p12 = reader.result;
+        document.getElementById('pkiwebsdk-modal-sign-any-p12-password-container').style.display = 'block';
+        document.getElementById('pkiwebsdk-modal-sign-any-p12-file-name').innerHTML = files[files.length-1].name
+	  	}
+    });
+    document.getElementById("pkiwebsdk-modal-sign-cancel").addEventListener("click", function(evt){
+      self.destroyModal();
+    })
+    document.getElementById("pkiwebsdk-modal-sign-any").addEventListener("click", function(evt){
+      var password = document.getElementById("pkiwebsdk-modal-sign-any-p12-password").value;
+      var cert = new PKIWebSDK.Certificate();
+      var result;
+      var signInfo = {};
+      var privKey;
+      cert.parseP12(p12, password)
+        .then(function(p12){
+          result = p12;
+          cert = result.certificate;
+          return result.certificate.getSubject();
+        })
+        .then(function(subject){
+          signInfo.date = new Date();
+          signInfo.name = subject.commonName;
+          signInfo.location = subject.localityName;
+          return window.PKIWebSDK.Key.parsePEM(result.privateKey, "SHA-256")
+        })
+        .then(function(privateKey){
+          privKey = privateKey;
+          console.log(cert);
+          console.log(privKey);
+          return SignedData.sign(cert, privKey, ab)
+        })
+        .then(function(signed){
+          self.destroyModal();
+          cb(signed);
+        })
+        .catch(function(err){
+          console.log(err.message);
+          if (err.message == "PKCS#12 SafeContents expected to be a SEQUENCE OF SafeBag.") {
+            return alert("Failed to open P12 container. Wrong password?");
+          }
+          if (err.message == "Cannot read PKCS#12 PFX. ASN.1 object is not an PKCS#12 PFX.") {
+            return alert("Not a valid P12 container");
+          }
+        })
+    })
+  }, 500)
+}
+
+
+/**
  * Verify a PDF document with modal
  *
  * @param {ArrayBuffer} toBeVerified - Array buffer of the PDF file that will be verified
@@ -687,4 +769,5 @@ UI.verifyPDFWithModal = function(toBeVerified, filename) {
     }, 500)
   }
 }
+
 module.exports = UI;
