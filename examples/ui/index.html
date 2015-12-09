@@ -45,23 +45,30 @@
 		</nav>
 
 		<div class="container" style="margin-top: 75px;">
-			<div id="parse-pem"></div>
-			<div id="parse-crl"></div>
-			<div id="parse-p12"></div>
-			<div id="validate-cert-chain"></div>
-			<div id="sign-a-pdf"></div>
-			<div id="verify-a-pdf"></div>
-			<div id="sign-a-file"></div>
-			<div id="verify-a-file"></div>
-      <div class="col-sm-12 well">
-       <h4>Sign and Verify PDF with modal</h4>
-          Sign PDF<br>
-          <input type="file" id="sign-pdf-with-modal">
-          <br><br>
-          Verify PDF<br>
-          <input type="file" id="verify-pdf-with-modal">
-      </div>
-		</div>
+            <div id="parse-pem"></div>
+            <div id="parse-crl"></div>
+            <div id="parse-p12"></div>
+            <div id="validate-cert-chain"></div>
+            <div id="sign-a-pdf"></div>
+            <div id="verify-a-pdf"></div>
+            <div id="sign-a-file"></div>
+            <div id="verify-a-file"></div>
+            <div class="col-sm-12 well">
+                <h4>Sign and Verify PDF with modal</h4>
+                Sign PDF<br>
+                <input type="file" id="sign-pdf-with-modal">
+                <br><br>
+                Verify PDF<br>
+                <input type="file" id="verify-pdf-with-modal">
+            </div>
+            <div class="col-sm-12 well">
+                <h4>Sign any file with modal</h4>
+                Sign File<br>
+                <input type="file" id="sign-any-with-modal">
+            </div>
+
+        </div>
+
 
 	<footer>
 		<p>&copy; 2015 <a href="http://kominfo.go.id/" class="footer-text">Direktorat Keamanan Informasi - Kementerian Komunikasi dan Informatika Republik Indonesia</a></p>
@@ -192,6 +199,26 @@
         PKIWebSDK.UI.verifyPDFWithModal(ab, filename);
 	  	}
     });
+
+    var afterSignAny = function(ab){
+      filename = filename + ".p7";
+      PKIWebSDK.Utils.toFile(ab, filename, "application/octet-stream");
+    }
+
+    // Listener to pdf file input element 
+    document.getElementById('sign-any-with-modal').addEventListener('change', function(evt){
+	  	files = evt.target.files; // FileList object
+	  	// files is a FileList of File objects. List some properties.
+        // Read file as ArrayBuffer
+        var reader = new window.FileReader();
+        reader.readAsArrayBuffer(files[files.length-1]);
+        reader.onload = function(e) {
+            filename = files[files.length-1].name;
+            ab = reader.result;
+            PKIWebSDK.UI.signAnyWithModal(ab, filename, afterSignAny);
+        }
+    });
+
 
 	</script>
 		
