@@ -522,6 +522,7 @@ UI.destroyModal = function(){
 /**
  * Sign a PDF document with modal
  *
+ * @since 1.1.0
  * @param {ArrayBuffer} ab - Array buffer of the PDF file that will be signed
  * @param {String} filename - File name of the PDF file
  * @returns {ArrayBuffer} - Array buffer of the signed PDF, passed in cb function
@@ -604,6 +605,7 @@ UI.signPDFWithModal = function(ab, filename, cb) {
 /**
  * Sign any data with modal
  *
+ * @since 1.1.0
  * @param {ArrayBuffer} ab - Array buffer of the file that will be signed
  * @param {String} filename - File name of the file
  * @returns {ArrayBuffer} - Array buffer of the signed file, passed in cb function
@@ -685,6 +687,7 @@ UI.signAnyWithModal = function(ab, filename, cb) {
 /**
  * Verify a PDF document with modal
  *
+ * @since 1.1.0
  * @param {ArrayBuffer} toBeVerified - Array buffer of the PDF file that will be verified
  * @param {String} [filename] - File name of the PDF file
  */
