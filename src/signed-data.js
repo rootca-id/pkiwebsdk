@@ -120,6 +120,46 @@ var signerInfoFromASN1 = function(asn1) {
   return signerInfo;
 }
 
+// extract content (if any) 
+var contentFromASN1 = function(asn1) {
+  var valid = false;
+  var data;
+
+  if (asn1.tagClass === 0 && 
+      asn1.type === 16 && 
+      asn1.value &&
+      asn1.value[0].tagClass === 0 && 
+      asn1.value[0].type === 6) {
+    valid = true;
+  }
+
+  function error() {
+    throw new Error('Content ASN1 is not valid');
+  }
+
+  if (!valid) {
+    return throwError();
+  }
+
+  var capture = {};
+  var errors = [];
+  if(!forge.asn1.validate(asn1, forge.pkcs7.asn1.contentInfoValidator, capture, errors)) {
+    return throwError();
+  }
+
+  var contentValue;
+  if (capture.content && capture.content.value[0]) {
+    contentValue = Utils.str2Ab(capture.content.value[0].value); 
+  }
+
+  var content = {
+    contentType: forge.asn1.derToOid(capture.contentType),
+    content: contentValue
+  };
+  return content;
+}
+
+
 /* @typedef Attribute
  * @type Object
  * @property {String} key - the key of the attribute
@@ -150,6 +190,10 @@ SignedData.parseDER = function parseDER(rawData) {
   var asn1 = forge.asn1.fromDer(rawData);
   var signedData = forge.pkcs7.messageFromAsn1(asn1); 
   var signedDataASN1 = asn1.value[1].value[0];
+  var content = contentFromASN1(signedDataASN1.value[2]); 
+  if (content.content) {
+    signedData.content = content;
+  }
   // SignedData has 6 contents
   // 2 of which are optionals
   var pos = 3;
@@ -183,6 +227,15 @@ SignedData.parseDER = function parseDER(rawData) {
 SignedData.prototype.getData = function getData() {
   return this.data;
 }
+
+/**
+ * Returns the content of SignedData
+ * @return {String} - the content of SignedData (if any) 
+ */
+SignedData.prototype.getContent = function getData() {
+  return this.data.content;
+}
+
 
 /**
  * Verify detached PKCS#7 DER, certificate and a file together
@@ -234,8 +287,24 @@ SignedData.verify = function verify(cert, der, data) {
  * @param {ArrayBuffer} data - Array buffer of data that to be signed
  * @returns {ArrayBuffer} - Array buffer of detached PKCS#7 in DER
  */
-
 SignedData.sign = function sign(cert, key, data) {
+  return SignedData.baseSign(false, cert, key, data);
+}
+
+/**
+ * Sign a data using certificate and private key, returns detached PKCS#7 in DER format
+ *
+ * @since 1.1.0
+ * @param {Certificate} cert - Certificate object
+ * @param {Key} key - Private key to sign 
+ * @param {ArrayBuffer} data - Array buffer of data that to be signed
+ * @returns {ArrayBuffer} - Array buffer of detached PKCS#7 in DER
+ */
+SignedData.signAttached = function sign(cert, key, data) {
+  return SignedData.baseSign(true, cert, key, data);
+}
+
+SignedData.baseSign = function baseSign(attached, cert, key, data) {
   return new Promise(function(resolve, reject) {
     var forgeKey;
     key.toPEM().then(function(keyInPem) {
@@ -265,7 +334,11 @@ SignedData.sign = function sign(cert, key, data) {
         }]
       });
       try {
-      p7.signDetached();
+        if (attached) {
+          p7.sign();
+        } else {
+          p7.signDetached();
+        }
       } catch (e) {
         console.log(e.stack);
       }

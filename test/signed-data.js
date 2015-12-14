@@ -80,6 +80,7 @@ describe("SignedData", function() {
 
       done();
     });
+
     it('should be able to validate the data', function(done) {
       var data = new Uint8Array([0x61, 0x62, 0x63, 0x0a ]) 
 
@@ -95,6 +96,34 @@ describe("SignedData", function() {
           })
       });
     });
+
+    it('should be able to sign as attached and validate the data', function(done) {
+      var data = new Uint8Array([0x61, 0x62, 0x63, 0x0a ]) 
+
+      // sign the message
+      var s = SignedData.signAttached(certSample, keyPair, data).then(function(signedMessage) {
+        // read back the signed message
+        var raw = String.fromCharCode.apply(null, signedMessage);
+        SignedData.verify(certSample, raw, data)
+          .then(function(result){
+            var p7 = SignedData.parseDER(raw);
+            var content = p7.getContent();
+
+            var contentEqual = true;
+            var array = new Uint8Array(content.content);
+            for (var i in data.length) {
+              if (array[i] !== data[i]) {
+                contentEqual = false;
+                break;
+              }
+            }
+            expect(contentEqual).toBe(true);
+            expect(result).toBe(true);
+            done();
+          })
+      });
+    });
+
   });
 });
 
