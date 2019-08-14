@@ -6,7 +6,8 @@
     "test": "./node_modules/.bin/gulp && ./node_modules/.bin/karma start --singleRun",
     "cov": "./node_modules/.bin/karma start karma-cov.conf.js --singleRun",
     "testWatch": "./node_modules/.bin/karma start",
-    "build": "./node_modules/.bin/gulp",
+    "preparation": "cp scripts/list-stylesheets.js ./node_modules/list-stylesheets/index.js",
+    "build": "npm run preparation && ./node_modules/.bin/gulp",
     "gendoc": "./node_modules/.bin/jsdoc --readme README.md src/* -d docs/api -t docs/templates/default",
     "gendoc-minimalist": "./node_modules/.bin/jsdoc --readme README.md src/* -d docs/api -t docs/templates/minimalist"
   },

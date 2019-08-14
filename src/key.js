@@ -164,13 +164,13 @@ Key.parsePEM = function(pem, algorithm) {
           var key = forge.pki.publicKeyFromPem(pem);
           pem = forge.pki.publicKeyToPem(key);
         } else {
-          var err = new Error();
+          err = new Error();
           err.message = "Invalid Key PEM";
           return reject(err);
         }
         jwk = pem2Jwk(pem);
       } else {
-        var err = new Error();
+        err = new Error();
         err.message = "Invalid Key PEM";
         return reject(err);
       }
