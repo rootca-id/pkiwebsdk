@@ -607,7 +607,6 @@ describe("Certificate suite", function() {
                 })
             })
             .catch(function(err){
-              console.log(err.message);
               expect(1).toBe(2);
               done();
             })
@@ -813,6 +812,7 @@ describe("Certificate suite", function() {
         })
         .catch(function(err){
           if (err) {
+            console.log(err);
             console.log(err.message);
           }
           expect(1).toBe(2);
