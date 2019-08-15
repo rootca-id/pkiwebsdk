@@ -11,4 +11,4 @@ is designed to create web based PKI application fully on the client side.
 * Modern web browser with WebCrypto features enabled. Please check http://caniuse.com/#search=cryptography
 
 ## License
-Please consult LICENSE file.
+GPLv3

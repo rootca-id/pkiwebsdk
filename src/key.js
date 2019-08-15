@@ -1,7 +1,7 @@
 "use strict";
 
-var pem2Jwk = require("pem-jwk").pem2jwk;
-var jwk2Pem = require("pem-jwk").jwk2pem;
+var pem2Jwk = require("pem-jwk-browser").pem2jwk;
+var jwk2Pem = require("pem-jwk-browser").jwk2pem;
 var Utils = require("./utils");
 
 // Wrapping webcrypto api
@@ -164,13 +164,13 @@ Key.parsePEM = function(pem, algorithm) {
           var key = forge.pki.publicKeyFromPem(pem);
           pem = forge.pki.publicKeyToPem(key);
         } else {
-          var err = new Error();
+          err = new Error();
           err.message = "Invalid Key PEM";
           return reject(err);
         }
         jwk = pem2Jwk(pem);
       } else {
-        var err = new Error();
+        err = new Error();
         err.message = "Invalid Key PEM";
         return reject(err);
       }
@@ -313,7 +313,6 @@ Key.prototype.isPublic = function() {
 
 Key.prototype.encrypt = function(arrayBuffer) {
   var self = this;
-  console.log(self.keyData)
   return new Promise(function(resolve, reject){
     if (self.keyData.type != "public") {
       reject("Public key does not exist in this key object");

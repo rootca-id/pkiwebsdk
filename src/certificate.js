@@ -40,7 +40,7 @@ var jwk2Pem = require("pem-jwk").jwk2pem;
  *
  * @constructor
  */
-var Certificate = function(certs) {
+var Certificate = function (certs) {
   if (!certs || certs == undefined) {
     this.certData = []
   } else {
@@ -56,12 +56,12 @@ var Certificate = function(certs) {
  * @static
  *
  */
-Certificate.getRevocationList = function(data){
+Certificate.getRevocationList = function (data) {
   var self = this;
-  return new Promise(function(resolve, reject){
+  return new Promise(function (resolve, reject) {
     var b64 = Utils.ab2Base64(data);
     var decoded = forge.util.decode64(b64);
-    if (decoded.substr(0,5) == "-----") {
+    if (decoded.substr(0, 5) == "-----") {
       decoded = forge.pem.decode(decoded)[0].body;
     }
     var crlAsn1 = forge.asn1.fromDer(decoded, false);
@@ -101,16 +101,16 @@ Certificate.getRevocationList = function(data){
  * @returns {Object} - Certificate object
  * @static
  */
-Certificate.create = function(record, keyPair) {
-  return new Promise(function(resolve, reject){
-    
+Certificate.create = function (record, keyPair) {
+  return new Promise(function (resolve, reject) {
+
     // Convert keyPair to PEM format
     var keys = {};
     keyPair.publicKey.toPEM()
-      .then(function(pem){
+      .then(function (pem) {
         keys.publicKey = pem;
         return keyPair.privateKey.toPEM();
-      }).then(function(pem){
+      }).then(function (pem) {
         keys.privateKey = pem;
         // Generate cert
         var cert = forge.pki.createCertificate();
@@ -196,7 +196,7 @@ Certificate.create = function(record, keyPair) {
         }, {
           name: 'subjectKeyIdentifier'
         }]);
-    
+
         // Convert privateKey to forge's privateKey
         cert.sign(forge.pki.privateKeyFromPem(keys.privateKey));
         var certificate = new Certificate([cert]);
@@ -224,38 +224,38 @@ Certificate.create = function(record, keyPair) {
  * @returns {Object} - The CSR object
  * @static
  */
-Certificate.createRequest = function(subject, keyPair, password) {
-  return new Promise(function(resolve, reject){
-    
-  // Convert keyPair to PEM format
+Certificate.createRequest = function (subject, keyPair, password) {
+  return new Promise(function (resolve, reject) {
+
+    // Convert keyPair to PEM format
     var keys = {};
     keyPair.publicKey.toPEM()
-      .then(function(pem){
+      .then(function (pem) {
         keys.publicKey = pem;
         return keyPair.privateKey.toPEM();
-      }).then(function(pem){
+      }).then(function (pem) {
         keys.privateKey = pem
         // Generate CSR
         var csr = forge.pki.createCertificationRequest();
         csr.publicKey = forge.pki.publicKeyFromPem(keys.publicKey);
         csr.setSubject([{
-          name : "commonName",
-          value : subject.commonName
+          name: "commonName",
+          value: subject.commonName
         }, {
-          name : "countryName",
-          value : subject.countryName
+          name: "countryName",
+          value: subject.countryName
         }, {
-          shortName : "ST",
-          value : subject.stateName
+          shortName: "ST",
+          value: subject.stateName
         }, {
-          name : "localityName",
-          value : subject.localityName
+          name: "localityName",
+          value: subject.localityName
         }, {
-          name : "organizationName",
-          value : subject.organizationName
+          name: "organizationName",
+          value: subject.organizationName
         }, {
-          shortName : "OU",
-          value : subject.organizationUnit
+          shortName: "OU",
+          value: subject.organizationUnit
         }]);
         var csrAttrs = [{
           name: 'challengePassword',
@@ -274,11 +274,11 @@ Certificate.createRequest = function(subject, keyPair, password) {
  *
  * @returns {String}
  */
-Certificate.prototype.toPEM = function() {
+Certificate.prototype.toPEM = function () {
   var certs = this.certData;
   var pem = "";
-  return new Promise(function(resolve, reject){
-    for (var i = 0;i < certs.length; i++) {
+  return new Promise(function (resolve, reject) {
+    for (var i = 0; i < certs.length; i++) {
       if (certs[i].certificationRequestInfo) {
         pem += forge.pki.certificationRequestToPem(certs[i]);
       } else {
@@ -296,10 +296,10 @@ Certificate.prototype.toPEM = function() {
  * @param {Object} opt - Optional configuration
  * @returns {String}
  */
-Certificate.prototype.toP12 = function(privateKeyPem, password) {
+Certificate.prototype.toP12 = function (privateKeyPem, password) {
   var self = this;
-  return new Promise(function(resolve, reject){
-    
+  return new Promise(function (resolve, reject) {
+
     var arr = privateKeyPem.split("-----");
     if (!(arr[1] == "BEGIN PRIVATE KEY" || arr[1] == "BEGIN RSA PRIVATE KEY")) {
       return reject("Invalid private key");
@@ -309,18 +309,18 @@ Certificate.prototype.toP12 = function(privateKeyPem, password) {
     }
     var series = Promise.resolve();
     var privateKey, p12Asn1, p12Der, p12b64;
-    series = series.then(function(){
+    series = series.then(function () {
       privateKey = window.forge.pki.privateKeyFromPem(privateKeyPem);
     })
-    series = series.then(function(){
-    // create P12 ASN1 object
+    series = series.then(function () {
+      // create P12 ASN1 object
       p12Asn1 = forge.pkcs12.toPkcs12Asn1(privateKey, self.certData, password);
     })
-    series = series.then(function(){
+    series = series.then(function () {
       // encode
       p12Der = forge.asn1.toDer(p12Asn1).getBytes();
     })
-    series = series.then(function(){
+    series = series.then(function () {
       p12b64 = forge.util.encode64(p12Der);
       resolve(p12b64);
     })
@@ -334,13 +334,13 @@ Certificate.prototype.toP12 = function(privateKeyPem, password) {
  * @param {String} pem - PEM string of certificate(s)
  * @returns {Object} - A forge certificate object, passed to Certificate object itself
  */
-Certificate.prototype.parsePEM = function(pemString) {
+Certificate.prototype.parsePEM = function (pemString) {
   var self = this;
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     var separatedPem = pemString.split("-\n-");
-    for (var i = 0;i < separatedPem.length;i++) {
-      if (i==0) { separatedPem[i] += "-" }
-      else if (i == separatedPem.length -1) { separatedPem[i] = "-" + separatedPem[i] }
+    for (var i = 0; i < separatedPem.length; i++) {
+      if (i == 0) { separatedPem[i] += "-" }
+      else if (i == separatedPem.length - 1) { separatedPem[i] = "-" + separatedPem[i] }
       else { separatedPem[i] = "-" + separatedPem[i] + "-" }
     }
     for (var i = 0; i < separatedPem.length; i++) {
@@ -375,26 +375,26 @@ Certificate.prototype.parsePEM = function(pemString) {
  * @returns {ParseP12Result} - An object that contains certificate and private key
  *.
  */
-Certificate.prototype.parseP12 = function(data, password) {
+Certificate.prototype.parseP12 = function (data, password) {
   var self = this;
-  return new Promise(function(resolve, reject){
+  return new Promise(function (resolve, reject) {
     var p12Der = forge.util.decode64(Utils.ab2Base64(data));
     var p12Asn1 = forge.asn1.fromDer(p12Der);
     var p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, false, password);
-    var certBags = p12.getBags({bagType: forge.pki.oids.certBag});
+    var certBags = p12.getBags({ bagType: forge.pki.oids.certBag });
     var cert = certBags[forge.pki.oids.certBag][0].cert;
     var certs = certBags[forge.pki.oids.certBag];
-    
-    var keyBags = p12.getBags({bagType: forge.pki.oids.pkcs8ShroudedKeyBag});
+
+    var keyBags = p12.getBags({ bagType: forge.pki.oids.pkcs8ShroudedKeyBag });
     var bag = keyBags[forge.pki.oids.pkcs8ShroudedKeyBag][0];
     var privateKey = forge.pki.privateKeyToPem(bag.key);
 
-    for (var i = 0;i < certs.length;i++) {
+    for (var i = 0; i < certs.length; i++) {
       self.certData.push(certs[i].cert);
     }
     var result = {
-      certificate : self,
-      privateKey : privateKey
+      certificate: self,
+      privateKey: privateKey
     }
     resolve(result);
   })
@@ -413,8 +413,8 @@ Certificate.prototype.parseP12 = function(data, password) {
  * @returns {RealValidateResult} - The result of validation
  * @static
  */
-Certificate.realValidate = function(chain){
-  return new Promise(function(resolve, reject) {
+Certificate.realValidate = function (chain) {
+  return new Promise(function (resolve, reject) {
     if (!chain || chain.length == 0) {
       error = {
         message: "No certificate chain defined."
@@ -422,80 +422,82 @@ Certificate.realValidate = function(chain){
       return reject(error);
     }
     var result = {
-      isValid : true,
-      isTrusted : true
-    } 
+      isValid: true,
+      isTrusted: true
+    }
     var caStoreCerts = []
     for (var x in PKIWebSDK.private.caStore.certs) {
       caStoreCerts.push(PKIWebSDK.private.caStore.certs[x]);
     }
-    var  rootCa = caStoreCerts[0];
+    var rootCa = caStoreCerts[0];
     var isTop = false;
     var hasError = false;
     var i = 0;
-      while (!isTop) {
-        var error = null;
-        var cert = chain[i];
-        if (i < (chain.length -1)) {
-          var parent = chain[i+1];
-        } else {
-          var parent = cert;
-          isTop = true;
-        }
-        // Check expiry
-        var now = new Date();
-        if ( (cert.validity.notAfter.getTime() < now.getTime())
-          || (cert.validity.notBefore.getTime() > now.getTime()) ) {
-            error = {
-              message: 'Certificate is not valid yet or has expired.',
-              error: forge.pki.certificateError.certificate_expired,
-              notBefore: cert.validity.notBefore,
-              notAfter: cert.validity.notAfter,
-              now: now
-            };
-          }
-        // Check if issuer matched
-        if (!cert.isIssuer(parent)) {
-          // If it is the last cert in chain and not a self-signed, add caStore's certs to the chain
-          // and redo the loop 1 step
-          if (isTop) {
-            chain = chain.concat(caStoreCerts.reverse());
-            i--;
-            isTop = false;
-          } else {
-            result.isTrusted = false;
-            if (hasError) {
-              result.isValid = false;
-            }
-          }
-        } else {
-          if (isTop && cert.isIssuer(parent)) {
-            if (!cert.isIssuer(rootCa)) {
-              result.isTrusted = false;
-            }
-            if (hasError) {
-              result.isValid = false;
-            }
-          } 
-          // Verify certificate signature
-          if (!parent.verify(cert)) {
-            error = {
-              message: 'Certificate signature is invalid.',
-              error: forge.pki.certificateError.bad_certificate
-            };
-          }
-        }
-        
-        // Set isValid to be false if there is any error
-        if (error != null) {
-          console.log(error);
-          hasError  = true;
-        }
+    while (!isTop) {
+      var error = null;
+      var cert = chain[i];
+      if (i < (chain.length - 1)) {
+        var parent = chain[i + 1];
+      } else {
+        var parent = cert;
+        isTop = true;
+      }
+      // Check expiry
+      var now = new Date();
+      if ((cert.validity.notAfter.getTime() < now.getTime())
+        || (cert.validity.notBefore.getTime() > now.getTime())) {
+        error = {
+          message: 'Certificate is not valid yet or has expired.',
+          error: forge.pki.certificateError.certificate_expired,
+          notBefore: cert.validity.notBefore,
+          notAfter: cert.validity.notAfter,
+          now: now
+        };
+      }
+      // Check if issuer matched
+      if (!cert.isIssuer(parent)) {
+        // If it is the last cert in chain and not a self-signed, add caStore's certs to the chain
+        // and redo the loop 1 step
         if (isTop) {
-          resolve(result);  
+          chain = chain.concat(caStoreCerts.reverse());
+          i--;
+          isTop = false;
+        } else {
+          result.isTrusted = false;
+          if (hasError) {
+            result.isValid = false;
+          }
         }
-        i++
-      } // End of while
+      } else {
+        if (isTop && cert.isIssuer(parent)) {
+          if (!cert.isIssuer(rootCa)) {
+            result.isTrusted = false;
+          }
+          if (hasError) {
+            result.isValid = false;
+          }
+        }
+        // Verify certificate signature
+        if (!parent.verify(cert)) {
+          error = {
+            message: 'Certificate signature is invalid.',
+            error: forge.pki.certificateError.bad_certificate
+          };
+        }
+      }
+
+      // Set isValid to be false if there is any error
+      if (error != null) {
+        if (error.message && error.message === 'Certificate is not valid yet or has expired.') {
+          result.isValid = false;
+        }
+        hasError = true;
+      }
+      if (isTop) {
+        resolve(result);
+      }
+      i++
+    } // End of while
   })
 }
 
@@ -512,15 +514,15 @@ Certificate.realValidate = function(chain){
  * @param {Array} chain - An array of cert chain in forge cert object format. Sorted by certificate level. The parent/top level certificate is the last item in array. 
  * @returns {ValidateResult} - The result of validation
  */
-Certificate.prototype.validate = function() {
+Certificate.prototype.validate = function () {
   var self = this;
   var chain = self.certData;
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     Certificate.realValidate(chain)
-      .then(function(result){
+      .then(function (result) {
         resolve(result);
       })
-      .catch(function(err){
+      .catch(function (err) {
         reject(err);
       })
   })
@@ -541,11 +543,11 @@ Certificate.prototype.validate = function() {
  * @param {Array} chain - An array of cert chain in forge cert object format. Sorted by certificate level. The parent/top level certificate is the last item in array.
  * @returns {TrustResult} - The result of validation
  */
-Certificate.trust = function(chain) {
+Certificate.trust = function (chain) {
   var self = this;
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     Certificate.realValidate(chain)
-      .then(function(result){
+      .then(function (result) {
         if (result.isValid && result.isTrusted) {
           for (var i = 0; i < chain.length; i++) {
             window.PKIWebSDK.private.caStore.addCertificate(chain[i]);
@@ -553,7 +555,7 @@ Certificate.trust = function(chain) {
         }
         resolve(result);
       })
-      .catch(function(err){
+      .catch(function (err) {
         reject(err);
       })
   })
@@ -565,12 +567,12 @@ Certificate.trust = function(chain) {
  *
  * @returns {Object} - Object that contains certificate's issuer detail
  */
-Certificate.prototype.getIssuer = function() {
+Certificate.prototype.getIssuer = function () {
   var cert = this.certData[0];
-  return new Promise(function(resolve, reject){
+  return new Promise(function (resolve, reject) {
     var issuer = cert.issuer.attributes;
     var wrap = {}
-    for (var i = 0; i < issuer.length;i++) {
+    for (var i = 0; i < issuer.length; i++) {
       wrap[issuer[i].name] = issuer[i].value;
     }
     resolve(wrap);
@@ -582,12 +584,12 @@ Certificate.prototype.getIssuer = function() {
  *
  * @returns {Object} - Object that contains certificate's subject detail
  */
-Certificate.prototype.getSubject = function() {
+Certificate.prototype.getSubject = function () {
   var cert = this.certData[0];
-  return new Promise(function(resolve, reject){
+  return new Promise(function (resolve, reject) {
     var subject = cert.subject.attributes;
     var wrap = {}
-    for (var i = 0; i < subject.length;i++) {
+    for (var i = 0; i < subject.length; i++) {
       wrap[subject[i].name] = subject[i].value;
     }
     resolve(wrap);
@@ -598,10 +600,10 @@ Certificate.prototype.getSubject = function() {
  * Gets the version number of the certificate
  *
  * @returns {Number} - Version number of certificate
- */ 
-Certificate.prototype.getVersionNumber = function() {
+ */
+Certificate.prototype.getVersionNumber = function () {
   var cert = this.certData[0];
-  return new Promise(function(resolve, reject){
+  return new Promise(function (resolve, reject) {
     resolve(cert.version);
   })
 }
@@ -610,10 +612,10 @@ Certificate.prototype.getVersionNumber = function() {
  * Gets the serial number of the certificate
  *
  * @returns {String} - Serial number of certificate
- */ 
-Certificate.prototype.getSerialNumber = function() {
+ */
+Certificate.prototype.getSerialNumber = function () {
   var cert = this.certData[0];
-  return new Promise(function(resolve, reject){
+  return new Promise(function (resolve, reject) {
     resolve(cert.serialNumber);
   })
 }
@@ -623,9 +625,9 @@ Certificate.prototype.getSerialNumber = function() {
  *
  * @returns {String} - Algorithm of certificate's public key
  */
-Certificate.prototype.getPublicKeyAlgorithm = function() {
+Certificate.prototype.getPublicKeyAlgorithm = function () {
   var cert = this.certData[0];
-  return new Promise(function(resolve, reject){
+  return new Promise(function (resolve, reject) {
     var alg = forge.oids[cert.signatureOid]
     resolve(alg);
   })
@@ -636,9 +638,9 @@ Certificate.prototype.getPublicKeyAlgorithm = function() {
  *
  * @returns {Key} - Public key of certificate
  */
-Certificate.prototype.getPublicKey = function() {
+Certificate.prototype.getPublicKey = function () {
   var cert = this.certData[0];
-  return new Promise(function(resolve, reject){
+  return new Promise(function (resolve, reject) {
     var pem = forge.pki.publicKeyToPem(cert.publicKey);
     resolve(pem)
   })
@@ -649,9 +651,9 @@ Certificate.prototype.getPublicKey = function() {
  *
  * @returns {ArrayBuffer} - An array buffer of the certificate's signature
  */
-Certificate.prototype.getSignature = function() {
+Certificate.prototype.getSignature = function () {
   var self = this;
-  return new Promise(function(resolve, reject){
+  return new Promise(function (resolve, reject) {
     var signature = Utils.str2Ab(self.certData[0].signature);
     resolve(signature);
   })
@@ -662,10 +664,10 @@ Certificate.prototype.getSignature = function() {
  *
  * @returns {string[]} - Array of string that represents the usage of certificate
  */
-Certificate.prototype.getUsage = function() {
+Certificate.prototype.getUsage = function () {
   var extensions = this.certData[0].extensions;
   var usage = [];
-  return new Promise(function(resolve, reject){
+  return new Promise(function (resolve, reject) {
     for (var i = 0; i < extensions.length; i++) {
       if (extensions[i].id == "2.5.29.15" || extensions[i].id == "2.5.29.37") {
         for (var child in extensions[i]) {

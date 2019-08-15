@@ -119,7 +119,6 @@ describe("UI Class", function() {
       })
       UI.handler.PEM(file)
         .then(function(cert){
-          console.log(cert);
           expect(cert.certData.length).toBe(1);
           cert.getSubject()
             .then(function(subject){
@@ -146,7 +145,6 @@ describe("UI Class", function() {
       })
       UI.handler.CRL(file)
         .then(function(revocationList){
-          console.log(revocationList);
           expect(revocationList.length).toBe(3);
           expect(revocationList[0]).toBe("1000");
           expect(revocationList[1]).toBe("1002");
@@ -208,7 +206,6 @@ describe("UI Class", function() {
     it("Render element to get P12 that will be used to sign a PDF file", function(done) {
       document.body.innerHTML = "";
       document.body.innerHTML += "<div id='pdf-to-sign'></div>";
-      console.log(1);
       UI.signPDF("pdf-to-sign", function(promise){
         // Do nothing
       })

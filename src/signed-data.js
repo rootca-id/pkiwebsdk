@@ -254,8 +254,6 @@ SignedData.verify = function verify(cert, der, data) {
     var signedDataHash = d.authenticatedAttributes.digest;
     var hash = forge.md.sha256.create();
     var dataHash = hash.update(Utils.ab2Str(data)).digest().toHex();
-    console.log(signedDataHash);
-    console.log(dataHash);
     cert.getIssuer()
       .then(function(issuer){
         // Verify
