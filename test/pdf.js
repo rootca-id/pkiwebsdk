@@ -33,13 +33,11 @@ describe("PDF suite", function() {
       keyPair = keys;
       return keys.privateKey.toPEM();
     }).then(function(pem) {
-      console.log(pem);
       return Certificate.create(record, keyPair);
     }).then(function(cert) {
       certSample = cert;
       return cert.toPEM();
     }).then(function(pem) {
-      console.log(pem);
       done();
     });
   });
@@ -121,9 +119,6 @@ var uint = new Uint8Array(doc);
           a += uint[i] + ','; 
         }
         a += ']';
-        //console.log(a);
-
-
 
         var p = new Pdf(new Uint8Array(doc));
         var signatures = p.getSignatures().then(function(signatures) {
@@ -228,12 +223,9 @@ var uint = new Uint8Array(doc);
           a += uint[i] + ','; 
         }
         a += ']';
-        //console.log(a);
-
 
         var p = new Pdf(new Uint8Array(doc));
         p.getSignatures().then(function(signatures) {
-          console.log(signatures.length);
           done();
         });
       }).catch(function(e) {
@@ -303,8 +295,6 @@ var uint = new Uint8Array(doc);
           a += uint[i] + ','; 
         }
         a += ']';
-        //console.log(a);
-
 
         var p = new Pdf(new Uint8Array(doc));
         var signatures = p.getSignatures().then(function(signatures) {

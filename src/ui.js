@@ -27,7 +27,6 @@ UI.signInfo = {};
 // Handle input file
 UI.handler = {}
 UI.handler.PEM = function(file) {
-  console.log(file);
   return new Promise(function(resolve, reject){
     if (file) {
       var reader = new window.FileReader();
@@ -56,7 +55,6 @@ UI.handler.CRL = function(file) {
 }
 
 UI.handler.P12 = function(file) {
-  console.log(file);
   return new Promise(function(resolve, reject){
     if (file) {
       var reader = new window.FileReader()
@@ -93,7 +91,6 @@ UI.handler.certChain = function(file) {
 }
 
 UI.handler.P12ToSign = function(file) {
-  console.log(file);
   return new Promise(function(resolve, reject){
     if (file) {
       var reader = new window.FileReader()
@@ -122,7 +119,6 @@ UI.handler.P12ToSign = function(file) {
   })
 }
 UI.handler.P12ToSignFile = function(file) {
-  console.log(file);
   return new Promise(function(resolve, reject){
     if (file) {
       var reader = new window.FileReader()
@@ -151,7 +147,6 @@ UI.handler.P12ToSignFile = function(file) {
   })
 }
 UI.handler.PDFToSign = function(file) {
-  console.log(file);
   return new Promise(function(resolve, reject){
     if (file) {
       var reader = new window.FileReader()
@@ -166,7 +161,6 @@ UI.handler.PDFToSign = function(file) {
   })
 }
 UI.handler.fileToSign = function(file) {
-  console.log(file);
   return new Promise(function(resolve, reject){
     if (file) {
       var reader = new window.FileReader()
@@ -181,7 +175,6 @@ UI.handler.fileToSign = function(file) {
   })
 }
 UI.handler.fileToBeVerified = function(file) {
-  console.log(file);
   return new Promise(function(resolve, reject){
     if (file) {
       var reader = new window.FileReader()
@@ -196,7 +189,6 @@ UI.handler.fileToBeVerified = function(file) {
   })
 }
 UI.handler.certToVerifyFile = function(file) {
-  console.log(file);
   return new Promise(function(resolve, reject){
     if (file) {
       var reader = new window.FileReader()
@@ -215,7 +207,6 @@ UI.handler.certToVerifyFile = function(file) {
   })
 }
 UI.handler.P7ToVerifyFile = function(file) {
-  console.log(file);
   return new Promise(function(resolve, reject){
     if (file) {
       var reader = new window.FileReader()
@@ -230,7 +221,6 @@ UI.handler.P7ToVerifyFile = function(file) {
   })
 }
 UI.handler.PDFToVerify = function(file) {
-  console.log(file);
   return new Promise(function(resolve, reject){
     if (file) {
       var reader = new window.FileReader()
@@ -239,7 +229,6 @@ UI.handler.PDFToVerify = function(file) {
         UI.PDFToVerify = new window.PKIWebSDK.PDF(new Uint8Array(reader.result));
         var signatures = UI.PDFToVerify.getSignatures()
           .then(function(signatures){
-            console.log(signatures);
             if (signatures.length > 0) {
               var result = {
                 isVerified : signatures[0].verified,
@@ -290,7 +279,6 @@ UI.getCertPEM = function(element, cb) {
   e.innerHTML = html["get-cert-pem.html"];
   document.getElementById("pkiwebsdk-get-cert-pem").addEventListener("change", function(evt){
     var files = evt.target.files;
-    console.log(files);
     cb(UI.handler.PEM(files[0]));
   });
   document.getElementById("pkiwebsdk-get-cert-pem").onchange = function () {
@@ -580,9 +568,6 @@ UI.signPDFWithModal = function(ab, filename, cb) {
         })
         .then(function(privateKey){
           privKey = privateKey;
-          console.log(cert);
-          console.log(privKey);
-          console.log(signInfo);
           return pdf.sign(cert, privKey, signInfo)
         })
         .then(function(signed){
@@ -662,8 +647,6 @@ UI.signAnyWithModal = function(ab, filename, cb) {
         })
         .then(function(privateKey){
           privKey = privateKey;
-          console.log(cert);
-          console.log(privKey);
           return SignedData.sign(cert, privKey, ab)
         })
         .then(function(signed){

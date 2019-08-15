@@ -37,8 +37,8 @@ var record = {
     organizationName : "Uji coba",
     organizationUnit : "Uji coba"
   },
-  notBefore: new Date(2015, 8, 1),
-  notAfter: new Date(2018, 8, 1),
+  notBefore: new Date(2019, 5, 1),
+  notAfter: new Date(2024, 8, 1),
 }
 var recordExpired = {
   issuer : {
@@ -57,8 +57,8 @@ var recordExpired = {
     organizationName : "Uji coba",
     organizationUnit : "Uji coba"
   },
-  notBefore: new Date(2011, 8, 1),
-  notAfter: new Date(2012, 8, 1),
+  notBefore: new Date(2017, 8, 1),
+  notAfter: new Date(2018, 8, 1),
 }
 var recordWithoutDate = {
   issuer : {
@@ -389,7 +389,6 @@ describe("Certificate suite", function() {
       Key.generatePair("SHA-256")
         .then(function(keys){
           Certificate.create(recordWithoutDate, keys).then(function(cert){
-            console.log(cert.certData);
             expect(cert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
             expect(cert.certData[0].issuer.attributes[1].value).toBe("ID");
             expect(cert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
@@ -541,7 +540,6 @@ describe("Certificate suite", function() {
     it("should be able to get publicKey algorithm from a certificate", function(done) {
       certSample.getPublicKeyAlgorithm()
         .then(function(alg){
-          console.log(alg);
           expect(alg).toBe("sha1WithRSAEncryption");
           done();
         })
@@ -556,7 +554,6 @@ describe("Certificate suite", function() {
     it("should be able to get publicKey from a certificate", function(done) {
       certSample.getPublicKey()
         .then(function(publicKey){
-          console.log(publicKey);
           var arr = publicKey.split("-----");
           expect(arr[1]).toEqual("BEGIN PUBLIC KEY");
           expect(arr[3]).toEqual("END PUBLIC KEY");
@@ -575,7 +572,6 @@ describe("Certificate suite", function() {
       var data = base642Ab(p12Base64);
       newCert.parseP12(data, "password")
         .then(function(result){
-          console.log(result.privateKey);
           expect(result.privateKey.substr(0, 31)).toBe("-----BEGIN RSA PRIVATE KEY-----");
           Key.parsePEM(result.privateKey, "SHA-256")
             .then(function(privateKey){
@@ -622,7 +618,6 @@ describe("Certificate suite", function() {
       var data = base642Ab(p12OpenSSLBase64);
       newCert.parseP12(data, "homhai")
         .then(function(result){
-          console.log(result.privateKey);
           expect(result.privateKey.substr(0, 31)).toBe("-----BEGIN RSA PRIVATE KEY-----");
           Key.parsePEM(result.privateKey, "SHA-256")
             .then(function(privateKey){
@@ -685,7 +680,6 @@ describe("Certificate suite", function() {
       var cert = new Certificate();
       cert.parsePEM(bundledPEM)
         .then(function(cert){
-          console.log(cert);
           expect(cert).toBeDefined();
           expect(cert.certData.length).toEqual(3);
           certChainSample = cert;
@@ -801,11 +795,9 @@ describe("Certificate suite", function() {
           done();
         })
     });
-    it("should be able to check validity of certificate chain", function(done) {
+    it("should be able to check validity of certificate chain (1)", function(done) {
       certChainSample.validate()
         .then(function(result){
-          console.log("validation result");
-          console.log(result);
           expect(result.isValid).toBe(true);
           expect(result.isTrusted).toBe(true);
           done();
@@ -840,57 +832,9 @@ describe("Certificate suite", function() {
 
       brokenPath.validate()
         .then(function(result){
-          console.log("validation result");
-          console.log(result);
           expect(result.isValid).toBe(true);
           expect(result.isTrusted).toBe(false);
           done();
-        })
-        .catch(function(err){
-          if (err) {
-            console.log(err.message);
-          }
-          expect(1).toBe(2);
-          done();
-        })
-    });
-    it("should be able to check validity of a certificate, return false because of expired date", function(done) {
-      Key.generatePair("SHA-256")
-        .then(function(keys){
-          Certificate.create(recordExpired, keys).then(function(cert){
-            expect(cert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
-            expect(cert.certData[0].issuer.attributes[1].value).toBe("ID");
-            expect(cert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
-            expect(cert.certData[0].issuer.attributes[3].value).toBe("Bojong");
-            expect(cert.certData[0].issuer.attributes[4].value).toBe("Uji coba");
-            expect(cert.certData[0].issuer.attributes[5].value).toBe("Uji coba");
-            expect(cert.certData[0].subject.attributes[0].value).toBe("blankon.in");
-            expect(cert.certData[0].subject.attributes[1].value).toBe("ID");
-            expect(cert.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
-            expect(cert.certData[0].subject.attributes[3].value).toBe("Bojong");
-            expect(cert.certData[0].subject.attributes[4].value).toBe("Uji coba");
-            expect(cert.certData[0].subject.attributes[5].value).toBe("Uji coba");
-            done();
-            cert.validate()
-              .then(function(result){
-                expect(result.isValid).toBe(false);
-                done();
-              })
-              .catch(function(err){
-                if (err) {
-                  console.log(err.message);
-                }
-                expect(1).toBe(2);
-                done();
-              })
-          })
-          .catch(function(err){
-            if (err) {
-              console.log(err.message);
-            }
-            expect(1).toBe(2);
-            done();
-          })
         })
         .catch(function(err){
           if (err) {
@@ -917,10 +861,9 @@ describe("Certificate suite", function() {
           done();
         })
     });
-    it("should be able to check validity of certificate chain", function(done) {
+    it("should be able to check validity of certificate chain (2)", function(done) {
       certChainSample.validate()
         .then(function(result){
-          console.log(result);
           expect(result.isValid).toBe(true);
           done();
         })
@@ -960,8 +903,6 @@ describe("Certificate suite", function() {
       certs.parsePEM(bundledPEM)
         .then(function(certs){
           var certChain = certs.certData;
-          console.log("cert length");
-          console.log(certChain.length);
           Certificate.trust(certChain)
             .then(function(result){
               expect(result.isValid).toBe(true);
@@ -987,8 +928,6 @@ describe("Certificate suite", function() {
           brokenPath.certData[2] = certs.certData[2];
           Certificate.trust(brokenPath.certData)
             .then(function(result){
-              console.log("validation result");
-              console.log(result);
               expect(result.isValid).toBe(true);
               expect(result.isTrusted).toBe(false);
               done();
@@ -1019,7 +958,6 @@ describe("Certificate suite", function() {
     it("should get key usage from a certificate", function(done) {
       certSample.getUsage()
         .then(function(usage){
-          console.log(usage);
           //  ['keyCertSign', 'digitalSignature', 'nonRepudiation', 'keyEncipherment', 'dataEncipherment', 'serverAuth', 'clientAuth', 'codeSigning', 'emailProtection', 'timeStamping']
           expect(usage.length).toEqual(10);
           expect(usage.indexOf("keyCertSign")>=0).toBeTruthy();
@@ -1033,5 +971,52 @@ describe("Certificate suite", function() {
           done();
         })
     });
+    it("should be able to check validity of a certificate, return false because of expired date", function(done) {
+      Key.generatePair("SHA-256")
+        .then(function(expiredKeys){
+          Certificate.create(recordExpired, expiredKeys).then(function(expiredCert){
+            expect(expiredCert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
+            expect(expiredCert.certData[0].issuer.attributes[1].value).toBe("ID");
+            expect(expiredCert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
+            expect(expiredCert.certData[0].issuer.attributes[3].value).toBe("Bojong");
+            expect(expiredCert.certData[0].issuer.attributes[4].value).toBe("Uji coba");
+            expect(expiredCert.certData[0].issuer.attributes[5].value).toBe("Uji coba");
+            expect(expiredCert.certData[0].subject.attributes[0].value).toBe("blankon.in");
+            expect(expiredCert.certData[0].subject.attributes[1].value).toBe("ID");
+            expect(expiredCert.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
+            expect(expiredCert.certData[0].subject.attributes[3].value).toBe("Bojong");
+            expect(expiredCert.certData[0].subject.attributes[4].value).toBe("Uji coba");
+            expect(expiredCert.certData[0].subject.attributes[5].value).toBe("Uji coba");
+            expiredCert.validate()
+              .then(function(result){
+                expect(result.isValid).toBe(false);
+                done();
+              })
+              .catch(function(err){
+                if (err) {
+                  console.log(err.message);
+                }
+                expect(1).toBe(2);
+                done();
+              })
+          })
+          .catch(function(err){
+            if (err) {
+              console.log(err.message);
+            }
+            expect(1).toBe(2);
+            done();
+          })
+        })
+        .catch(function(err){
+          if (err) {
+            console.log(err.message);
+          }
+          expect(1).toBe(2);
+          done();
+        })
+    });
+/*
+*/
   });
 });

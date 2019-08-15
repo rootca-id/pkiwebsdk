@@ -313,7 +313,6 @@ Key.prototype.isPublic = function() {
 
 Key.prototype.encrypt = function(arrayBuffer) {
   var self = this;
-  console.log(self.keyData)
   return new Promise(function(resolve, reject){
     if (self.keyData.type != "public") {
       reject("Public key does not exist in this key object");
