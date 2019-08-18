@@ -33,7 +33,7 @@ require("../lib/forge/pkcs7asn1.js");
 var forge = window.forge;
 var Key = require("./key");
 var Utils = require("./utils");
-var jwk2Pem = require("pem-jwk").jwk2pem;
+var jwk2Pem = require("pem-jwk-browser").jwk2pem;
 
 /**
  * X509 certificate management
