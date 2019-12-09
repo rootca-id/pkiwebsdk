@@ -1,6 +1,6 @@
 {
   "name": "pkiwebsdk",
-  "version": "1.1.4",
+  "version": "1.1.6",
   "description": "PKI WebSDK",
   "scripts": {
     "pre-test": "cp ./scripts/list-stylesheets.js ./node_modules/list-stylesheets/index.js",
