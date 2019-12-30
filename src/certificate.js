@@ -294,6 +294,18 @@ Certificate.createRequest = function(subject, keyPair, password) {
             value: subject.description || subject['2.5.4.13'],
           });
         }
+        if (subject.subjectAltName || subject['2.5.25.17']) {
+          subjects.push({
+            name: 'subjectAltName',
+            value: subject.subjectAltName || subject['2.5.25.17'],
+          });
+        }
+        if (subject.emailAddress) {
+          subjects.push({
+            name: 'emailAddress',
+            value: subject.emailAddress,
+          });
+        }
         console.log(subjects);
         csr.setSubject(subjects);
         if (password && password.length > 0) {
