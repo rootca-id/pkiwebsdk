@@ -34,14 +34,15 @@ var Key = function(key) {
  * Generates a key pair
  *
  * @param {String} algorithm - The algorithm used to generate the key pair
+ * @param {Number} length - The key length
  * @returns {GeneratePairResult} - An object containing both private and public keys
  * @static
  */
-Key.generatePair = function(algorithm) {
+Key.generatePair = function(algorithm, length) {
   return new Promise(function(resolve, reject){
     cryptoSubtle.generateKey({
       name:"RSASSA-PKCS1-v1_5", 
-      modulusLength:2048, 
+      modulusLength: length || 2048, 
       publicExponent : new Uint8Array([1,0,1]), 
       hash : { name : algorithm}}, 
       true, 
