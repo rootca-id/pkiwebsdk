@@ -17,7 +17,7 @@ window.PKIWebSDK = new PKIWebSDK();
 window.PKIWebSDK.private = {}
 window.PKIWebSDK.private.forge = window.forge;
 window.PKIWebSDK.private.caStore = window.forge.pki.createCaStore(caStore);
-window.PKIWebSDK.createCaStore = (caStore) => {
+window.PKIWebSDK.setCaStore = (caStore) => {
   window.PKIWebSDK.private.caStore = window.forge.pki.createCaStore(caStore);
 }
 module.exports = PKIWebSDK;

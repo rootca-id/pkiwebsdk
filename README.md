@@ -9,6 +9,18 @@ is designed to create web based PKI application fully on the client side.
 
 ## Requirements
 * Modern web browser with WebCrypto features enabled. Please check http://caniuse.com/#search=cryptography
+* NodeJS v10.x
+
+## Usage
+
+```
+require('pkiwebsdk');
+
+// Set your own CA store
+const rootCA = '-----CERTIFICATE-----...';
+const intermediateCA = '-----CERTIFICATE-----...';
+window.PKIWebSDK.setCaStore([rootCA, intermediateCA]);
+```
 
 ## License
 GPLv3

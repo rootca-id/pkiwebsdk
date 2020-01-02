@@ -306,7 +306,6 @@ Certificate.createRequest = function(subject, keyPair, password) {
             value: subject.emailAddress,
           });
         }
-        console.log(subjects);
         csr.setSubject(subjects);
         if (password && password.length > 0) {
           var csrAttrs = [
@@ -494,8 +493,10 @@ Certificate.realValidate = function(chain) {
       var error = null;
       var cert = chain[i];
       if (i < chain.length - 1) {
+				// parent is the next cert
         var parent = chain[i + 1];
       } else {
+				// parent is itself, should be a selfsigned or root cert
         var parent = cert;
         isTop = true;
       }
