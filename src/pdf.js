@@ -49,13 +49,11 @@ PDF.prototype.sign = function(cert, key, info) {
         for (var i = 0 ; i < z.length; i ++) {
           x+=z[i]+',';
         }
-        //console.log(x);
         var z=data;
         var x='[';
         for (var i = 0 ; i < z.length; i ++) {
           x+=z[i]+',';
         }
-        //console.log(x);
  
         cb(signedMessage);
       });

@@ -5,6 +5,7 @@ var caStore = require("../src/castore");
 window.PKIWebSDK = {};
 window.PKIWebSDK.private = {}
 window.PKIWebSDK.private.caStore = forge.pki.createCaStore(caStore);
+
 var certSample;
 var certChainSample;
 var certPemSample;
@@ -37,8 +38,8 @@ var record = {
     organizationName : "Uji coba",
     organizationUnit : "Uji coba"
   },
-  notBefore: new Date(2015, 8, 1),
-  notAfter: new Date(2018, 8, 1),
+  notBefore: new Date(2019, 5, 1),
+  notAfter: new Date(2024, 8, 1),
 }
 var recordExpired = {
   issuer : {
@@ -57,8 +58,8 @@ var recordExpired = {
     organizationName : "Uji coba",
     organizationUnit : "Uji coba"
   },
-  notBefore: new Date(2011, 8, 1),
-  notAfter: new Date(2012, 8, 1),
+  notBefore: new Date(2017, 8, 1),
+  notAfter: new Date(2018, 8, 1),
 }
 var recordWithoutDate = {
   issuer : {
@@ -178,114 +179,110 @@ var privateKeyPEM = "-----BEGIN RSA PRIVATE KEY-----\r\n" +
 "dSM3Ih9m4tv+7y46qtdODuFWvVnZwsPy2E4JRvS0vumbElUffs2p2g==\r\n" +
 "-----END RSA PRIVATE KEY-----\r\n";
 
-
-var bundledPEM = "-----BEGIN CERTIFICATE-----\n"
-+ "MIIGcDCCBFigAwIBAgIIGe+fRp/vsmcwDQYJKoZIhvcNAQELBQAwZzEZMBcGA1UE\n"
-+ "AwwQSW50IENBIFB1cndhcnVwYTE9MDsGA1UECgw0TWluaXN0cnkgb2YgQ29tbXVu\n"
-+ "aWNhdGlvbiBhbmQgSW5mb3JtYXRpb24gVGVjaG5vbG9neTELMAkGA1UEBhMCSUQw\n"
-+ "HhcNMTQxMjAxMDcxNjAyWhcNMTkxMjAxMDcxNjAyWjBVMRUwEwYDVQQDDAxQU3JF\n"
-+ "IEtvbWluZm8xLzAtBgNVBAoMJktlbWVudGVyaWFuIEtvbXVuaWthc2kgZGFuIElu\n"
-+ "Zm9ybWF0aWthMQswCQYDVQQGEwJJRDCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCC\n"
-+ "AgoCggIBAK/wnRUqa10tc21uOutmRepT0+n2K6KFBLrgI3Skn+YqPQe4w3J31ZUd\n"
-+ "e/xROWjePbTTAbRdRAt+q2C2Wc+aQKS6sf4UE45PCVNC4//J9EQEq4/BC6MvFKdJ\n"
-+ "9CC9AdBHhLe5tPnC9+KjpkNE2pQ1e/RM3tPmyUSme0coct2sdrdVNvM88ePHanYR\n"
-+ "z4T2aeSmzHAnRqNxC7atD4aLp2ur3VtIzg/s1A6VHFdG1olXd2C62Z7OlibAxM1c\n"
-+ "wwYqdZ9otFYKfi4g6/OzNiEQR9E6MxrTu4fXXRXDeRmPyVJ9rSNsBFXhMOKvulAB\n"
-+ "dv5DsbSUD60XwsdVm3nTtufDUer03hKuJ8mk2GzK4XXtysiXKwH5V6sTTZb9X3rm\n"
-+ "byHc+XI9SeKEfzNrD2RXd+ZryC5kkKs5n2uFRqnpdQbxBFJuTUUN2Rb3F1X5yG+8\n"
-+ "LgsALnXSfg8L2YJ1myH2p0HAlfvG5Ojirs5g/f2Gqcyg4bSekG6LIx9aqFmF7NnG\n"
-+ "Acq8pAoIRKlrZJXRivmQOOG30Sg4GtefUFaR/KLKbFcSL4HUSANhRNZpPbrYrqfU\n"
-+ "nyId2gz/NgnEwtqIj3e+hSbqohHhdQlfv91y39XLfeIPkKUCKuMa+66y2Cor8FEp\n"
-+ "hgJUUq+sWmrRAbT4qwVQSWWelWqlztf4gmU2Eq3n5tgEr+lt3KeXAgMBAAGjggEw\n"
-+ "MIIBLDAdBgNVHQ4EFgQUfeNICO6lM6vYrySahecEDylcfiMwDwYDVR0TAQH/BAUw\n"
-+ "AwEB/zAfBgNVHSMEGDAWgBRU92GkD8/qyIpYK9mpfLBj1LUUKjAZBgNVHSAEEjAQ\n"
-+ "MA4GDGCCaAEBAQEBAgMEAjCBrQYDVR0fBIGlMIGiMIGfoDCgLoYsaHR0cDovL3d3\n"
-+ "dy5yb290Y2Eub3IuaWQvY3JsL3BzcmVpbnRwdXJ3YS5jcmyia6RpMGcxGTAXBgNV\n"
-+ "BAMMEEludCBDQSBQdXJ3YXJ1cGExPTA7BgNVBAoMNE1pbmlzdHJ5IG9mIENvbW11\n"
-+ "bmljYXRpb24gYW5kIEluZm9ybWF0aW9uIFRlY2hub2xvZ3kxCzAJBgNVBAYTAklE\n"
-+ "MA4GA1UdDwEB/wQEAwIBhjANBgkqhkiG9w0BAQsFAAOCAgEAQNZqEBILwNZLJl/M\n"
-+ "T4fGAC/AEz9dfjOn1hwNOvv/wA0uZFjLQ4+hv2OQ53lc3YqnjVvI3l0rqm5OpUFn\n"
-+ "NjEBTgwEYOSu54KHuD/8evip9oagDVpMLYF3jnpY3NQz0XMvdbSQmSGGdjH663cR\n"
-+ "+j9r1ll1nysiY4H69hPkOc8Il5pmkeWCLGzoSeG0G/fPJ/Pup3DH2h9d+2hvqa26\n"
-+ "PNH1sM73MQua2aVPCQhIkHS9NhyRbOVQ/5XBMOiGvA36HEROwiI5n8LjVAt18rfs\n"
-+ "Od2Zzf8o3kW5uiDV66rogWX4syspPMM1ragfkgmFDC7lkxqxphRgTlChahQe1xWQ\n"
-+ "NUthUKzmvqcJL42g0Nmz/HBg7MsUwbuQwfo2BRTVXEc+TpvI7BzY6SnFKdD+cKTT\n"
-+ "l45Vk6Y3ogJ+4APjyN1BO97avNy7lAYBv+BLBbOoBtIkhxaLhqE27WbahfvhoqQh\n"
-+ "5YObY7+UVECBf2jRQ+vssiTgo0xWPLlOB7XVRVJZoLBkgG+G0VcuSMxOtPGO2C55\n"
-+ "U/0DT0OJ7umv+wt4j2Hd+H1OStqA/IKMX66FCJsHt/ekOXjM4UJsy1V5x8NL8Sl2\n"
-+ "IM6w7Wz8F8atTpxCa9FuEUdiKFGUGSEbjzslYIsoF5/nxOZ68j35uEB8xDrL35+T\n"
-+ "a06t9F/6PIVuMSGVtc1622I1cUI=\n"
-+ "-----END CERTIFICATE-----\n"
-+ "-----BEGIN CERTIFICATE-----\n"
-+ "MIIFzTCCA7WgAwIBAgIIclMDFanvos4wDQYJKoZIhvcNAQELBQAwaDEaMBgGA1UE\n"
-+ "AwwRUm9vdCBDQSBJbmRvbmVzaWExPTA7BgNVBAoMNE1pbmlzdHJ5IG9mIENvbW11\n"
-+ "bmljYXRpb24gYW5kIEluZm9ybWF0aW9uIFRlY2hub2xvZ3kxCzAJBgNVBAYTAklE\n"
-+ "MB4XDTE0MTIwMTA2NTc1MFoXDTIyMTIwMTA2NTc1MFowZzEZMBcGA1UEAwwQSW50\n"
-+ "IENBIFB1cndhcnVwYTE9MDsGA1UECgw0TWluaXN0cnkgb2YgQ29tbXVuaWNhdGlv\n"
-+ "biBhbmQgSW5mb3JtYXRpb24gVGVjaG5vbG9neTELMAkGA1UEBhMCSUQwggIiMA0G\n"
-+ "CSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDGUmMjoHmkx+/1crLlY3U35ItnKi5d\n"
-+ "/2cMQYtlruipcEpOIWBFXnZEHYTXNfdMRVNkiFm/GM+j74h/yNIoCnJShSvG2BaO\n"
-+ "O669BFMxJhDNE93HcmvwvXH8Kk25paZL55JlcVtcGF7SPLpWyhhVJ+U/zKP0JwDf\n"
-+ "PG5qppDxinVzQQJn3zQmdFzDHDtYDCx+M72+5nVNut+afe3Ady/ZuLgobjZ5Yguz\n"
-+ "2l7Jtya81X/fJEhjBTcjsHOOgbnVneksBtdvV+z1Z/n8SXoZnWuESNE0QTBJRiEx\n"
-+ "NcY4OiNxNkh66D7e4CtFsb5K6Qsl+V7pmpIXy17M3TbKDBXb3Gcd/U+ihTnkrW7G\n"
-+ "cS4qPWM5J2DeSSKIY2JEhtt7SNvufPgcRPao/uH0KyLp56XEaBMsFAv95e6oEjNC\n"
-+ "6uGcI44dhPwsxcKCk1TLnBLUZY3TwMF+h/VJjuPmGkVGxtTTzPyfmxhmhpwjgmYX\n"
-+ "ArZrAwztQoW174BbpI/+KK+mPRLIPuPiql0kqwt7dk/C6mlH4rBLlZrfAcO0Nq+N\n"
-+ "87TzpEYAiYFyoMmELgksFzh3UmOLhSFVkxAfZeShuaNu12plVqXZy6tDmF3HBk35\n"
-+ "kGDUS49nri5d3Bt/Camo1Zt10AT+M5BAUyP49kaa3WsXugZ+CBxCn6v3qH2tGuct\n"
-+ "5GDwV+Pw0jHDPwIDAQABo3wwejAdBgNVHQ4EFgQUVPdhpA/P6siKWCvZqXywY9S1\n"
-+ "FCowDwYDVR0TAQH/BAUwAwEB/zAfBgNVHSMEGDAWgBTT5WcUOE8Ep+lomeXjJsi8\n"
-+ "RGCQ1TAXBgNVHSAEEDAOMAwGCmCCaAEBAQECAwIwDgYDVR0PAQH/BAQDAgGGMA0G\n"
-+ "CSqGSIb3DQEBCwUAA4ICAQB478kfrWtEwHX7GE9L+JEGO14Xr5TZV5nbrQpgFNJ8\n"
-+ "NWICT+goEOVdOMXh2Fn4eLK7urQWyogkUP8lVI46Es9w+JuPpZSSk1KD14YIqoNZ\n"
-+ "VuYOYbmKu/WzDsV9yWckNOPtbT96VSEVFJq3I68IApYdcr6YRyhIfX21YO5+u9YW\n"
-+ "pdLzws12FwKS/yhhwW0UK/T07E1K2fIBcBrbbYD67OOuXYJeNMZ4WZ9CxX5sOnek\n"
-+ "DM18e6nQpC0cmXsBLNOAYxj4U73Xe6zjPpvnVbJW8yXSDgRK5MtPl69g70+XURbi\n"
-+ "npgSOiwwhpGSp16nTX3bYZ3Thi7DPzZC2skvz2EtvbP9N9V1k+xDewb7UmTKnYZo\n"
-+ "W1WV4N6GbakpwZcw1vF0ApMEThxNUejssmQERnyEpOFRhbasl+lJSsCpZlcf6S/5\n"
-+ "zuk6mJi+hzQksGxy0Bn3PkTGQa1YL7ob8vYuN/5FtheAv+3ABojnD3KMV0zbmpR0\n"
-+ "6RcjF/iYiXCxVdb0HeBAEGFv6utWvbb+iNCKMznZ4X7kr2gtEJ/xbv8qKILTsYx/\n"
-+ "SulNdmnYuRVFmECS01zHkQ3sP2Zzaxh4aZfjX4mtL7TQJsl6O1Ax+Z2mUqHjQK8W\n"
-+ "aJVIpjqOS/1xxZzrko6UMEmJQepL1ppITGT5rPQQiPnxGad72ccVdqBonUhroWLr\n"
-+ "gA==\n"
-+ "-----END CERTIFICATE-----\n"
-+ "-----BEGIN CERTIFICATE-----\n"
-+ "MIIGCTCCA/GgAwIBAgIICi6gYftB7m8wDQYJKoZIhvcNAQELBQAwaDEaMBgGA1UE\n"
-+ "AwwRUm9vdCBDQSBJbmRvbmVzaWExPTA7BgNVBAoMNE1pbmlzdHJ5IG9mIENvbW11\n"
-+ "bmljYXRpb24gYW5kIEluZm9ybWF0aW9uIFRlY2hub2xvZ3kxCzAJBgNVBAYTAklE\n"
-+ "MB4XDTE0MTExMDAzNDg1MloXDTI0MTExMDAzNDg1MlowaDEaMBgGA1UEAwwRUm9v\n"
-+ "dCBDQSBJbmRvbmVzaWExPTA7BgNVBAoMNE1pbmlzdHJ5IG9mIENvbW11bmljYXRp\n"
-+ "b24gYW5kIEluZm9ybWF0aW9uIFRlY2hub2xvZ3kxCzAJBgNVBAYTAklEMIICIjAN\n"
-+ "BgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAthHkQIHCK5IMTJGsUumuYIx+X8qn\n"
-+ "uGlUSHcvL4qUvIs7pw/a/ysjNO1sWN6SZ3ErysZWWDUV79lJzyzrmhPxpC8zXscH\n"
-+ "KVDsiJxjQAhQhJKg4Jy4BCy/zMZuht6LCrDiRyv7/ctaFFt3RpTcF3VzzLsLj72z\n"
-+ "nJUir4OxYXMHTu4XAzGAXrtDen1UvXCUdoknWdXNN5nRa/XJuNEWePsO+2EBmHoQ\n"
-+ "jWu6/f/sTtg335ffWgp6qXto+i1daN9veV0VKmdh1d6qXQOVpi0dhBlQMyx9OuS5\n"
-+ "I6mEx4v9/B7XOQ2uKiBZsCZ3LhB5DctaQVMCtQbU8b9uELxBeLw/9lHljZ63oDwe\n"
-+ "DhWnPU41FrbRCzNM1B0R+w4NYj0SO6WpxOAn6AupYyKh4vSjtLyMeaFwFp9vYyV1\n"
-+ "qVNZDmuEfDO0ato0w5kAV5LcCgI4Ezt55rB/HCoS1j6x00xRNXG8jJs2B/aiJZbj\n"
-+ "cMgFdITDnDd4ZGtamRhqfUnXOCaSxamSlLIPW/VAUHkoc/illdlfsfVS0P0V5H5c\n"
-+ "caqMGBI0PbyU18VviqIaYv3POZQ+FpxWg7j/Y2I8OlNpRYZ/74QXok2fbHO4OkIw\n"
-+ "mPHxlt4EnCqMYTAAr9LfvI/kI1Qgtw35kn8kllVU7lGy8jA9qqwW5TClnbY0aZdO\n"
-+ "DgvBEr1Yfm2kpckCAwEAAaOBtjCBszAdBgNVHQ4EFgQU0+VnFDhPBKfpaJnl4ybI\n"
-+ "vERgkNUwDwYDVR0TAQH/BAUwAwEB/zAfBgNVHSMEGDAWgBTT5WcUOE8Ep+lomeXj\n"
-+ "Jsi8RGCQ1TBQBgNVHSAESTBHMEUGCGCCaAEBAQEBMDkwNwYIKwYBBQUHAgEWK2h0\n"
-+ "dHA6Ly8vd3d3LnJvb3RjYS5vci5pZC9DUC9wc3JlSW5kdWtjcC5wZGYwDgYDVR0P\n"
-+ "AQH/BAQDAgGGMA0GCSqGSIb3DQEBCwUAA4ICAQBBBLzQhP/NaR7/S1jvm/3stqWz\n"
-+ "NPLobbahQ1LrD2jQWpemlnflhf25RAv/5ED22u+w0F4M9U92RmHlM3cJrJyDHEui\n"
-+ "6EAIFmA+MUeCo4wRGg5KHx8zIWjjo2O1VN+QyfOsBUdnycPojTNsL/Y1tPl8b9Yj\n"
-+ "XIl9EK9Uo5x5U6pmWGQSgzhTnY9ii0s2SYQcJSoT0/SlTVL+/nT9k/XK5VmBcpIs\n"
-+ "xxeL8yO3uu9r1uwzBggRV+9HD89er7oqC3m+xQo86+izpiPYMneVC8R1Ukr/h3zC\n"
-+ "i3G5pUIE4TMrdPe3jL7c5VeA/97NUW8gZJPlP8yj9FQ+2SPg3ddJ1tPtpn2KirVw\n"
-+ "XPezfB6cGoZAIRd6aPhXZsOYuuY9MJMDVEphoEBy5e9C7uy9s/vekZ87qSSS+9s5\n"
-+ "xC404z0YXvE9WY8Ar+Pz0jR1ZL343DlgfWGmiPVolWoyQQsmkhXUBF1fMdYriOTQ\n"
-+ "GiiuDJvh3+bsYKwdihnzFN74eeO+Qdq+ewacfJaSUwwV5yS5l1SFemjMns2b8swy\n"
-+ "banq7DgcMRg6PauDb4nHm7zTmruEr02fMuLw+uzSToeHWd9LWx4tmhhOJ6lYO3B2\n"
-+ "XW2ebYPDtYGVoYv1QybZmcCE9dwh2Hdu0GLD9fYB7/DAV0rsKEdWYbf+xNrq6ngo\n"
-+ "mKI3tpvJtlLMduW0JA==\n"
-+ "-----END CERTIFICATE-----\n";
-
+var bundledPEM = "-----BEGIN CERTIFICATE-----\n" +
+"MIIF+zCCA+OgAwIBAgICEAAwDQYJKoZIhvcNAQELBQAwgY0xCzAJBgNVBAYTAklE\n" +
+"MRAwDgYDVQQIDAdKYWthcnRhMRIwEAYDVQQKDAlQS0lXZWJTREsxEjAQBgNVBAsM\n" +
+"CVBLSVdlYlNESzEiMCAGA1UEAwwZUEtJV2ViU0RLIEludGVybWVkaWF0ZSBDQTEg\n" +
+"MB4GCSqGSIb3DQEJARYRcGtpd2Vic2RrQHJvb3QuY2EwHhcNMjAwMTAyMTY0MjAw\n" +
+"WhcNMjEwMTExMTY0MjAwWjCBizELMAkGA1UEBhMCSUQxEDAOBgNVBAgMB0pha2Fy\n" +
+"dGExEDAOBgNVBAcMB0pha2FydGExEjAQBgNVBAoMCVBLSVdlYlNESzESMBAGA1UE\n" +
+"CwwJUEtJV2ViU0RLMRAwDgYDVQQDDAdIZXJwaWtvMR4wHAYJKoZIhvcNAQkBFg9o\n" +
+"ZXJwaWtvQHJvb3QuY2EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDX\n" +
+"8Deer3KiJ7yI3Z7kwr76MxrPbIRZ8VWzvQ0i7ZB4OKcTWuOmatv/IWquBKJu2LIP\n" +
+"xqwJGpYfdpTqas/buTB5HTl7ysffmUfrAYoqnAhT8dbp3asLu/MaGzM3fDBhcdhH\n" +
+"0sh/MBKWisNbyijiRdxy3qq2wuS8i6Y7cfZFllaCIr0rwaQ9/ZP+/xq+z/tedMga\n" +
+"hgBZYT0/LNXCcxWjsjQfzKMyV38I32AKQQoHTA49hrojPYsmipC3c5ZgpIjING6k\n" +
+"OX2IWvXajlpY0/MvhT4To+4Yi2SjmZDk2E8IYFuxnIc/YSLj8AYNrtYn1EKXe1tc\n" +
+"B2E98NI3kdLcquTtK/qXAgMBAAGjggFjMIIBXzAJBgNVHRMEAjAAMBEGCWCGSAGG\n" +
+"+EIBAQQEAwIGQDAzBglghkgBhvhCAQ0EJhYkT3BlblNTTCBHZW5lcmF0ZWQgU2Vy\n" +
+"dmVyIENlcnRpZmljYXRlMB0GA1UdDgQWBBS3TVawAwCdaEqH5S14VEDfdruntDCB\n" +
+"xQYDVR0jBIG9MIG6gBRAGvhT1GftY78gv3lnPRppYKzTyaGBnaSBmjCBlzELMAkG\n" +
+"A1UEBhMCSUQxEDAOBgNVBAgMB0pha2FydGExEDAOBgNVBAcMB0pha2FydGExEjAQ\n" +
+"BgNVBAoMCVBLSVdlYlNESzESMBAGA1UECwwJUEtJV2ViU0RLMRowGAYDVQQDDBFQ\n" +
+"S0lXZWJTREsgUm9vdCBDQTEgMB4GCSqGSIb3DQEJARYRcGtpd2Vic2RrQHJvb3Qu\n" +
+"Y2GCAhAAMA4GA1UdDwEB/wQEAwIFoDATBgNVHSUEDDAKBggrBgEFBQcDATANBgkq\n" +
+"hkiG9w0BAQsFAAOCAgEAUPExRRVsnbwet0xU+V9L/NyFqydnQ+c8Oz2ZflLf8T/w\n" +
+"emWYWmV6Ih+3ir8Zt7I92HOP1U2LwedlRybg+nDcoT+f0XquKvYkzO2Aha9RAjk2\n" +
+"1I50E7yvLmK5YHUAIDfirUlyk8k6q/0/WAMSOBVdVw6HT7kDe5PQLfYNZu6b1mu1\n" +
+"OxMN3QPm6HoclyEbl41h0rweXl60vA/TIHBO+9feKa1HGufyosnTsbHN1/zf/7MX\n" +
+"nqqyBa/eViPKJyuikqt+C2rUIlTF1qN7YEJom0sxSw6mq2HWm87pFz4QHQcLcM+c\n" +
+"88Q+Ys/KP/RDVwHA+/UqeQ/aiwQmgH+HMAe7BImlOPNsGconjlaLvEt+e4mOOQPG\n" +
+"B4rWyuaQOSthv4hpbvtAPI1/BQPmiHzzon7IEuHrqSC/ovXnjrFDx6m7yzks+qpu\n" +
+"070edUdkrskOd+sg2oH1v1jN28qDBUscosk0wmWGi08TcLziX3is+2kDUU8kJ3xY\n" +
+"LhMpPlgFryjeyu/xlYYshTF8fsLM9m+ZD7ZnyDSo3W7dAbPuhCo9eFX3V+3Im2UV\n" +
+"p0OHUwoKRMDpNHHw60dZTelI0TtIgQHlJ5dblTH2THsLxs5aZVW205fcKI+HlMK2\n" +
+"5ErpOCGotNLPj9g/yN+pcoxUBa9E9vv8iAJTI3RpxDNeq7oiAedhWqZiFysHTqU=\n" +
+"-----END CERTIFICATE-----\n" +
+"-----BEGIN CERTIFICATE-----" +
+"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\n" +
+"7dSLlGaFjRV/N4zA\n" +
+"-----END CERTIFICATE-----\n" +
+"-----BEGIN CERTIFICATE-----\n" +
+"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\n" +
+"-----END CERTIFICATE-----\n"
 
 var ab2Base64 = function(arrayBuffer) {
   var base64    = "";
@@ -389,7 +386,6 @@ describe("Certificate suite", function() {
       Key.generatePair("SHA-256")
         .then(function(keys){
           Certificate.create(recordWithoutDate, keys).then(function(cert){
-            console.log(cert.certData);
             expect(cert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
             expect(cert.certData[0].issuer.attributes[1].value).toBe("ID");
             expect(cert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
@@ -541,7 +537,6 @@ describe("Certificate suite", function() {
     it("should be able to get publicKey algorithm from a certificate", function(done) {
       certSample.getPublicKeyAlgorithm()
         .then(function(alg){
-          console.log(alg);
           expect(alg).toBe("sha1WithRSAEncryption");
           done();
         })
@@ -556,7 +551,6 @@ describe("Certificate suite", function() {
     it("should be able to get publicKey from a certificate", function(done) {
       certSample.getPublicKey()
         .then(function(publicKey){
-          console.log(publicKey);
           var arr = publicKey.split("-----");
           expect(arr[1]).toEqual("BEGIN PUBLIC KEY");
           expect(arr[3]).toEqual("END PUBLIC KEY");
@@ -575,7 +569,6 @@ describe("Certificate suite", function() {
       var data = base642Ab(p12Base64);
       newCert.parseP12(data, "password")
         .then(function(result){
-          console.log(result.privateKey);
           expect(result.privateKey.substr(0, 31)).toBe("-----BEGIN RSA PRIVATE KEY-----");
           Key.parsePEM(result.privateKey, "SHA-256")
             .then(function(privateKey){
@@ -607,7 +600,6 @@ describe("Certificate suite", function() {
                 })
             })
             .catch(function(err){
-              console.log(err.message);
               expect(1).toBe(2);
               done();
             })
@@ -623,7 +615,6 @@ describe("Certificate suite", function() {
       var data = base642Ab(p12OpenSSLBase64);
       newCert.parseP12(data, "homhai")
         .then(function(result){
-          console.log(result.privateKey);
           expect(result.privateKey.substr(0, 31)).toBe("-----BEGIN RSA PRIVATE KEY-----");
           Key.parsePEM(result.privateKey, "SHA-256")
             .then(function(privateKey){
@@ -686,7 +677,6 @@ describe("Certificate suite", function() {
       var cert = new Certificate();
       cert.parsePEM(bundledPEM)
         .then(function(cert){
-          console.log(cert);
           expect(cert).toBeDefined();
           expect(cert.certData.length).toEqual(3);
           certChainSample = cert;
@@ -802,17 +792,16 @@ describe("Certificate suite", function() {
           done();
         })
     });
-    it("should be able to check validity of certificate chain", function(done) {
+    it("should be able to check validity of certificate chain (1)", function(done) {
       certChainSample.validate()
         .then(function(result){
-          console.log("validation result");
-          console.log(result);
           expect(result.isValid).toBe(true);
           expect(result.isTrusted).toBe(true);
           done();
         })
         .catch(function(err){
           if (err) {
+            console.log(err);
             console.log(err.message);
           }
           expect(1).toBe(2);
@@ -840,57 +829,9 @@ describe("Certificate suite", function() {
 
       brokenPath.validate()
         .then(function(result){
-          console.log("validation result");
-          console.log(result);
           expect(result.isValid).toBe(true);
           expect(result.isTrusted).toBe(false);
           done();
-        })
-        .catch(function(err){
-          if (err) {
-            console.log(err.message);
-          }
-          expect(1).toBe(2);
-          done();
-        })
-    });
-    it("should be able to check validity of a certificate, return false because of expired date", function(done) {
-      Key.generatePair("SHA-256")
-        .then(function(keys){
-          Certificate.create(recordExpired, keys).then(function(cert){
-            expect(cert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
-            expect(cert.certData[0].issuer.attributes[1].value).toBe("ID");
-            expect(cert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
-            expect(cert.certData[0].issuer.attributes[3].value).toBe("Bojong");
-            expect(cert.certData[0].issuer.attributes[4].value).toBe("Uji coba");
-            expect(cert.certData[0].issuer.attributes[5].value).toBe("Uji coba");
-            expect(cert.certData[0].subject.attributes[0].value).toBe("blankon.in");
-            expect(cert.certData[0].subject.attributes[1].value).toBe("ID");
-            expect(cert.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
-            expect(cert.certData[0].subject.attributes[3].value).toBe("Bojong");
-            expect(cert.certData[0].subject.attributes[4].value).toBe("Uji coba");
-            expect(cert.certData[0].subject.attributes[5].value).toBe("Uji coba");
-            done();
-            cert.validate()
-              .then(function(result){
-                expect(result.isValid).toBe(false);
-                done();
-              })
-              .catch(function(err){
-                if (err) {
-                  console.log(err.message);
-                }
-                expect(1).toBe(2);
-                done();
-              })
-          })
-          .catch(function(err){
-            if (err) {
-              console.log(err.message);
-            }
-            expect(1).toBe(2);
-            done();
-          })
         })
         .catch(function(err){
           if (err) {
@@ -917,10 +858,9 @@ describe("Certificate suite", function() {
           done();
         })
     });
-    it("should be able to check validity of certificate chain", function(done) {
+    it("should be able to check validity of certificate chain (2)", function(done) {
       certChainSample.validate()
         .then(function(result){
-          console.log(result);
           expect(result.isValid).toBe(true);
           done();
         })
@@ -960,8 +900,6 @@ describe("Certificate suite", function() {
       certs.parsePEM(bundledPEM)
         .then(function(certs){
           var certChain = certs.certData;
-          console.log("cert length");
-          console.log(certChain.length);
           Certificate.trust(certChain)
             .then(function(result){
               expect(result.isValid).toBe(true);
@@ -987,8 +925,6 @@ describe("Certificate suite", function() {
           brokenPath.certData[2] = certs.certData[2];
           Certificate.trust(brokenPath.certData)
             .then(function(result){
-              console.log("validation result");
-              console.log(result);
               expect(result.isValid).toBe(true);
               expect(result.isTrusted).toBe(false);
               done();
@@ -1019,11 +955,55 @@ describe("Certificate suite", function() {
     it("should get key usage from a certificate", function(done) {
       certSample.getUsage()
         .then(function(usage){
-          console.log(usage);
           //  ['keyCertSign', 'digitalSignature', 'nonRepudiation', 'keyEncipherment', 'dataEncipherment', 'serverAuth', 'clientAuth', 'codeSigning', 'emailProtection', 'timeStamping']
           expect(usage.length).toEqual(10);
           expect(usage.indexOf("keyCertSign")>=0).toBeTruthy();
           done();
+        })
+        .catch(function(err){
+          if (err) {
+            console.log(err.message);
+          }
+          expect(1).toBe(2);
+          done();
+        })
+    });
+    it("should be able to check validity of a certificate, return false because of expired date", function(done) {
+      Key.generatePair("SHA-256")
+        .then(function(expiredKeys){
+          Certificate.create(recordExpired, expiredKeys).then(function(expiredCert){
+            expect(expiredCert.certData[0].issuer.attributes[0].value).toBe("blankon.in");
+            expect(expiredCert.certData[0].issuer.attributes[1].value).toBe("ID");
+            expect(expiredCert.certData[0].issuer.attributes[2].value).toBe("Jabodetabek");
+            expect(expiredCert.certData[0].issuer.attributes[3].value).toBe("Bojong");
+            expect(expiredCert.certData[0].issuer.attributes[4].value).toBe("Uji coba");
+            expect(expiredCert.certData[0].issuer.attributes[5].value).toBe("Uji coba");
+            expect(expiredCert.certData[0].subject.attributes[0].value).toBe("blankon.in");
+            expect(expiredCert.certData[0].subject.attributes[1].value).toBe("ID");
+            expect(expiredCert.certData[0].subject.attributes[2].value).toBe("Jabodetabek");
+            expect(expiredCert.certData[0].subject.attributes[3].value).toBe("Bojong");
+            expect(expiredCert.certData[0].subject.attributes[4].value).toBe("Uji coba");
+            expect(expiredCert.certData[0].subject.attributes[5].value).toBe("Uji coba");
+            expiredCert.validate()
+              .then(function(result){
+                expect(result.isValid).toBe(false);
+                done();
+              })
+              .catch(function(err){
+                if (err) {
+                  console.log(err.message);
+                }
+                expect(1).toBe(2);
+                done();
+              })
+          })
+          .catch(function(err){
+            if (err) {
+              console.log(err.message);
+            }
+            expect(1).toBe(2);
+            done();
+          })
         })
         .catch(function(err){
           if (err) {

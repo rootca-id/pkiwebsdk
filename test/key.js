@@ -528,7 +528,6 @@ describe("Key", function() {
         .then(function(key){
           key.toPKCS8("katasandi")
             .then(function(pemString){
-              console.log(pemString);
               expect(pemString.split("-----")[1]).toBe("BEGIN ENCRYPTED PRIVATE KEY");
               encryptedPrivateKey = pemString;
               done();

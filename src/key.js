@@ -1,7 +1,7 @@
 "use strict";
 
-var pem2Jwk = require("pem-jwk").pem2jwk;
-var jwk2Pem = require("pem-jwk").jwk2pem;
+var pem2Jwk = require("pem-jwk-browser").pem2jwk;
+var jwk2Pem = require("pem-jwk-browser").jwk2pem;
 var Utils = require("./utils");
 
 // Wrapping webcrypto api
@@ -34,14 +34,15 @@ var Key = function(key) {
  * Generates a key pair
  *
  * @param {String} algorithm - The algorithm used to generate the key pair
+ * @param {Number} length - The key length
  * @returns {GeneratePairResult} - An object containing both private and public keys
  * @static
  */
-Key.generatePair = function(algorithm) {
+Key.generatePair = function(algorithm, length) {
   return new Promise(function(resolve, reject){
     cryptoSubtle.generateKey({
       name:"RSASSA-PKCS1-v1_5", 
-      modulusLength:2048, 
+      modulusLength: length || 2048, 
       publicExponent : new Uint8Array([1,0,1]), 
       hash : { name : algorithm}}, 
       true, 
@@ -164,13 +165,13 @@ Key.parsePEM = function(pem, algorithm) {
           var key = forge.pki.publicKeyFromPem(pem);
           pem = forge.pki.publicKeyToPem(key);
         } else {
-          var err = new Error();
+          err = new Error();
           err.message = "Invalid Key PEM";
           return reject(err);
         }
         jwk = pem2Jwk(pem);
       } else {
-        var err = new Error();
+        err = new Error();
         err.message = "Invalid Key PEM";
         return reject(err);
       }
@@ -313,7 +314,6 @@ Key.prototype.isPublic = function() {
 
 Key.prototype.encrypt = function(arrayBuffer) {
   var self = this;
-  console.log(self.keyData)
   return new Promise(function(resolve, reject){
     if (self.keyData.type != "public") {
       reject("Public key does not exist in this key object");

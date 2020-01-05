@@ -90,7 +90,6 @@ describe("SignedData", function() {
         var raw = String.fromCharCode.apply(null, signedMessage);
         SignedData.verify(certSample, raw, data)
           .then(function(result){
-            console.log(result);
             expect(result).toBe(true);
             done();
           })

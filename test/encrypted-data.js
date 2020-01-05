@@ -103,7 +103,6 @@ describe("Encrypted Data", function() {
       var hash = forge.md5.create();
       hash.update(ab);
       var originalHash = hash.digest().data;
-      console.log("original hash : " + originalHash);
       cert.parsePEM(certPem)
         .then(function(cert){
           certificate = cert;
@@ -123,7 +122,6 @@ describe("Encrypted Data", function() {
           var hash = forge.md5.create();
           hash.update(content);
           var decryptedHash = hash.digest().data;
-          console.log("decrypted hash : " + decryptedHash);
           expect(originalHash).toBe(decryptedHash);
           done(); 
         })
@@ -138,7 +136,6 @@ describe("Encrypted Data", function() {
       var hash = forge.md5.create();
       hash.update(ab);
       var originalHash = hash.digest().data;
-      console.log("original hash : " + originalHash);
       cert.parsePEM(certPem)
         .then(function(cert){
           certificate = cert;
@@ -169,7 +166,6 @@ describe("Encrypted Data", function() {
       var hash = forge.md5.create();
       hash.update(ab);
       var originalHash = hash.digest().data;
-      console.log("original hash : " + originalHash);
       cert.parsePEM(certPem)
         .then(function(cert){
           certificate = cert;
